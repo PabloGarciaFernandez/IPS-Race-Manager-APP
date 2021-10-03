@@ -63,7 +63,7 @@ public class GestorDB {
 		conectar();
 		try {
 			pst = conn.prepareStatement(
-					"CREATE TABLE atleta (idAtltea varchar NOT NULL, dni varchar not null, nombre varchar not null, edad numeric not null, fechaInscripcion date not null, estadoInscripcion varchar not null, sexo varchar not null, idCarrera varchar, CONSTRAINT CHK_Atleta CHECK (Edad>18 AND sexo='M' AND sexo='F' AND sexo='NB' AND estadoInscripcion='Inscrito' AND estadoInscripcion='No inscrito')) ");
+					"CREATE TABLE atleta (idAtleta varchar2 NOT NULL, dni varchar2 not null, nombre varchar2 not null, edad integer not null, fechaInscripcion date not null, estadoInscripcion varchar2 not null, sexo varchar not null, idCarrera varchar, CONSTRAINT CHK_Atleta CHECK (Edad>18 AND sexo='M' AND sexo='F' AND sexo='NB' AND estadoInscripcion='Inscrito' AND estadoInscripcion='No inscrito')) ");
 			pst.execute();
 		} catch (SQLException e) {
 			System.out.println("Error en la base de datos: " + e.getMessage());
@@ -76,16 +76,29 @@ public class GestorDB {
 	// |BORRAR TABLAS|
 	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭
 
-	public void borrarTablas() {
-		conectar();
-		try {
-			pst = conn.prepareStatement("drop table atleta");
-			pst.execute();
-			pst.close();
-		} catch (SQLException e) {
-			System.out.println("Error en la la base de datos: " + e.getMessage());
-		} finally {
-			cerrar();
+	public void borrarTablas(boolean all) {
+		if (!all) {
+			conectar();		
+			try {
+				pst = conn.prepareStatement("drop table atleta");
+				pst.execute();
+				pst.close();
+			} catch (SQLException e) {
+				System.out.println("Error en la la base de datos: " + e.getMessage());
+			} finally {
+				cerrar();
+			}
+		} else {
+			conectar();		
+			try {
+				pst = conn.prepareStatement("drop table *");
+				pst.execute();
+				pst.close();
+			} catch (SQLException e) {
+				System.out.println("Error en la la base de datos: " + e.getMessage());
+			} finally {
+				cerrar();
+			}
 		}
 	}
 
@@ -112,7 +125,7 @@ public class GestorDB {
 	public void deleteCarrera() {
 		conectar();
 		try {
-			pst = conn.prepareStatement("delete from carreas where duracion = 50 ");
+			pst = conn.prepareStatement("delete from carreras where duracion = 50 ");
 			pst.execute();
 		} catch (SQLException e) {
 			System.out.println("Error en la base de datos: " + e.getMessage());
