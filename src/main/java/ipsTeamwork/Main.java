@@ -1,23 +1,29 @@
 package ipsTeamwork;
 
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
+import gestorDB.GestorDB;
 import ipsTeamwork.gui.MainWindow;
 
 public class Main {
 
-	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+	public static void main(String[] args) {
 //		GestorDB db = new GestorDB();
-//		db.borrarTablas(true);
+
 //		db.crearTablas();
-//		db.insertarCarrera();
-//		db.deleteCarrera();
-//		db.borrarTablas(true);
-//		db.estadoInscripcion("ACR");
-		
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		
+//		db.insertarAtleta();
+//		db.deleteAtleta();
+//		db.borrarTablas(false);
+//		db.estadoInscripcion("5");
+
+//		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
+		try {
+			UIManager.setLookAndFeel("com.jtattoo.plaf.texture.TextureLookAndFeel");
+		} catch (Exception e) {
+			System.out.println("Algo malo paso: " + e.getMessage());
+		}
+
 		MainWindow mw = new MainWindow();
 		mw.setVisible(true);
 	}
