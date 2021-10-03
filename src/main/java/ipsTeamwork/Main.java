@@ -11,7 +11,8 @@ public class Main {
 //		db.crearTablas();
 //		db.insertarCarrera();
 //		db.deleteCarrera();
-		db.carrerasCortas();
+//		db.borrarTablas();
+		db.estadoInscripcion("ACR");
 
 	}
 

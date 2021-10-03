@@ -63,52 +63,90 @@ public class GestorDB {
 		conectar();
 		try {
 			pst = conn.prepareStatement(
-					"CREATE TABLE carreas (duracion INT(20) NOT NULL, acronimo CHAR(3), maxParticipantes INT(20))");
+					"CREATE TABLE atleta (idAtltea varchar NOT NULL, dni varchar not null, nombre varchar not null, edad numeric not null, fechaInscripcion date not null, estadoInscripcion varchar not null, sexo varchar not null, idCarrera varchar, CONSTRAINT CHK_Atleta CHECK (Edad>18 AND sexo='M' AND sexo='F' AND sexo='NB' AND estadoInscripcion='Inscrito' AND estadoInscripcion='No inscrito')) ");
 			pst.execute();
-			pst.close();
 		} catch (SQLException e) {
-			System.out.println("Error al cerrar la base de datos: " + e.getMessage());
+			System.out.println("Error en la base de datos: " + e.getMessage());
 		} finally {
 			cerrar();
 		}
 	}
 
-	public void insertarCarrera() {
+	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇
+	// |BORRAR TABLAS|
+	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭
+
+	public void borrarTablas() {
 		conectar();
 		try {
-			pst = conn.prepareStatement("Insert into carreas values(50,'ACR',15); ");
+			pst = conn.prepareStatement("drop table atleta");
 			pst.execute();
+			pst.close();
 		} catch (SQLException e) {
-			System.out.println("Error al cerrar la base de datos: " + e.getMessage());
+			System.out.println("Error en la la base de datos: " + e.getMessage());
 		} finally {
 			cerrar();
 		}
 	}
-	
+
+	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇
+	// |INSERT CARRERAS|
+	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭
+
+	public void insertarCarrera() {
+		conectar();
+		try {
+			pst = conn.prepareStatement("Insert into atleta values(); ");
+			pst.execute();
+		} catch (SQLException e) {
+			System.out.println("Error en la base de datos: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+	}
+
+	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇
+	// |BORRAR CARRERAS|
+	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭
+
 	public void deleteCarrera() {
 		conectar();
 		try {
 			pst = conn.prepareStatement("delete from carreas where duracion = 50 ");
 			pst.execute();
 		} catch (SQLException e) {
-			System.out.println("Error al cerrar la base de datos: " + e.getMessage());
+			System.out.println("Error en la base de datos: " + e.getMessage());
 		} finally {
 			cerrar();
 		}
 	}
 
-	public void carrerasCortas() {
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Partiendo de la lista de competiciones y seleccionando una, el
+	 *         organizador visualizará un listado con los atletas que están
+	 *         inscritos hasta el momento actual (DNI, Nombre, Categoría, Fecha de
+	 *         Inscripción y Estado de Inscripción). Estarán ordenados por fecha
+	 *         inscripción y estado de la inscripción.
+	 * 
+	 */
+	public void estadoInscripcion(String idCarrera) {
 		conectar();
 		try {
-			pst = conn.prepareStatement("select * from carreas ");
+			pst = conn.prepareStatement(
+					"select * from atleta where idCarrera = ? order by fechaInscripcion, estadoInscripcion");
+
+			pst.setString(1, idCarrera);
+
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
-				System.out.println("Esta es la duración:" + rs.getString("duracion"));
+				System.out.println("Este es el atleta:" + rs.getString("idAtleta"));
 			}
 
 		} catch (SQLException e) {
-			System.out.println("Error al cerrar la base de datos: " + e.getMessage());
+			System.out.println("Error en la base de datos: " + e.getMessage());
 		} finally {
 			cerrar();
 		}
