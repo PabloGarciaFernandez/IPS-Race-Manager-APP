@@ -3,23 +3,30 @@ package ipsTeamwork;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import gestorDB.GestorDB;
 import ipsTeamwork.gui.MainWindow;
 
 public class Main {
 
 	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
-//		GestorDB db = new GestorDB();
-//		db.borrarTablas(true);
-//		db.crearTablas();
-//		db.insertarCarrera();
-//		db.deleteCarrera();
-//		db.borrarTablas(true);
-//		db.estadoInscripcion("ACR");
+
+		GestorDB db = new GestorDB();
+		System.out.println("borrando tablas antiguas");
+		db.borrarTablas();
 		
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		System.out.println("\ncreando nuevas tablas");
+		db.crearTablas();
 		
-		MainWindow mw = new MainWindow();
-		mw.setVisible(true);
+		System.out.println("\npoblando tablas");
+		db.poblarTablas();
+		
+		System.out.println("\n\n");
+		db.selectCarreras();
+		
+//		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//		
+//		MainWindow mw = new MainWindow();
+//		mw.setVisible(true);
 	}
 
 }

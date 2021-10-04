@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
@@ -54,6 +55,7 @@ public class GestorDB {
 			System.out.println("Error al cerrar la base de datos: " + e.getMessage());
 		}
 	}
+	
 
 	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇
 	// |CREAR TABLAS|
@@ -62,11 +64,20 @@ public class GestorDB {
 	public void crearTablas() {
 		conectar();
 		try {
-			pst = conn.prepareStatement(
-					"CREATE TABLE atleta (idAtleta varchar2 NOT NULL, dni varchar2 not null, nombre varchar2 not null, edad integer not null, fechaInscripcion date not null, estadoInscripcion varchar2 not null, sexo varchar not null, idCarrera varchar, CONSTRAINT CHK_Atleta CHECK (Edad>18 AND sexo='M' AND sexo='F' AND sexo='NB' AND estadoInscripcion='Inscrito' AND estadoInscripcion='No inscrito')) ");
+			pst = conn.prepareStatement(SQLStrings.createAtleta);
 			pst.execute();
+			pst.close();
+			
+			pst = conn.prepareStatement(SQLStrings.createCarrera);
+			pst.execute();
+			pst.close();
+			
+			pst = conn.prepareStatement(SQLStrings.createTipos);
+			pst.execute();
+			pst.close();
+			
 		} catch (SQLException e) {
-			System.out.println("Error en la base de datos: " + e.getMessage());
+			System.out.println("Error al crear tabla en la base de datos: " + e.getMessage());
 		} finally {
 			cerrar();
 		}
@@ -76,30 +87,30 @@ public class GestorDB {
 	// |BORRAR TABLAS|
 	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭
 
-	public void borrarTablas(boolean all) {
-		if (!all) {
-			conectar();		
-			try {
-				pst = conn.prepareStatement("drop table atleta");
-				pst.execute();
-				pst.close();
-			} catch (SQLException e) {
-				System.out.println("Error en la la base de datos: " + e.getMessage());
-			} finally {
-				cerrar();
-			}
-		} else {
-			conectar();		
-			try {
-				pst = conn.prepareStatement("drop table *");
-				pst.execute();
-				pst.close();
-			} catch (SQLException e) {
-				System.out.println("Error en la la base de datos: " + e.getMessage());
-			} finally {
-				cerrar();
-			}
+	public void borrarTablas() {
+		conectar();		
+		try {
+			pst = conn.prepareStatement("drop table atleta");
+			pst.execute();
+			pst.close();
+			
+			pst = conn.prepareStatement("drop table carrera");
+			pst.execute();
+			pst.close();
+			
+			pst = conn.prepareStatement("drop table tiposCarrera");
+			pst.execute();
+			pst.close();
+		} catch (SQLException e) {
+			System.out.println("Error al borrar tabla en la base de datos: " + e.getMessage());
+		} finally {
+			cerrar();
 		}
+	}
+	
+	
+	public void poblarTablas() {
+		runScript(SQLStrings.insertCarreraEjemplo);
 	}
 
 	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇
@@ -133,6 +144,58 @@ public class GestorDB {
 			cerrar();
 		}
 	}
+	
+	
+	public void runScript(String script) {
+		conectar();
+		try {
+			PreparedStatement ps = conn.prepareStatement(script);
+			ps.execute();
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println("Error de script de DB: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+	}
+	
+	public void selectCarreras() {
+		conectar();
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.selectCarrera);
+			ResultSet rs = ps.executeQuery();
+			
+			printResultSet(rs);
+			
+			rs.close();
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println("Error de script de DB: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+	}
+	
+	
+	/**
+	 * utilidad para imprimir resultsets por consola
+	 * @param rs
+	 * @throws SQLException
+	 */
+	public static void printResultSet(ResultSet rs) throws SQLException
+	{
+	    ResultSetMetaData rsmd = rs.getMetaData();
+	    int columnsNumber = rsmd.getColumnCount();
+	    while (rs.next()) {
+	        for (int i = 1; i <= columnsNumber; i++) {
+	            if (i > 1) System.out.print(" | ");
+	            System.out.print(rs.getString(i));
+	        }
+	        System.out.println("");
+	    }
+	}
+	
+	
 
 	/**
 	 * @author Sergio Arroni
