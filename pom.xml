@@ -1,9 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
- 	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 	<groupId>1</groupId>
-  	<artifactId>1</artifactId>
+	<artifactId>1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
- 	<packaging>jar</packaging>
+	<packaging>jar</packaging>
 	<organization>
 		<name>Grupo de Practicas de Laboratio 4 de la asiganatura IPS</name>
 	</organization>
@@ -14,21 +16,29 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
+
 	<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 	<dependencies>
-	
+
 		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 		<dependency>
-    		<groupId>org.xerial</groupId>
-    		<artifactId>sqlite-jdbc</artifactId>
-    		<version>3.36.0</version>
+			<groupId>org.xerial</groupId>
+			<artifactId>sqlite-jdbc</artifactId>
+			<version>3.36.0</version>
 		</dependency>
-	
-	
+
+		<!-- https://mvnrepository.com/artifact/com.jtattoo/JTattoo -->
+		<dependency>
+			<groupId>com.jtattoo</groupId>
+			<artifactId>JTattoo</artifactId>
+			<version>1.6.13</version>
+		</dependency>
+
+
+
 
 	</dependencies>
-	
-	
-	
+
+
+
 </project>

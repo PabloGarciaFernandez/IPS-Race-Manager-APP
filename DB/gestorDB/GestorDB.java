@@ -22,7 +22,7 @@ public class GestorDB {
 	private ResultSet rs = null;
 
 	/**
-	 * Metodo que establece una conexion con la base de datos.
+	 * Método q establece una conexion con la base de datos.
 	 */
 	private void conectar() {
 		try {
@@ -36,8 +36,7 @@ public class GestorDB {
 	}
 
 	/**
-	 * Metodo que cierra la base de datos (Debe de estar abierta) =======CERRAR
-	 * SIEMPRE=======
+	 * Metodo que cierra la base de datos
 	 */
 	private void cerrar() {
 		try {
@@ -64,7 +63,6 @@ public class GestorDB {
 	public void crearTablas() {
 		conectar();
 		try {
-			pst = conn.prepareStatement(SQLStrings.createAtleta);
 			pst.execute();
 			pst.close();
 			
@@ -108,6 +106,32 @@ public class GestorDB {
 		}
 	}
 	
+	public void borrarTablas(boolean all) {
+		if (!all) {
+			conectar();
+			try {
+				pst = conn.prepareStatement("drop table atleta");
+				pst.execute();
+				pst.close();
+			} catch (SQLException e) {
+				System.out.println("Error en la la base de datos: " + e.getMessage());
+			} finally {
+				cerrar();
+			}
+		} else {
+			conectar();
+			try {
+				pst = conn.prepareStatement("drop table *");
+				pst.execute();
+				pst.close();
+			} catch (SQLException e) {
+				System.out.println("Error en la la base de datos: " + e.getMessage());
+			} finally {
+				cerrar();
+			}
+		}
+	}
+	
 	
 	public void poblarTablas() {
 		runScript(SQLStrings.insertCarreraEjemplo);
@@ -117,10 +141,12 @@ public class GestorDB {
 	// |INSERT CARRERAS|
 	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭
 
-	public void insertarCarrera() {
+	public void insertarAtleta() {
 		conectar();
 		try {
-			pst = conn.prepareStatement("Insert into atleta values(); ");
+
+			pst = conn.prepareStatement(
+					"Insert into atleta values('69','11122233A','Usain',25,'2021-10-25', 'Inscrito','M', '5' ,0); ");
 			pst.execute();
 		} catch (SQLException e) {
 			System.out.println("Error en la base de datos: " + e.getMessage());
@@ -133,10 +159,10 @@ public class GestorDB {
 	// |BORRAR CARRERAS|
 	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭
 
-	public void deleteCarrera() {
+	public void deleteAtleta() {
 		conectar();
 		try {
-			pst = conn.prepareStatement("delete from carreras where duracion = 50 ");
+			pst = conn.prepareStatement("delete from atleta where idAtleta = '69' ");
 			pst.execute();
 		} catch (SQLException e) {
 			System.out.println("Error en la base de datos: " + e.getMessage());
@@ -205,20 +231,24 @@ public class GestorDB {
 	 *         inscritos hasta el momento actual (DNI, Nombre, Categoría, Fecha de
 	 *         Inscripción y Estado de Inscripción). Estarán ordenados por fecha
 	 *         inscripción y estado de la inscripción.
+	 * @return
 	 * 
 	 */
 	public void estadoInscripcion(String idCarrera) {
 		conectar();
 		try {
 			pst = conn.prepareStatement(
-					"select * from atleta where idCarrera = ? order by fechaInscripcion, estadoInscripcion");
+					"select * from atleta where idCarrera = ? and estadoInscripcion = 'Inscrito' order by fechaInscripcion, estadoInscripcion");
 
 			pst.setString(1, idCarrera);
 
 			rs = pst.executeQuery();
 
 			while (rs.next()) {
-				System.out.println("Este es el atleta:" + rs.getString("idAtleta"));
+				System.out.println("-----------------------------------------------------");
+				System.out.println("Este es el atleta:\n\t DNI: " + rs.getString("dni") + "\n\t nombre: "
+						+ rs.getString("nombre"));
+				System.out.println("-----------------------------------------------------");
 			}
 
 		} catch (SQLException e) {

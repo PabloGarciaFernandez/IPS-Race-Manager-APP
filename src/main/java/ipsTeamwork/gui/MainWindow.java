@@ -39,7 +39,6 @@ public class MainWindow extends JFrame {
 	private Component verticalStrutBot;
 	private Component horizontalStrutRight;
 
-
 	/**
 	 * Create the frame.
 	 */
@@ -69,6 +68,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnInicio;
 	}
+
 	private JButton getBtnAtleta() {
 		if (btnAtleta == null) {
 			btnAtleta = new JButton("Soy atleta");
@@ -81,6 +81,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnAtleta;
 	}
+
 	private JButton getBtnOrganiz() {
 		if (btnOrganiz == null) {
 			btnOrganiz = new JButton("Soy organizador");
@@ -93,6 +94,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnOrganiz;
 	}
+
 	private JLabel getLbImagen() {
 		if (lbImagen == null) {
 			lbImagen = new JLabel("lbImagen");
@@ -101,6 +103,7 @@ public class MainWindow extends JFrame {
 		}
 		return lbImagen;
 	}
+
 	private JPanel getPnAtleta() {
 		if (pnAtleta == null) {
 			pnAtleta = new JPanel();
@@ -110,12 +113,14 @@ public class MainWindow extends JFrame {
 		}
 		return pnAtleta;
 	}
+
 	private JPanel getPnOrganizador() {
 		if (pnOrganizador == null) {
 			pnOrganizador = new JPanel();
 		}
 		return pnOrganizador;
 	}
+
 	private JButton getBtnRegistro() {
 		if (btnRegistro == null) {
 			btnRegistro = new JButton("Registrarme");
@@ -128,6 +133,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnRegistro;
 	}
+
 	private JButton getBtnListaCarreras() {
 		if (btnListaCarreras == null) {
 			btnListaCarreras = new JButton("Lista de competiciones");
@@ -140,6 +146,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnListaCarreras;
 	}
+
 	private JButton getBtnMisCarreras() {
 		if (btnMisCarreras == null) {
 			btnMisCarreras = new JButton("Mis carreras");
@@ -147,6 +154,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnMisCarreras;
 	}
+
 	private JPanel getPnLista() {
 		if (pnLista == null) {
 			pnLista = new JPanel();
@@ -159,6 +167,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnLista;
 	}
+
 	private JList getList() {
 		if (list == null) {
 			list = new JList();
@@ -166,31 +175,35 @@ public class MainWindow extends JFrame {
 		}
 		return list;
 	}
+
 	private Component getHorizontalStrutLeft() {
 		if (horizontalStrutLeft == null) {
 			horizontalStrutLeft = Box.createHorizontalStrut(50);
 		}
 		return horizontalStrutLeft;
 	}
+
 	private Component getVerticalStrutTop() {
 		if (verticalStrutTop == null) {
 			verticalStrutTop = Box.createVerticalStrut(60);
 		}
 		return verticalStrutTop;
 	}
+
 	private Component getVerticalStrutBot() {
 		if (verticalStrutBot == null) {
 			verticalStrutBot = Box.createVerticalStrut(10);
 		}
 		return verticalStrutBot;
 	}
+
 	private Component getHorizontalStrutRight() {
 		if (horizontalStrutRight == null) {
 			horizontalStrutRight = Box.createHorizontalStrut(10);
 		}
 		return horizontalStrutRight;
 	}
-	
+
 	private void showCard(String name) {
 		CardLayout c1 = (CardLayout) contentPane.getLayout();
 		c1.show(contentPane, name);
