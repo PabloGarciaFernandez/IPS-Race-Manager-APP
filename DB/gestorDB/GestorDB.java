@@ -63,10 +63,10 @@ public class GestorDB {
 		conectar();
 		try {
 
-//			pst = conn.prepareStatement(SQLStrings.createAtleta);
-//			pst.execute();
-//			pst = conn.prepareStatement(SQLStrings.createCarrera);
-//			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.createAtleta);
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.createCarrera);
+			pst.execute();
 			pst = conn.prepareStatement(SQLStrings.createInscripcion);
 			pst.execute();
 
@@ -87,14 +87,12 @@ public class GestorDB {
 			pst = conn.prepareStatement("drop table atleta");
 			pst.execute();
 
-//
-//			pst = conn.prepareStatement("drop table carrera");
-//			pst.execute();
-//			pst.close();
-//
-//			pst = conn.prepareStatement("drop table tiposCarrera");
-//			pst.execute();
-//			pst.close();
+			pst = conn.prepareStatement("drop table carrera");
+			pst.execute();
+
+			pst = conn.prepareStatement("drop table inscripcion");
+			pst.execute();
+
 		} catch (SQLException e) {
 			System.out.println("Error al borrar tabla en la base de datos: " + e.getMessage());
 		} finally {

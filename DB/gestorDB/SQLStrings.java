@@ -22,7 +22,7 @@ public class SQLStrings {
 
 	public static String insterInscripcion1 = "Insert into inscripcion values('70','5','007','2021-05-01','No inscrito', 'Tarjeta'); ";
 
-	// fecha: text YYYY-MM-DD HH:MM:SS.SSS
+	// fecha: text YYYY-MM-DD
 	public static String AtletaEjemplo = "select * from atleta";
 
 	public static String CarreaEjemplo = "select * from carrera";
