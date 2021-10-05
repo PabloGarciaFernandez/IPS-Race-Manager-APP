@@ -21,7 +21,7 @@ public class GestorDB {
 	private ResultSet rs = null;
 
 	/**
-	 * Metodo que establece una conexion con la base de datos.
+	 * Método que establece una conexion con la base de datos.
 	 */
 	private void conectar() {
 		try {
