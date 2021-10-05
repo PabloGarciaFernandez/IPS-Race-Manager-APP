@@ -1,6 +1,5 @@
 package ipsTeamwork;
 
-import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import gestorDB.GestorDB;
@@ -23,10 +22,9 @@ public class Main {
 		System.out.println("\n\n");
 		db.selectCarreras();
 		
-//		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//		
-//		MainWindow mw = new MainWindow();
-//		mw.setVisible(true);
+		
+		MainWindow mw = new MainWindow();
+		mw.setVisible(true);
 	}
 
 }
