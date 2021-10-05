@@ -28,6 +28,12 @@ public class MainWindow extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 3073912408195015551L;
+	private static final String PANEL_ATLETA = "panel_atleta";
+	private static final String PANEL_INICIO = "panel_inicio";
+	private static final String PANEL_ORGANIZADOR = "panel_organizador";
+	private static final String PANEL_LISTA = "panel_lista";
+	private static final String PANEL_REGISTRO = "panel_registro";
+	private static final String PANEL_INGRESO = "panel_ingreso";
 	private JPanel contentPane;
 	private JPanel pnInicio;
 	private JButton btnAtleta;
@@ -41,10 +47,9 @@ public class MainWindow extends JFrame {
 	private JPanel pnLista;
 	private JPanel pnLista14473;
 	private JPanel pnListaNorth;
-	private JButton btnListaIngresar;
-	private JButton btnListaRegistrarse;
+	private JButton btnListaInscribirse;
 	private JPanel pnListaSouth;
-	private JButton btnListaCancel;
+	private JButton btnListaAtras;
 	private JPanel pnRegistro;
 	private JPanel pnRegistroCenter;
 	private JTextField textRegistroEmail;
@@ -71,6 +76,9 @@ public class MainWindow extends JFrame {
 	private JLabel lblIngresoDeCuenta;
 	private JButton btnRegistroCancelar_1;
 	private JButton btnRegistroSiguiente_1;
+	private JPanel pnOrganizadorCentro;
+	private JButton btnOrganizadorCancelar;
+	private JButton btnOrganizadorSiguiente;
 
 	/**
 	 * Create the frame.
@@ -84,12 +92,12 @@ public class MainWindow extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new CardLayout(0, 0));
-		contentPane.add(getPnInicio(), "panel_inicio");
-		contentPane.add(getPnAtleta(), "panel_atleta");
-		contentPane.add(getPnOrganizador(), "panel_organizador");
-		contentPane.add(getPnLista(), "panel_lista");
-		contentPane.add(getPnRegistro(), "name_338442641229100");
-		contentPane.add(getPnIngreso(), "name_338949480805700");
+		contentPane.add(getPnInicio(), PANEL_INICIO);
+		contentPane.add(getPnAtleta(), PANEL_ATLETA);
+		contentPane.add(getPnOrganizador(), PANEL_ORGANIZADOR);
+		contentPane.add(getPnLista(), PANEL_LISTA);
+		contentPane.add(getPnRegistro(), PANEL_REGISTRO);
+		contentPane.add(getPnIngreso(), PANEL_INGRESO);
 	}
 
 	private JPanel getPnInicio() {
@@ -107,12 +115,13 @@ public class MainWindow extends JFrame {
 	private JButton getBtnAtleta() {
 		if (btnAtleta == null) {
 			btnAtleta = new JButton("Soy atleta");
+			btnAtleta.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnAtleta.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard("panel_atleta");
+					showCard(PANEL_INGRESO);
 				}
 			});
-			btnAtleta.setBounds(236, 194, 111, 23);
+			btnAtleta.setBounds(217, 191, 146, 23);
 		}
 		return btnAtleta;
 	}
@@ -120,12 +129,13 @@ public class MainWindow extends JFrame {
 	private JButton getBtnOrganiz() {
 		if (btnOrganiz == null) {
 			btnOrganiz = new JButton("Soy organizador");
+			btnOrganiz.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnOrganiz.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard("panel_organizador");
+					showCard(PANEL_ORGANIZADOR);
 				}
 			});
-			btnOrganiz.setBounds(236, 230, 111, 23);
+			btnOrganiz.setBounds(217, 227, 146, 23);
 		}
 		return btnOrganiz;
 	}
@@ -152,6 +162,8 @@ public class MainWindow extends JFrame {
 	private JPanel getPnOrganizador() {
 		if (pnOrganizador == null) {
 			pnOrganizador = new JPanel();
+			pnOrganizador.setLayout(new BorderLayout(0, 0));
+			pnOrganizador.add(getPnOrganizadorCentro(), BorderLayout.CENTER);
 		}
 		return pnOrganizador;
 	}
@@ -159,12 +171,13 @@ public class MainWindow extends JFrame {
 	private JButton getBtnRegistro() {
 		if (btnRegistro == null) {
 			btnRegistro = new JButton("Registrarme");
+			btnRegistro.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnRegistro.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard("panel_registro");
+					showCard(PANEL_REGISTRO);
 				}
 			});
-			btnRegistro.setBounds(236, 264, 111, 23);
+			btnRegistro.setBounds(217, 261, 146, 23);
 		}
 		return btnRegistro;
 	}
@@ -172,12 +185,13 @@ public class MainWindow extends JFrame {
 	private JButton getBtnListaCarreras() {
 		if (btnListaCarreras == null) {
 			btnListaCarreras = new JButton("Lista de competiciones");
+			btnListaCarreras.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnListaCarreras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard("panel_lista");
+					showCard(PANEL_LISTA);
 				}
 			});
-			btnListaCarreras.setBounds(222, 205, 139, 23);
+			btnListaCarreras.setBounds(197, 205, 192, 23);
 		}
 		return btnListaCarreras;
 	}
@@ -185,7 +199,8 @@ public class MainWindow extends JFrame {
 	private JButton getBtnMisCarreras() {
 		if (btnMisCarreras == null) {
 			btnMisCarreras = new JButton("Mis carreras");
-			btnMisCarreras.setBounds(222, 239, 139, 23);
+			btnMisCarreras.setFont(new Font("Arial", Font.PLAIN, 14));
+			btnMisCarreras.setBounds(197, 239, 192, 23);
 		}
 		return btnMisCarreras;
 	}
@@ -218,40 +233,41 @@ public class MainWindow extends JFrame {
 		if (pnListaNorth == null) {
 			pnListaNorth = new JPanel();
 			pnListaNorth.setBackground(Color.LIGHT_GRAY);
-			pnListaNorth.add(getBtnListaIngresar());
-			pnListaNorth.add(getBtnListaRegistrarse());
+			pnListaNorth.add(getBtnListaInscribirse());
 		}
 		return pnListaNorth;
 	}
-	private JButton getBtnListaIngresar() {
-		if (btnListaIngresar == null) {
-			btnListaIngresar = new JButton("Ingresar");
-			btnListaIngresar.setFont(new Font("Arial", Font.PLAIN, 14));
+	private JButton getBtnListaInscribirse() {
+		if (btnListaInscribirse == null) {
+			btnListaInscribirse = new JButton("Inscribirse");
+			btnListaInscribirse.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+			btnListaInscribirse.setFont(new Font("Arial", Font.PLAIN, 14));
 		}
-		return btnListaIngresar;
-	}
-	private JButton getBtnListaRegistrarse() {
-		if (btnListaRegistrarse == null) {
-			btnListaRegistrarse = new JButton("Registrarse");
-			btnListaRegistrarse.setFont(new Font("Arial", Font.PLAIN, 14));
-		}
-		return btnListaRegistrarse;
+		return btnListaInscribirse;
 	}
 	private JPanel getPnListaSouth() {
 		if (pnListaSouth == null) {
 			pnListaSouth = new JPanel();
 			pnListaSouth.setBackground(Color.LIGHT_GRAY);
-			pnListaSouth.add(getBtnListaCancel());
+			pnListaSouth.add(getBtnListaAtras());
 		}
 		return pnListaSouth;
 	}
-	private JButton getBtnListaCancel() {
-		if (btnListaCancel == null) {
-			btnListaCancel = new JButton("Cancelar");
-			btnListaCancel.setForeground(Color.RED);
-			btnListaCancel.setFont(new Font("Arial", Font.PLAIN, 14));
+	private JButton getBtnListaAtras() {
+		if (btnListaAtras == null) {
+			btnListaAtras = new JButton("Atras");
+			btnListaAtras.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_INICIO);
+				}
+			});
+			btnListaAtras.setForeground(Color.BLACK);
+			btnListaAtras.setFont(new Font("Arial", Font.PLAIN, 14));
 		}
-		return btnListaCancel;
+		return btnListaAtras;
 	}
 	private JPanel getPnRegistro() {
 		if (pnRegistro == null) {
@@ -356,6 +372,11 @@ public class MainWindow extends JFrame {
 	private JButton getBtnRegistroSiguiente() {
 		if (btnRegistroSiguiente == null) {
 			btnRegistroSiguiente = new JButton("Siguiente");
+			btnRegistroSiguiente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_ATLETA);
+				}
+			});
 			btnRegistroSiguiente.setForeground(Color.GREEN);
 			btnRegistroSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnRegistroSiguiente.setBounds(452, 348, 121, 23);
@@ -365,9 +386,14 @@ public class MainWindow extends JFrame {
 	private JButton getBtnRegistroCancelar() {
 		if (btnRegistroCancelar == null) {
 			btnRegistroCancelar = new JButton("Cancelar");
+			btnRegistroCancelar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_INICIO);
+				}
+			});
 			btnRegistroCancelar.setForeground(Color.RED);
 			btnRegistroCancelar.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnRegistroCancelar.setBounds(319, 348, 89, 23);
+			btnRegistroCancelar.setBounds(319, 348, 95, 23);
 		}
 		return btnRegistroCancelar;
 	}
@@ -475,19 +501,65 @@ public class MainWindow extends JFrame {
 	private JButton getBtnRegistroCancelar_1() {
 		if (btnRegistroCancelar_1 == null) {
 			btnRegistroCancelar_1 = new JButton("Cancelar");
+			btnRegistroCancelar_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_INICIO);
+				}
+			});
 			btnRegistroCancelar_1.setForeground(Color.RED);
 			btnRegistroCancelar_1.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnRegistroCancelar_1.setBounds(319, 348, 89, 23);
+			btnRegistroCancelar_1.setBounds(319, 348, 95, 23);
 		}
 		return btnRegistroCancelar_1;
 	}
 	private JButton getBtnRegistroSiguiente_1() {
 		if (btnRegistroSiguiente_1 == null) {
 			btnRegistroSiguiente_1 = new JButton("Siguiente");
+			btnRegistroSiguiente_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_LISTA);
+				}
+			});
 			btnRegistroSiguiente_1.setForeground(Color.GREEN);
 			btnRegistroSiguiente_1.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnRegistroSiguiente_1.setBounds(452, 348, 121, 23);
 		}
 		return btnRegistroSiguiente_1;
+	}
+	private JPanel getPnOrganizadorCentro() {
+		if (pnOrganizadorCentro == null) {
+			pnOrganizadorCentro = new JPanel();
+			pnOrganizadorCentro.setLayout(null);
+			pnOrganizadorCentro.add(getBtnOrganizadorCancelar());
+			pnOrganizadorCentro.add(getBtnOrganizadorSiguiente());
+		}
+		return pnOrganizadorCentro;
+	}
+	private JButton getBtnOrganizadorCancelar() {
+		if (btnOrganizadorCancelar == null) {
+			btnOrganizadorCancelar = new JButton("Cancelar");
+			btnOrganizadorCancelar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_INICIO);
+				}
+			});
+			btnOrganizadorCancelar.setBounds(319, 347, 95, 25);
+			btnOrganizadorCancelar.setForeground(Color.RED);
+			btnOrganizadorCancelar.setFont(new Font("Arial", Font.PLAIN, 14));
+		}
+		return btnOrganizadorCancelar;
+	}
+	private JButton getBtnOrganizadorSiguiente() {
+		if (btnOrganizadorSiguiente == null) {
+			btnOrganizadorSiguiente = new JButton("Siguiente");
+			btnOrganizadorSiguiente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+			btnOrganizadorSiguiente.setBounds(452, 348, 121, 23);
+			btnOrganizadorSiguiente.setForeground(Color.GREEN);
+			btnOrganizadorSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
+		}
+		return btnOrganizadorSiguiente;
 	}
 }
