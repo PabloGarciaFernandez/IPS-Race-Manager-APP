@@ -54,7 +54,6 @@ public class GestorDB {
 			System.out.println("Error al cerrar la base de datos: " + e.getMessage());
 		}
 	}
-	
 
 	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇
 	// |CREAR TABLAS|
@@ -63,17 +62,14 @@ public class GestorDB {
 	public void crearTablas() {
 		conectar();
 		try {
+
+//			pst = conn.prepareStatement(SQLStrings.createAtleta);
+//			pst.execute();
+//			pst = conn.prepareStatement(SQLStrings.createCarrera);
+//			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.createInscripcion);
 			pst.execute();
-			pst.close();
-			
-			pst = conn.prepareStatement(SQLStrings.createCarrera);
-			pst.execute();
-			pst.close();
-			
-			pst = conn.prepareStatement(SQLStrings.createTipos);
-			pst.execute();
-			pst.close();
-			
+
 		} catch (SQLException e) {
 			System.out.println("Error al crear tabla en la base de datos: " + e.getMessage());
 		} finally {
@@ -86,33 +82,32 @@ public class GestorDB {
 	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭
 
 	public void borrarTablas() {
-		conectar();		
+		conectar();
 		try {
 			pst = conn.prepareStatement("drop table atleta");
 			pst.execute();
-			pst.close();
-			
-			pst = conn.prepareStatement("drop table carrera");
-			pst.execute();
-			pst.close();
-			
-			pst = conn.prepareStatement("drop table tiposCarrera");
-			pst.execute();
-			pst.close();
+
+//
+//			pst = conn.prepareStatement("drop table carrera");
+//			pst.execute();
+//			pst.close();
+//
+//			pst = conn.prepareStatement("drop table tiposCarrera");
+//			pst.execute();
+//			pst.close();
 		} catch (SQLException e) {
 			System.out.println("Error al borrar tabla en la base de datos: " + e.getMessage());
 		} finally {
 			cerrar();
 		}
 	}
-	
+
 	public void borrarTablas(boolean all) {
 		if (!all) {
 			conectar();
 			try {
-				pst = conn.prepareStatement("drop table atleta");
+				pst = conn.prepareStatement("drop table Inscripcion");
 				pst.execute();
-				pst.close();
 			} catch (SQLException e) {
 				System.out.println("Error en la la base de datos: " + e.getMessage());
 			} finally {
@@ -131,22 +126,40 @@ public class GestorDB {
 			}
 		}
 	}
-	
-	
-	public void poblarTablas() {
-		runScript(SQLStrings.insertCarreraEjemplo);
-	}
 
 	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇
-	// |INSERT CARRERAS|
+	// |INSERT DATOS |
 	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭
 
 	public void insertarAtleta() {
 		conectar();
 		try {
 
-			pst = conn.prepareStatement(
-					"Insert into atleta values('69','11122233A','Usain',25,'2021-10-25', 'Inscrito','M', '5' ,0); ");
+			pst = conn.prepareStatement(SQLStrings.insterUsain);
+			pst.execute();
+		} catch (SQLException e) {
+			System.out.println("Error en la base de datos: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+	}
+
+	public void insertarCarrera() {
+		conectar();
+		try {
+			pst = conn.prepareStatement(SQLStrings.insterNewYork);
+			pst.execute();
+		} catch (SQLException e) {
+			System.out.println("Error en la base de datos: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+	}
+
+	public void insertarInscripcion() {
+		conectar();
+		try {
+			pst = conn.prepareStatement(SQLStrings.insterInscripcion1);
 			pst.execute();
 		} catch (SQLException e) {
 			System.out.println("Error en la base de datos: " + e.getMessage());
@@ -170,8 +183,7 @@ public class GestorDB {
 			cerrar();
 		}
 	}
-	
-	
+
 	public void runScript(String script) {
 		conectar();
 		try {
@@ -184,44 +196,68 @@ public class GestorDB {
 			cerrar();
 		}
 	}
-	
-	public void selectCarreras() {
+
+	public void selectAtletas() {
 		conectar();
 		try {
-			PreparedStatement ps = conn.prepareStatement(SQLStrings.selectCarrera);
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.AtletaEjemplo);
 			ResultSet rs = ps.executeQuery();
-			
+
 			printResultSet(rs);
-			
-			rs.close();
-			ps.close();
+
 		} catch (SQLException e) {
 			System.out.println("Error de script de DB: " + e.getMessage());
 		} finally {
 			cerrar();
 		}
 	}
-	
-	
+
+	public void selectCarrera() {
+		conectar();
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.CarreaEjemplo);
+			ResultSet rs = ps.executeQuery();
+			printResultSet(rs);
+		} catch (SQLException e) {
+			System.out.println("Error de script de DB: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+	}
+
+	public void selectInscripcion() {
+		conectar();
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.InscripcionEjemplo);
+			ResultSet rs = ps.executeQuery();
+
+			printResultSet(rs);
+
+		} catch (SQLException e) {
+			System.out.println("Error de script de DB: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+	}
+
 	/**
 	 * utilidad para imprimir resultsets por consola
+	 * 
 	 * @param rs
 	 * @throws SQLException
 	 */
-	public static void printResultSet(ResultSet rs) throws SQLException
-	{
-	    ResultSetMetaData rsmd = rs.getMetaData();
-	    int columnsNumber = rsmd.getColumnCount();
-	    while (rs.next()) {
-	        for (int i = 1; i <= columnsNumber; i++) {
-	            if (i > 1) System.out.print(" | ");
-	            System.out.print(rs.getString(i));
-	        }
-	        System.out.println("");
-	    }
+	public static void printResultSet(ResultSet rs) throws SQLException {
+		ResultSetMetaData rsmd = rs.getMetaData();
+		int columnsNumber = rsmd.getColumnCount();
+		while (rs.next()) {
+			for (int i = 1; i <= columnsNumber; i++) {
+				if (i > 1)
+					System.out.print(" | ");
+				System.out.print(rs.getString(i));
+			}
+			System.out.println("");
+		}
 	}
-	
-	
 
 	/**
 	 * @author Sergio Arroni

@@ -1,53 +1,34 @@
 package gestorDB;
 
 public class SQLStrings {
-	
-	/**
-	 * Aqui ponemos todas las queries y luego las usamos con el nombre sin más, por tenerlas ordenadas
-	 */
-	
-	
-	//creates
-	public static String createAtleta = ""
-			+ "CREATE TABLE atleta "
-			+ "(id integer primary key,"
-			+ " dni text,"
-			+ " nombre text,"
-			+ " edad integer,"
-			+ " fechaRegistro text,"
-			+ " sexo text)";
-	
-	public static String createCarrera= ""
-			+ "CREATE TABLE carrera "
-			+ "(id integer primary key,"
-			+ " nombre text,"
-			+ " fecha text,"
-			+ " tipo integer," //tipo tiene que ser foreign key de la tabla de tipos TIPOSCARRERA
-			+ " fechaFinInscripcion text,"
-			+ " plazas integer)";
-	
-	public static String createTipos= ""
-			+ "CREATE TABLE tiposCarrera "
-			+ "(id integer primary key,"
-			+ " nombre text)";
-	
-	
-	
-	
-	
-	//inserts
-	
-	//fecha: text YYYY-MM-DD HH:MM:SS.SSS
-	public static String insertCarreraEjemplo = ""
-			+ "insert into carrera (nombre, fecha, tipo, fechaFinInscripcion, plazas) values "
-			+ " ('Carrera de Ejemplo',"
-			+ " '2021-11-03 15:00:00.000',"
-			+ " 1,"
-			+ " '2021-10-18 23:59:59.000',"
-			+ " 32)";
 
-	
-	
-	//selects
+	/**
+	 * Aqui ponemos todas las queries y luego las usamos con el nombre sin más, por
+	 * tenerlas ordenadas
+	 */
+
+	// creates
+	public static String createAtleta = "CREATE TABLE atleta (idAtleta varchar2 NOT NULL, dni varchar2 not null, nombre varchar2 not null, edad integer not null, sexo varchar not null, discapacitado bit NOT NULL, CONSTRAINT CHK_Atleta CHECK (edad >18 AND (sexo='M' OR sexo='F' OR sexo='NB')) , primary key (idAtleta))";
+
+	public static String createInscripcion = "CREATE TABLE inscripcion (idAtleta varchar2 NOT NULL,idCarrera varchar NOT NULL, dorsal varchar2 NOT NULL, fechaInscripcion date not null, estadoInscripcion varchar2 not null, formaDePago varchar2 NOT NULL, CONSTRAINT CHK_Inscripcion CHECK ( (formaDePago='Transferencia' OR formaDePago='Tarjeta') AND (estadoInscripcion='Inscrito' OR estadoInscripcion='No inscrito' OR estadoInscripcion='Pendiente de pago')), primary key (idAtleta, idCarrera, dorsal))";
+
+	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2 NOT NULL,tipo varchar2 NOT NULL, maxPlazas integer NOT NULL, CONSTRAINT CHK_Atleta CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
+
+	// inserts
+
+	public static String insterUsain = "Insert into atleta values('69','11122233A','Usain',25,'M',0); ";
+
+	public static String insterNewYork = "Insert into carrera values('5','Asfalto',25); ";
+
+	public static String insterInscripcion1 = "Insert into inscripcion values('70','5','007','2021-05-01','No inscrito', 'Tarjeta'); ";
+
+	// fecha: text YYYY-MM-DD HH:MM:SS.SSS
+	public static String AtletaEjemplo = "select * from atleta";
+
+	public static String CarreaEjemplo = "select * from carrera";
+
+	public static String InscripcionEjemplo = "select * from inscripcion";
+
+	// selects
 	public static String selectCarrera = "select * from carrera";
 }
