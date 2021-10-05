@@ -15,6 +15,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.Font;
 
 public class MainWindow extends JFrame {
 
@@ -32,12 +35,13 @@ public class MainWindow extends JFrame {
 	private JButton btnRegistro;
 	private JButton btnListaCarreras;
 	private JButton btnMisCarreras;
-	private JPanel pnLista;
-	private JList list;
-	private Component horizontalStrutLeft;
-	private Component verticalStrutTop;
-	private Component verticalStrutBot;
-	private Component horizontalStrutRight;
+	private JPanel pn1;
+	private JPanel pn14473;
+	private JPanel pn1North;
+	private JButton btnIngresar;
+	private JButton btnRegistrarse;
+	private JPanel pn1South;
+	private JButton btnCancel;
 
 	/**
 	 * Create the frame.
@@ -54,7 +58,7 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnInicio(), "panel_inicio");
 		contentPane.add(getPnAtleta(), "panel_atleta");
 		contentPane.add(getPnOrganizador(), "panel_organizador");
-		contentPane.add(getPnLista(), "panel_lista");
+		contentPane.add(getPn1(), "panel_lista");
 	}
 
 	private JPanel getPnInicio() {
@@ -155,57 +159,67 @@ public class MainWindow extends JFrame {
 		return btnMisCarreras;
 	}
 
-	private JPanel getPnLista() {
-		if (pnLista == null) {
-			pnLista = new JPanel();
-			pnLista.setLayout(new BorderLayout(0, 0));
-			pnLista.add(getList());
-			pnLista.add(getHorizontalStrutLeft(), BorderLayout.WEST);
-			pnLista.add(getVerticalStrutTop(), BorderLayout.NORTH);
-			pnLista.add(getVerticalStrutBot(), BorderLayout.SOUTH);
-			pnLista.add(getHorizontalStrutRight(), BorderLayout.EAST);
-		}
-		return pnLista;
-	}
-
-	private JList getList() {
-		if (list == null) {
-			list = new JList();
-			list.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		}
-		return list;
-	}
-
-	private Component getHorizontalStrutLeft() {
-		if (horizontalStrutLeft == null) {
-			horizontalStrutLeft = Box.createHorizontalStrut(50);
-		}
-		return horizontalStrutLeft;
-	}
-
-	private Component getVerticalStrutTop() {
-		if (verticalStrutTop == null) {
-			verticalStrutTop = Box.createVerticalStrut(60);
-		}
-		return verticalStrutTop;
-	}
-
-	private Component getVerticalStrutBot() {
-		if (verticalStrutBot == null) {
-			verticalStrutBot = Box.createVerticalStrut(10);
-		}
-		return verticalStrutBot;
-	}
-
-	private Component getHorizontalStrutRight() {
-		if (horizontalStrutRight == null) {
-			horizontalStrutRight = Box.createHorizontalStrut(10);
-		}
-		return horizontalStrutRight;
-	}
-
 	private void showCard(String name) {
 		CardLayout c1 = (CardLayout) contentPane.getLayout();
 		c1.show(contentPane, name);
+	}
+	
+	private JPanel getPn1() {
+		if (pn1 == null) {
+			pn1 = new JPanel();
+			pn1.setLayout(new BorderLayout(0, 0));
+			pn1.add(getPn14473(), BorderLayout.CENTER);
+			pn1.add(getPn1North(), BorderLayout.NORTH);
+			pn1.add(getPn1South(), BorderLayout.SOUTH);
+		}
+		return pn1;
+	}
+	
+	private JPanel getPn14473() {
+		if (pn14473 == null) {
+			pn14473 = new JPanel();
+			pn14473.setBackground(Color.DARK_GRAY);
+			pn14473.setLayout(new GridLayout(1, 0, 0, 0));
+		}
+		return pn14473;
+	}
+	private JPanel getPn1North() {
+		if (pn1North == null) {
+			pn1North = new JPanel();
+			pn1North.setBackground(Color.LIGHT_GRAY);
+			pn1North.add(getBtnIngresar());
+			pn1North.add(getBtnRegistrarse());
+		}
+		return pn1North;
+	}
+	private JButton getBtnIngresar() {
+		if (btnIngresar == null) {
+			btnIngresar = new JButton("Ingresar");
+			btnIngresar.setFont(new Font("Arial", Font.PLAIN, 14));
+		}
+		return btnIngresar;
+	}
+	private JButton getBtnRegistrarse() {
+		if (btnRegistrarse == null) {
+			btnRegistrarse = new JButton("Registrarse");
+			btnRegistrarse.setFont(new Font("Arial", Font.PLAIN, 14));
+		}
+		return btnRegistrarse;
+	}
+	private JPanel getPn1South() {
+		if (pn1South == null) {
+			pn1South = new JPanel();
+			pn1South.setBackground(Color.LIGHT_GRAY);
+			pn1South.add(getBtnCancel());
+		}
+		return pn1South;
+	}
+	private JButton getBtnCancel() {
+		if (btnCancel == null) {
+			btnCancel = new JButton("Cancelar");
+			btnCancel.setForeground(Color.RED);
+			btnCancel.setFont(new Font("Arial", Font.PLAIN, 14));
+		}
+		return btnCancel;
 	}
 }
