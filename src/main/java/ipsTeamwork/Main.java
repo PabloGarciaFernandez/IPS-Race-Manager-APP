@@ -1,6 +1,8 @@
 package ipsTeamwork;
 
 
+import javax.swing.UIManager;
+
 import ipsTeamwork.gui.MainWindow;
 
 public class Main {
@@ -14,7 +16,6 @@ public class Main {
 //		db.borrarTablas(false);
 //		db.estadoInscripcion("5");
 
-//		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
 //		try {
 //			UIManager.setLookAndFeel("com.jtattoo.plaf.texture.TextureLookAndFeel");
