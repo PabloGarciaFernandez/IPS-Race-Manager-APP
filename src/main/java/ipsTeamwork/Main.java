@@ -1,8 +1,11 @@
 package ipsTeamwork;
 
 
+import java.sql.SQLException;
+
 import javax.swing.UIManager;
 
+import gestorDB.GestorDB;
 import ipsTeamwork.gui.MainWindow;
 
 public class Main {
@@ -22,9 +25,18 @@ public class Main {
 //		} catch (Exception e) {
 //			System.out.println("Algo malo paso: " + e.getMessage());
 //		}
+		
+		
+		GestorDB db = new GestorDB();
+		
+		db.borrarTablas();
+		db.crearTablas();
+		db.poblarTablas();
+		
+		db.selectCarrera();
 
-		MainWindow mw = new MainWindow();
-		mw.setVisible(true);
+//		MainWindow mw = new MainWindow();
+//		mw.setVisible(true);
 	}
 
 }

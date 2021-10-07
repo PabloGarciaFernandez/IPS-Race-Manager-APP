@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * Clase que accede a la base de datos y tiene métodos para sacar y añadir datos
@@ -213,7 +215,7 @@ public class GestorDB {
 	public void selectCarrera() {
 		conectar();
 		try {
-			PreparedStatement ps = conn.prepareStatement(SQLStrings.CarreaEjemplo);
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.CarreraEjemplo);
 			ResultSet rs = ps.executeQuery();
 			printResultSet(rs);
 		} catch (SQLException e) {
@@ -287,6 +289,36 @@ public class GestorDB {
 
 		} catch (SQLException e) {
 			System.out.println("Error en la base de datos: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+	}
+	
+	
+	/**
+	 * @author Juan Torrente
+	 * 
+	 * este metodo solamente llama a los demas poblarXX() de cada tabla
+	 */
+	public void poblarTablas() {
+		poblarCarreras(25);
+	}
+	
+	public void poblarCarreras(int i) {
+		conectar();
+		Random r = new Random();
+		try {
+			for (int j = 0; j < i; j++) {
+				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertCarreraValues);
+				pst.setString(1, UUID.randomUUID().toString());
+				pst.setString(2, (r.nextBoolean() ? "Asfalto" : "Montaña"));
+				pst.setInt(3, r.nextInt(128));
+				
+				pst.executeUpdate();
+				pst.close();
+			}
+		} catch (Exception e) {
+			
 		} finally {
 			cerrar();
 		}

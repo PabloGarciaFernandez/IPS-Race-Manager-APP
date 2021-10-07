@@ -15,20 +15,18 @@ public class SQLStrings {
 	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2 NOT NULL,tipo varchar2 NOT NULL, maxPlazas integer NOT NULL, CONSTRAINT CHK_Atleta CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
 
 	// inserts
-
 	public static String insterUsain = "Insert into atleta values('69','11122233A','Usain',25,'M',0); ";
 
 	public static String insterNewYork = "Insert into carrera values('5','Asfalto',25); ";
 
 	public static String insterInscripcion1 = "Insert into inscripcion values('70','5','007','2021-05-01','No inscrito', 'Tarjeta'); ";
 
-	// fecha: text YYYY-MM-DD
+	public static String insertCarreraValues = "insert into carrera(idCarrera, tipo, maxPlazas) values (?, ?, ?)";
+	
+	// selects	
 	public static String AtletaEjemplo = "select * from atleta";
 
-	public static String CarreaEjemplo = "select * from carrera";
+	public static String CarreraEjemplo = "select * from carrera";
 
 	public static String InscripcionEjemplo = "select * from inscripcion";
-
-	// selects
-	public static String selectCarrera = "select * from carrera";
 }
