@@ -1,26 +1,22 @@
-package ipsTeamwork.gui;
+package ipsTeamwork.view;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Component;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.Font;
-import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 public class MainWindow extends JFrame {
 
@@ -28,23 +24,24 @@ public class MainWindow extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 3073912408195015551L;
+	
 	private static final String PANEL_ATLETA = "panel_atleta";
 	private static final String PANEL_INICIO = "panel_inicio";
 	private static final String PANEL_ORGANIZADOR = "panel_organizador";
-	private static final String PANEL_LISTA = "panel_lista";
+	private static final String PANEL_LISTA_CARRERAS = "panel_lista";
 	private static final String PANEL_REGISTRO = "panel_registro";
 	private static final String PANEL_INGRESO = "panel_ingreso";
+	
 	private JPanel contentPane;
 	private JPanel pnInicio;
 	private JButton btnAtleta;
 	private JButton btnOrganiz;
 	private JLabel lbImagen;
-	private JPanel pnAtleta;
-	private JPanel pnOrganizador;
-	private JButton btnRegistro;
+	private JPanel pnVistaAtleta;
+	private JPanel pnVistaOrganizador;
 	private JButton btnListaCarreras;
 	private JButton btnMisCarreras;
-	private JPanel pnLista;
+	private JPanel pnListaCarreras;
 	private JPanel pnLista14473;
 	private JPanel pnListaNorth;
 	private JButton btnListaInscribirse;
@@ -74,11 +71,12 @@ public class MainWindow extends JFrame {
 	private JTextField textIngresoEmail;
 	private JLabel lblIngesoEmail;
 	private JLabel lblIngresoDeCuenta;
-	private JButton btnRegistroCancelar_1;
-	private JButton btnRegistroSiguiente_1;
+	private JButton btnIngresoCancelar;
+	private JButton btnIngresoSiguiente;
 	private JPanel pnOrganizadorCentro;
 	private JButton btnOrganizadorCancelar;
 	private JButton btnOrganizadorSiguiente;
+	private JButton btnIngresoRegistro;
 
 	/**
 	 * Create the frame.
@@ -93,9 +91,9 @@ public class MainWindow extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new CardLayout(0, 0));
 		contentPane.add(getPnInicio(), PANEL_INICIO);
-		contentPane.add(getPnAtleta(), PANEL_ATLETA);
-		contentPane.add(getPnOrganizador(), PANEL_ORGANIZADOR);
-		contentPane.add(getPnLista(), PANEL_LISTA);
+		contentPane.add(getPnVistaAtleta(), PANEL_ATLETA);
+		contentPane.add(getPnVistaOrganizador(), PANEL_ORGANIZADOR);
+		contentPane.add(getPnListaCarreras(), PANEL_LISTA_CARRERAS);
 		contentPane.add(getPnRegistro(), PANEL_REGISTRO);
 		contentPane.add(getPnIngreso(), PANEL_INGRESO);
 	}
@@ -107,7 +105,6 @@ public class MainWindow extends JFrame {
 			pnInicio.add(getBtnAtleta());
 			pnInicio.add(getBtnOrganiz());
 			pnInicio.add(getLbImagen());
-			pnInicio.add(getBtnRegistro());
 		}
 		return pnInicio;
 	}
@@ -121,7 +118,7 @@ public class MainWindow extends JFrame {
 					showCard(PANEL_INGRESO);
 				}
 			});
-			btnAtleta.setBounds(217, 191, 146, 23);
+			btnAtleta.setBounds(217, 247, 146, 23);
 		}
 		return btnAtleta;
 	}
@@ -135,7 +132,7 @@ public class MainWindow extends JFrame {
 					showCard(PANEL_ORGANIZADOR);
 				}
 			});
-			btnOrganiz.setBounds(217, 227, 146, 23);
+			btnOrganiz.setBounds(217, 283, 146, 23);
 		}
 		return btnOrganiz;
 	}
@@ -143,43 +140,29 @@ public class MainWindow extends JFrame {
 	private JLabel getLbImagen() {
 		if (lbImagen == null) {
 			lbImagen = new JLabel("lbImagen");
-			lbImagen.setIcon(new ImageIcon(MainWindow.class.getResource("/main/resources/icon/icon.png")));
-			lbImagen.setBounds(111, 40, 361, 140);
+			lbImagen.setIcon(new ImageIcon(MainWindow.class.getResource("/ipsTeamwork/resources/icon.png")));
+			lbImagen.setBounds(111, 60, 361, 140);
 		}
 		return lbImagen;
 	}
 
-	private JPanel getPnAtleta() {
-		if (pnAtleta == null) {
-			pnAtleta = new JPanel();
-			pnAtleta.setLayout(null);
-			pnAtleta.add(getBtnListaCarreras());
-			pnAtleta.add(getBtnMisCarreras());
+	private JPanel getPnVistaAtleta() {
+		if (pnVistaAtleta == null) {
+			pnVistaAtleta = new JPanel();
+			pnVistaAtleta.setLayout(null);
+			pnVistaAtleta.add(getBtnListaCarreras());
+			pnVistaAtleta.add(getBtnMisCarreras());
 		}
-		return pnAtleta;
+		return pnVistaAtleta;
 	}
 
-	private JPanel getPnOrganizador() {
-		if (pnOrganizador == null) {
-			pnOrganizador = new JPanel();
-			pnOrganizador.setLayout(new BorderLayout(0, 0));
-			pnOrganizador.add(getPnOrganizadorCentro(), BorderLayout.CENTER);
+	private JPanel getPnVistaOrganizador() {
+		if (pnVistaOrganizador == null) {
+			pnVistaOrganizador = new JPanel();
+			pnVistaOrganizador.setLayout(new BorderLayout(0, 0));
+			pnVistaOrganizador.add(getPnOrganizadorCentro(), BorderLayout.CENTER);
 		}
-		return pnOrganizador;
-	}
-
-	private JButton getBtnRegistro() {
-		if (btnRegistro == null) {
-			btnRegistro = new JButton("Registrarme");
-			btnRegistro.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnRegistro.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_REGISTRO);
-				}
-			});
-			btnRegistro.setBounds(217, 261, 146, 23);
-		}
-		return btnRegistro;
+		return pnVistaOrganizador;
 	}
 
 	private JButton getBtnListaCarreras() {
@@ -188,7 +171,7 @@ public class MainWindow extends JFrame {
 			btnListaCarreras.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnListaCarreras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_LISTA);
+					showCard(PANEL_LISTA_CARRERAS);
 				}
 			});
 			btnListaCarreras.setBounds(197, 205, 192, 23);
@@ -210,15 +193,15 @@ public class MainWindow extends JFrame {
 		c1.show(contentPane, name);
 	}
 	
-	private JPanel getPnLista() {
-		if (pnLista == null) {
-			pnLista = new JPanel();
-			pnLista.setLayout(new BorderLayout(0, 0));
-			pnLista.add(getPnLista14473(), BorderLayout.CENTER);
-			pnLista.add(getPnListaNorth(), BorderLayout.NORTH);
-			pnLista.add(getPnListaSouth(), BorderLayout.SOUTH);
+	private JPanel getPnListaCarreras() {
+		if (pnListaCarreras == null) {
+			pnListaCarreras = new JPanel();
+			pnListaCarreras.setLayout(new BorderLayout(0, 0));
+			pnListaCarreras.add(getPnLista14473(), BorderLayout.CENTER);
+			pnListaCarreras.add(getPnListaNorth(), BorderLayout.NORTH);
+			pnListaCarreras.add(getPnListaSouth(), BorderLayout.SOUTH);
 		}
-		return pnLista;
+		return pnListaCarreras;
 	}
 	
 	private JPanel getPnLista14473() {
@@ -377,7 +360,7 @@ public class MainWindow extends JFrame {
 					showCard(PANEL_ATLETA);
 				}
 			});
-			btnRegistroSiguiente.setForeground(Color.GREEN);
+			btnRegistroSiguiente.setForeground(Color.BLACK);
 			btnRegistroSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnRegistroSiguiente.setBounds(452, 348, 121, 23);
 		}
@@ -391,9 +374,9 @@ public class MainWindow extends JFrame {
 					showCard(PANEL_INICIO);
 				}
 			});
-			btnRegistroCancelar.setForeground(Color.RED);
+			btnRegistroCancelar.setForeground(Color.BLACK);
 			btnRegistroCancelar.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnRegistroCancelar.setBounds(319, 348, 95, 23);
+			btnRegistroCancelar.setBounds(10, 348, 95, 23);
 		}
 		return btnRegistroCancelar;
 	}
@@ -468,8 +451,9 @@ public class MainWindow extends JFrame {
 			pnIngresoCenter.add(getTextIngresoEmail());
 			pnIngresoCenter.add(getLblIngesoEmail());
 			pnIngresoCenter.add(getLblIngresoDeCuenta());
-			pnIngresoCenter.add(getBtnRegistroCancelar_1());
-			pnIngresoCenter.add(getBtnRegistroSiguiente_1());
+			pnIngresoCenter.add(getBtnIngresoCancelar());
+			pnIngresoCenter.add(getBtnIngresoSiguiente());
+			pnIngresoCenter.add(getBtnIngresoRegistro());
 		}
 		return pnIngresoCenter;
 	}
@@ -492,39 +476,39 @@ public class MainWindow extends JFrame {
 	}
 	private JLabel getLblIngresoDeCuenta() {
 		if (lblIngresoDeCuenta == null) {
-			lblIngresoDeCuenta = new JLabel("INGRESO DE CUENTA");
+			lblIngresoDeCuenta = new JLabel("Ingresar como atleta");
 			lblIngresoDeCuenta.setFont(new Font("Arial", Font.BOLD, 25));
-			lblIngresoDeCuenta.setBounds(37, 21, 691, 53);
+			lblIngresoDeCuenta.setBounds(37, 21, 355, 53);
 		}
 		return lblIngresoDeCuenta;
 	}
-	private JButton getBtnRegistroCancelar_1() {
-		if (btnRegistroCancelar_1 == null) {
-			btnRegistroCancelar_1 = new JButton("Cancelar");
-			btnRegistroCancelar_1.addActionListener(new ActionListener() {
+	private JButton getBtnIngresoCancelar() {
+		if (btnIngresoCancelar == null) {
+			btnIngresoCancelar = new JButton("Cancelar");
+			btnIngresoCancelar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					showCard(PANEL_INICIO);
 				}
 			});
-			btnRegistroCancelar_1.setForeground(Color.RED);
-			btnRegistroCancelar_1.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnRegistroCancelar_1.setBounds(319, 348, 95, 23);
+			btnIngresoCancelar.setForeground(Color.BLACK);
+			btnIngresoCancelar.setFont(new Font("Arial", Font.PLAIN, 14));
+			btnIngresoCancelar.setBounds(10, 348, 95, 23);
 		}
-		return btnRegistroCancelar_1;
+		return btnIngresoCancelar;
 	}
-	private JButton getBtnRegistroSiguiente_1() {
-		if (btnRegistroSiguiente_1 == null) {
-			btnRegistroSiguiente_1 = new JButton("Siguiente");
-			btnRegistroSiguiente_1.addActionListener(new ActionListener() {
+	private JButton getBtnIngresoSiguiente() {
+		if (btnIngresoSiguiente == null) {
+			btnIngresoSiguiente = new JButton("Siguiente");
+			btnIngresoSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_LISTA);
+					showCard(PANEL_LISTA_CARRERAS);
 				}
 			});
-			btnRegistroSiguiente_1.setForeground(Color.GREEN);
-			btnRegistroSiguiente_1.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnRegistroSiguiente_1.setBounds(452, 348, 121, 23);
+			btnIngresoSiguiente.setForeground(Color.BLACK);
+			btnIngresoSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
+			btnIngresoSiguiente.setBounds(452, 348, 121, 23);
 		}
-		return btnRegistroSiguiente_1;
+		return btnIngresoSiguiente;
 	}
 	private JPanel getPnOrganizadorCentro() {
 		if (pnOrganizadorCentro == null) {
@@ -543,8 +527,8 @@ public class MainWindow extends JFrame {
 					showCard(PANEL_INICIO);
 				}
 			});
-			btnOrganizadorCancelar.setBounds(319, 347, 95, 25);
-			btnOrganizadorCancelar.setForeground(Color.RED);
+			btnOrganizadorCancelar.setBounds(10, 347, 95, 25);
+			btnOrganizadorCancelar.setForeground(Color.BLACK);
 			btnOrganizadorCancelar.setFont(new Font("Arial", Font.PLAIN, 14));
 		}
 		return btnOrganizadorCancelar;
@@ -557,9 +541,21 @@ public class MainWindow extends JFrame {
 				}
 			});
 			btnOrganizadorSiguiente.setBounds(452, 348, 121, 23);
-			btnOrganizadorSiguiente.setForeground(Color.GREEN);
+			btnOrganizadorSiguiente.setForeground(Color.BLACK);
 			btnOrganizadorSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
 		}
 		return btnOrganizadorSiguiente;
+	}
+	private JButton getBtnIngresoRegistro() {
+		if (btnIngresoRegistro == null) {
+			btnIngresoRegistro = new JButton("Registrarme");
+			btnIngresoRegistro.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_REGISTRO);
+				}
+			});
+			btnIngresoRegistro.setBounds(241, 236, 100, 23);
+		}
+		return btnIngresoRegistro;
 	}
 }

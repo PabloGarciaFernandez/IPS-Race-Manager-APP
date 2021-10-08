@@ -1,8 +1,8 @@
-package ipsTeamwork.business.carrera;
+package ipsTeamwork.model.carrera;
 
 import java.util.Date;
 
-public class Carrera {
+public class CarreraDto {
 
 	String nombre;
 	TipoCarrera tipo;

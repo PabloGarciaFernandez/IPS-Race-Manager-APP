@@ -1,4 +1,4 @@
-package gestorDB;
+package ipsTeamwork.controller;
 
 public class SQLStrings {
 
@@ -15,11 +15,14 @@ public class SQLStrings {
 	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2 NOT NULL,tipo varchar2 NOT NULL, maxPlazas integer NOT NULL, CONSTRAINT CHK_Atleta CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
 
 	// inserts
+
+	public static String insterBolt = "Insert into atleta values('96','11122234A','Bolt',35,'F',0); ";
 	public static String insterUsain = "Insert into atleta values('69','11122233A','Usain',25,'M',0); ";
+
 
 	public static String insterNewYork = "Insert into carrera values('5','Asfalto',25); ";
 
-	public static String insterInscripcion1 = "Insert into inscripcion values('70','5','007','2021-05-01','No inscrito', 'Tarjeta'); ";
+	public static String insterInscripcion1 = "Insert into inscripcion values('96','5','009','2021-05-01','Inscrito', 'Tarjeta'); ";
 
 	public static String insertCarreraValues = "insert into carrera(idCarrera, tipo, maxPlazas) values (?, ?, ?)";
 	
@@ -29,4 +32,11 @@ public class SQLStrings {
 	public static String CarreraEjemplo = "select * from carrera";
 
 	public static String InscripcionEjemplo = "select * from inscripcion";
+
+	// selects
+	public static String selectCarrera = "select * from carrera";
+
+	// Consulta para el metodo estadoInscripcion
+	protected static String estadoInscipcion = "select * from atleta a, inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' and a.idAtleta=i.idAtleta order by fechaInscripcion, estadoInscripcion";
+
 }

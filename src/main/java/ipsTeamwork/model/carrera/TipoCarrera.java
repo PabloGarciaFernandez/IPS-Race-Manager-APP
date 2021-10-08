@@ -1,4 +1,4 @@
-package ipsTeamwork.business.carrera;
+package ipsTeamwork.model.carrera;
 
 public enum TipoCarrera {
 	MONTANA,
