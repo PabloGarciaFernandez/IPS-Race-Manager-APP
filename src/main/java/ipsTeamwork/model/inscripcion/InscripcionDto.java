@@ -9,5 +9,6 @@ public class InscripcionDto {
 	public String estadoInscripcion;
 	public Date fechaInscripcion;
 	public AtletaDto atleta;
+	public int tiempoCorriendo;
 
 }
