@@ -19,14 +19,15 @@ public class SQLStrings {
 	public static String insterBolt = "Insert into atleta values('96','11122234A','Bolt',35,'F',0); ";
 	public static String insterUsain = "Insert into atleta values('69','11122233A','Usain',25,'M',0); ";
 
-
 	public static String insterNewYork = "Insert into carrera values('5','Asfalto',25); ";
 
 	public static String insterInscripcion1 = "Insert into inscripcion values('96','5','009','2021-05-01','Inscrito', 'Tarjeta'); ";
 
+	public static String insterInscripcion2 = "Insert into inscripcion values('96','a0931d2e-cf27-4965-b395-a086aa0228a5','015','2021-05-01','Inscrito', 'Tarjeta'); ";
+
 	public static String insertCarreraValues = "insert into carrera(idCarrera, tipo, maxPlazas) values (?, ?, ?)";
-	
-	// selects	
+
+	// selects
 	public static String AtletaEjemplo = "select * from atleta";
 
 	public static String CarreraEjemplo = "select * from carrera";
@@ -37,6 +38,6 @@ public class SQLStrings {
 	public static String selectCarrera = "select * from carrera";
 
 	// Consulta para el metodo estadoInscripcion
-	protected static String estadoInscipcion = "select * from atleta a, inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' and a.idAtleta=i.idAtleta order by fechaInscripcion, estadoInscripcion";
-
+	protected static String estadoInscipcion = "select * from inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' order by fechaInscripcion, estadoInscripcion";
+	protected static String estadoInscipcionAtleta = "select * from atleta where idAtleta = ?";
 }
