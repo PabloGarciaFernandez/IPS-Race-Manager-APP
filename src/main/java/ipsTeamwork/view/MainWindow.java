@@ -503,7 +503,7 @@ public class MainWindow extends JFrame {
 			btnIngresoSiguiente = new JButton("Siguiente");
 			btnIngresoSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_LISTA_CARRERAS);
+					showCard(PANEL_ATLETA);
 				}
 			});
 			btnIngresoSiguiente.setForeground(Color.BLACK);
