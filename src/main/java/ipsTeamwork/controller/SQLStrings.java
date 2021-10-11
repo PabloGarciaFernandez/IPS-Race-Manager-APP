@@ -15,7 +15,7 @@ public class SQLStrings {
 
 	public static String createInscripcion = "CREATE TABLE inscripcion (idAtleta varchar2 NOT NULL,idCarrera varchar NOT NULL, dorsal varchar2 NOT NULL, fechaInscripcion date not null, estadoInscripcion varchar2 not null, formaDePago varchar2 NOT NULL, tiempoCorriendo integer, CONSTRAINT CHK_Inscripcion CHECK ( (formaDePago='Transferencia' OR formaDePago='Tarjeta') AND (estadoInscripcion='Inscrito' OR estadoInscripcion='No inscrito' OR estadoInscripcion='Pendiente de pago')), primary key (idAtleta, idCarrera, dorsal), CONSTRAINT FK_idAtleta FOREIGN KEY (idAtleta) REFERENCES atleta(idAtleta), CONSTRAINT FK_idCarrera FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera) )";
 
-	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2 NOT NULL,tipo varchar2 NOT NULL, maxPlazas integer NOT NULL, CONSTRAINT CHK_Atleta CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
+	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2, nombre varchar2, fecha date, tipo varchar2, distancia number, cuota number, fechaFinInsc, plazasDisp, CONSTRAINT chk_tipo CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
 
 	
 	
@@ -33,27 +33,28 @@ public class SQLStrings {
 	public static String insertInscripcion = "Insert into inscripcion values('69','3','008','2021-08-01','Inscrito', 'Transferencia', 320); ";
 
 	
-	public static String insertCarreraValues = "insert into carrera(idCarrera, tipo, maxPlazas) values (?, ?, ?)";
+	public static String insertCarreraValues = "insert into carrera(idCarrera, nombre, fecha, tipo, distancia, cuota, fechaFinInsc, plazasDisp) values (?, ?, ?, ?, ?, ?, ?, ?)";
 
 	public static String insertAtletaValues = "insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado) values (?, ?, ?, ?, ?, ?)";
 
 	public static String insertInscrpcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
 
 	
+	
+	
+	
+	
 	// selects	
 	public static String AtletaEjemplo = "select * from atleta";
 
-	public static String CarreraEjemplo = "select * from carrera";
+	public static String listaCarreras = "select * from carrera";
 
 	public static String InscripcionEjemplo = "select * from inscripcion";
 
-	// selects
 	public static String selectCarrera = "select * from carrera";
 
 	// Consulta para el metodo estadoInscripcion
 	protected static String estadoInscipcion = "select * from atleta a, inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' and a.idAtleta=i.idAtleta order by fechaInscripcion, estadoInscripcion";
-
-	
 	
 	//Consultas para sacar las clasificaciones
 	

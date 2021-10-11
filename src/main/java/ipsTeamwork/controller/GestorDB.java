@@ -10,12 +10,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
 import ipsTeamwork.model.atleta.AtletaDto;
+import ipsTeamwork.model.carrera.CarreraDto;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
+import ipsTeamwork.util.DateUtil;
+import ipsTeamwork.util.DtoBuilder;
 
 
 /**
@@ -248,7 +253,7 @@ public class GestorDB {
 	public void selectCarrera() {
 		conectar();
 		try {
-			PreparedStatement ps = conn.prepareStatement(SQLStrings.CarreraEjemplo);
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.listaCarreras);
 			ResultSet rs = ps.executeQuery();
 			printResultSet(rs);
 		} catch (SQLException e) {
@@ -283,8 +288,8 @@ public class GestorDB {
 	public static void printResultSet(ResultSet rs) throws SQLException {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnsNumber = rsmd.getColumnCount();
+
 		while (rs.next()) {
-		
 			for (int i = 1; i <= columnsNumber; i++) {
 				if (i > 1)
 					System.out.print(" | ");
@@ -306,7 +311,7 @@ public class GestorDB {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnsNumber = rsmd.getColumnCount();
 		while (rs.next()) {
-			System.out.print(orden +"� | ");
+			System.out.print(orden +"� | ");
 			for (int i = 1; i <= columnsNumber; i++) {
 				if (i > 1)
 					System.out.print(" | ");
@@ -386,8 +391,7 @@ public class GestorDB {
 		poblarInscripciones(25);
 	}
 	
-	private void poblarInscripciones(int i) {
-		
+	private void poblarInscripciones(int i) {		
 		conectar();
 		Random r = new Random();
 		try {
@@ -411,9 +415,7 @@ public class GestorDB {
 			System.out.println("hola     " + e.getMessage());
 		} finally {
 			cerrar();
-		}
-		
-		
+		}		
 	}
 
 	public void poblarCarreras(int i) {
@@ -421,16 +423,38 @@ public class GestorDB {
 		Random r = new Random();
 		try {
 			for (int j = 0; j < i; j++) {
-				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertCarreraValues);
-				pst.setString(1, UUID.randomUUID().toString());
-				pst.setString(2, (r.nextBoolean() ? "Asfalto" : "Montaña"));
-				pst.setInt(3, r.nextInt(128));
+				System.out.println("metiendo carrera " + j);
+				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertCarreraValues); //(idCarrera, nombre, fecha, tipo, distancia, cuota, fechaFinInsc, plazasDisp)
 				
+				pst.setString(1, UUID.randomUUID().toString());
+				pst.setString(2, UUID.randomUUID().toString().substring(0,5));
+				
+				java.sql.Date d = new java.sql.Date(
+						DateUtil.between(
+							new Date(), 
+							new Calendar
+								.Builder()
+								.setDate(2023, 12, 31)
+								.build()
+								.getTime())
+						.getTime());				
+				pst.setDate(3, d); //fecha origen
+				
+				pst.setString(4, (r.nextBoolean() ? "Asfalto" : "Montaña"));
+				pst.setInt(5, r.nextInt(24)+1); //distancia en km
+				pst.setInt(6, r.nextInt(50+1)); //cuota
+
+				java.sql.Date d2 = new java.sql.Date( new Calendar.Builder().setDate(2022, 1, 1).build().getTimeInMillis() );				
+				pst.setDate(7, d2); //fecha origen
+				
+				pst.setInt(8, r.nextInt(100+1));
 				pst.executeUpdate();
 				pst.close();
+				
+				System.out.println(d2.toString());
 			}
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -530,12 +554,10 @@ public class GestorDB {
 	}
 	
 	public void obtenerClasificacionGeneralMujeres() {
-		
 		conectar();
 		try {
 			
 			pst = conn.prepareStatement(SQLStrings.clasificacionGeneralPresentadosMujeres);
-	
 
 			rs = pst.executeQuery();
 			
@@ -561,6 +583,23 @@ public class GestorDB {
 			cerrar();
 		}
 		
+	}
+
+	public List<CarreraDto> listarCarreras() {
+		List<CarreraDto> ret = null;
+		conectar();
+		
+		try {
+			pst = conn.prepareStatement(SQLStrings.listaCarreras);
+			rs = pst.executeQuery();
+			
+			ret = DtoBuilder.toCarreraDtoList(rs);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();;
+		}
+		
+		return ret;
 	}
 	
 	

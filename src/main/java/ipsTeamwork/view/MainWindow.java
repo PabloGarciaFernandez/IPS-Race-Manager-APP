@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -14,9 +15,14 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import ipsTeamwork.model.carrera.crud.ListCarreras;
+import java.awt.FlowLayout;
+import javax.swing.JScrollPane;
 
 public class MainWindow extends JFrame {
 
@@ -77,6 +83,8 @@ public class MainWindow extends JFrame {
 	private JButton btnOrganizadorCancelar;
 	private JButton btnOrganizadorSiguiente;
 	private JButton btnIngresoRegistro;
+	private JList<String> listCarreras;
+	private JScrollPane scrollPane;
 
 	/**
 	 * Create the frame.
@@ -194,24 +202,17 @@ public class MainWindow extends JFrame {
 	}
 	
 	private JPanel getPnListaCarreras() {
+		
 		if (pnListaCarreras == null) {
 			pnListaCarreras = new JPanel();
 			pnListaCarreras.setLayout(new BorderLayout(0, 0));
-			pnListaCarreras.add(getPnLista14473(), BorderLayout.CENTER);
+			pnListaCarreras.add(getScrollPane(), BorderLayout.CENTER);
 			pnListaCarreras.add(getPnListaNorth(), BorderLayout.NORTH);
 			pnListaCarreras.add(getPnListaSouth(), BorderLayout.SOUTH);
 		}
 		return pnListaCarreras;
 	}
 	
-	private JPanel getPnLista14473() {
-		if (pnLista14473 == null) {
-			pnLista14473 = new JPanel();
-			pnLista14473.setBackground(Color.DARK_GRAY);
-			pnLista14473.setLayout(new GridLayout(1, 0, 0, 0));
-		}
-		return pnLista14473;
-	}
 	private JPanel getPnListaNorth() {
 		if (pnListaNorth == null) {
 			pnListaNorth = new JPanel();
@@ -462,15 +463,16 @@ public class MainWindow extends JFrame {
 			textIngresoEmail = new JTextField();
 			textIngresoEmail.setFont(new Font("Arial", Font.PLAIN, 14));
 			textIngresoEmail.setColumns(10);
-			textIngresoEmail.setBounds(160, 188, 370, 20);
+			textIngresoEmail.setBounds(102, 188, 379, 20);
 		}
 		return textIngresoEmail;
 	}
 	private JLabel getLblIngesoEmail() {
 		if (lblIngesoEmail == null) {
 			lblIngesoEmail = new JLabel("Email:");
+			lblIngesoEmail.setLabelFor(getTextIngresoEmail());
 			lblIngesoEmail.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblIngesoEmail.setBounds(37, 188, 80, 20);
+			lblIngesoEmail.setBounds(102, 162, 53, 20);
 		}
 		return lblIngesoEmail;
 	}
@@ -557,5 +559,19 @@ public class MainWindow extends JFrame {
 			btnIngresoRegistro.setBounds(241, 236, 100, 23);
 		}
 		return btnIngresoRegistro;
+	}
+	private JList<String> getListCarreras() {
+		if (listCarreras == null) {
+			String[] toDisplay = new ListCarreras().execute();
+			listCarreras = new JList<String>();
+			listCarreras.setListData(toDisplay);
+		}
+		return listCarreras;
+	}
+	private JScrollPane getScrollPane() {
+		if (scrollPane == null) {
+			scrollPane = new JScrollPane(getListCarreras());
+		}
+		return scrollPane;
 	}
 }
