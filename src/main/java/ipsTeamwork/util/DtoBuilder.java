@@ -16,14 +16,14 @@ public class DtoBuilder {
 		try {
 			while (rs.next()) {
 				dto = new CarreraDto();
-				dto.id = rs.getString("idCarrera");
-				dto.nombre = rs.getString("nombre");
-				dto.fecha = rs.getDate("fecha");
-				dto.tipo = rs.getString("tipo");
-				dto.distancia = rs.getDouble("distancia");
-				dto.cuota = rs.getFloat("cuota");
-				dto.fechaFin = rs.getDate("fechaFinInsc");
-				dto.plazasDisp = rs.getInt("plazasDisp");
+				dto.setId(rs.getString("idCarrera"));
+				dto.setNombre(rs.getString("nombre"));
+				dto.setFecha(rs.getDate("fecha"));
+				dto.setTipo(rs.getString("tipo"));
+				dto.setDistancia(rs.getDouble("distancia"));
+				dto.setCuota(rs.getFloat("cuota"));
+				dto.setFechaFin(rs.getDate("fechaFinInsc"));
+				dto.setPlazasDisp(rs.getInt("plazasDisp"));
 				
 				ret.add(dto);
 			}
