@@ -94,7 +94,6 @@ public class MainWindow extends JFrame {
 	private JButton btnOrganizadorCancelar;
 	private JButton btnOrganizadorSiguiente;
 	private JButton btnIngresoRegistro;
-
 	private JPanel pnVerCarreras;
 	private JPanel pnPrincipalVerCarreras;
 	private JButton btVerVarrerasOrganizacion;
@@ -228,7 +227,7 @@ public class MainWindow extends JFrame {
 	}
 
 	private JPanel getPnListaCarreras() {
-		
+
 		if (pnListaCarreras == null) {
 			pnListaCarreras = new JPanel();
 			pnListaCarreras.setLayout(new BorderLayout(0, 0));
@@ -247,7 +246,6 @@ public class MainWindow extends JFrame {
 		}
 		return pnLista14473;
 	}
-
 
 	private JPanel getPnListaNorth() {
 		if (pnListaNorth == null) {
@@ -700,9 +698,9 @@ public class MainWindow extends JFrame {
 		}
 	}
 
-  /**
-  * Metofo cambiar
-  */
+	/**
+	 * Metodo cambiar
+	 */
 	private JButton getBtVerAtletasInscritosPorXCarrera() {
 		if (btVerAtletasInscritosPorXCarrera == null) {
 			btVerAtletasInscritosPorXCarrera = new JButton("Ver atletas inscritos de esa carrera");
@@ -745,8 +743,8 @@ public class MainWindow extends JFrame {
 
 		}
 		return txaAtletasInscritosEnXCarrera;
-  }
-  
+	}
+
 	private JList<String> getListCarreras() {
 		if (listCarreras == null) {
 			String[] toDisplay = new ListCarreras().execute();
@@ -755,6 +753,7 @@ public class MainWindow extends JFrame {
 		}
 		return listCarreras;
 	}
+
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane(getListCarreras());

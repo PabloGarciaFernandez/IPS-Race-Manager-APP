@@ -8,5 +8,4 @@ package ipsTeamwork.controller;
  */
 public class CarrerasControlador {
 
-
 }

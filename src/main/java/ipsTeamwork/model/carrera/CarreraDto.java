@@ -10,7 +10,8 @@ public class CarreraDto {
 	private double distancia;
 	private float cuota;
 	private Date fechaFin;
-  
+	private int maxPlazas;
+
 	// idCarrera varchar2 NOT NULL,tipo varchar2 NOT NULL, maxPlazas integer NOT
 	// NULL
 
@@ -127,10 +128,25 @@ public class CarreraDto {
 	public void setPlazasDisp(int plazasDisp) {
 		this.plazasDisp = plazasDisp;
 	}
-  
+
+	/**
+	 * @return the maxPlazas
+	 */
+	public int getMaxPlazas() {
+		return maxPlazas;
+	}
+
+	/**
+	 * @param maxPlazas the maxPlazas to set
+	 */
+	public void setMaxPlazas(int maxPlazas) {
+		this.maxPlazas = maxPlazas;
+	}
+
 	@Override
 	public String toString() {
-		return nombre + " | " + tipo + " | " + fecha.toString() + " | " + distancia + " | " + cuota + " | " + fechaFin.toString() + " | " + plazasDisp;
+		return nombre + " | " + tipo + " | " + fecha.toString() + " | " + distancia + " | " + cuota + " | "
+				+ fechaFin.toString() + " | " + plazasDisp;
 	}
 
 }
