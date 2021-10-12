@@ -7,8 +7,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -17,8 +17,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import ipsTeamwork.controller.CarrerasControlador;
+import ipsTeamwork.controller.GestorDB;
+import ipsTeamwork.model.carrera.CarreraDto;
+import ipsTeamwork.model.inscripcion.InscripcionDto;
+
+import javax.swing.JTextArea;
 
 import ipsTeamwork.model.carrera.crud.ListCarreras;
 import java.awt.FlowLayout;
@@ -30,14 +40,15 @@ public class MainWindow extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 3073912408195015551L;
-	
+
 	private static final String PANEL_ATLETA = "panel_atleta";
 	private static final String PANEL_INICIO = "panel_inicio";
 	private static final String PANEL_ORGANIZADOR = "panel_organizador";
 	private static final String PANEL_LISTA_CARRERAS = "panel_lista";
 	private static final String PANEL_REGISTRO = "panel_registro";
 	private static final String PANEL_INGRESO = "panel_ingreso";
-	
+	private static final String PANEL_VERCARRERAS = "panel_verCarreras";
+
 	private JPanel contentPane;
 	private JPanel pnInicio;
 	private JButton btnAtleta;
@@ -83,6 +94,17 @@ public class MainWindow extends JFrame {
 	private JButton btnOrganizadorCancelar;
 	private JButton btnOrganizadorSiguiente;
 	private JButton btnIngresoRegistro;
+
+	private JPanel pnVerCarreras;
+	private JPanel pnPrincipalVerCarreras;
+	private JButton btVerVarrerasOrganizacion;
+	private JScrollPane scVerCarreras;
+	private JTable tbVerCarreras;
+	private JButton btVerAtletasInscritosPorXCarrera;
+	private JScrollPane scVerAtletasInscritosPorXCarrera;
+	private JTextArea txaAtletasInscritosEnXCarrera;
+	private DefaultTableModel tb;
+	private GestorDB db;
 	private JList<String> listCarreras;
 	private JScrollPane scrollPane;
 
@@ -90,6 +112,8 @@ public class MainWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public MainWindow() {
+		db = new GestorDB();
+		tb = (DefaultTableModel) getTbVerCarreras().getModel();
 		setResizable(false);
 		setTitle("App");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -104,6 +128,8 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnListaCarreras(), PANEL_LISTA_CARRERAS);
 		contentPane.add(getPnRegistro(), PANEL_REGISTRO);
 		contentPane.add(getPnIngreso(), PANEL_INGRESO);
+		contentPane.add(getPnVerCarreras(), PANEL_VERCARRERAS);
+		VerCarreras();
 	}
 
 	private JPanel getPnInicio() {
@@ -200,7 +226,7 @@ public class MainWindow extends JFrame {
 		CardLayout c1 = (CardLayout) contentPane.getLayout();
 		c1.show(contentPane, name);
 	}
-	
+
 	private JPanel getPnListaCarreras() {
 		
 		if (pnListaCarreras == null) {
@@ -212,7 +238,17 @@ public class MainWindow extends JFrame {
 		}
 		return pnListaCarreras;
 	}
-	
+
+	private JPanel getPnLista14473() {
+		if (pnLista14473 == null) {
+			pnLista14473 = new JPanel();
+			pnLista14473.setBackground(Color.DARK_GRAY);
+			pnLista14473.setLayout(new GridLayout(1, 0, 0, 0));
+		}
+		return pnLista14473;
+	}
+
+
 	private JPanel getPnListaNorth() {
 		if (pnListaNorth == null) {
 			pnListaNorth = new JPanel();
@@ -221,6 +257,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnListaNorth;
 	}
+
 	private JButton getBtnListaInscribirse() {
 		if (btnListaInscribirse == null) {
 			btnListaInscribirse = new JButton("Inscribirse");
@@ -232,6 +269,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnListaInscribirse;
 	}
+
 	private JPanel getPnListaSouth() {
 		if (pnListaSouth == null) {
 			pnListaSouth = new JPanel();
@@ -240,6 +278,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnListaSouth;
 	}
+
 	private JButton getBtnListaAtras() {
 		if (btnListaAtras == null) {
 			btnListaAtras = new JButton("Atras");
@@ -253,6 +292,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnListaAtras;
 	}
+
 	private JPanel getPnRegistro() {
 		if (pnRegistro == null) {
 			pnRegistro = new JPanel();
@@ -261,6 +301,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnRegistro;
 	}
+
 	private JPanel getPnRegistroCenter() {
 		if (pnRegistroCenter == null) {
 			pnRegistroCenter = new JPanel();
@@ -285,6 +326,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnRegistroCenter;
 	}
+
 	private JTextField getTextRegistroEmail() {
 		if (textRegistroEmail == null) {
 			textRegistroEmail = new JTextField();
@@ -294,6 +336,7 @@ public class MainWindow extends JFrame {
 		}
 		return textRegistroEmail;
 	}
+
 	private JTextField getTextRegistroEdad() {
 		if (textRegistroEdad == null) {
 			textRegistroEdad = new JTextField();
@@ -303,6 +346,7 @@ public class MainWindow extends JFrame {
 		}
 		return textRegistroEdad;
 	}
+
 	private JTextField getTextRegistroNombre() {
 		if (textRegistroNombre == null) {
 			textRegistroNombre = new JTextField();
@@ -312,6 +356,7 @@ public class MainWindow extends JFrame {
 		}
 		return textRegistroNombre;
 	}
+
 	private JTextField getTextRegistroApellidos() {
 		if (textRegistroApellidos == null) {
 			textRegistroApellidos = new JTextField();
@@ -321,6 +366,7 @@ public class MainWindow extends JFrame {
 		}
 		return textRegistroApellidos;
 	}
+
 	private JLabel getLblRegistroEmail() {
 		if (lblRegistroEmail == null) {
 			lblRegistroEmail = new JLabel("Email:");
@@ -329,6 +375,7 @@ public class MainWindow extends JFrame {
 		}
 		return lblRegistroEmail;
 	}
+
 	private JLabel getLblRegistroRegistroEdad() {
 		if (lblRegistroRegistroEdad == null) {
 			lblRegistroRegistroEdad = new JLabel("Edad:");
@@ -337,6 +384,7 @@ public class MainWindow extends JFrame {
 		}
 		return lblRegistroRegistroEdad;
 	}
+
 	private JLabel getLblRegistroNombre() {
 		if (lblRegistroNombre == null) {
 			lblRegistroNombre = new JLabel("Nombre:");
@@ -345,6 +393,7 @@ public class MainWindow extends JFrame {
 		}
 		return lblRegistroNombre;
 	}
+
 	private JLabel getLblRegistroApellidos() {
 		if (lblRegistroApellidos == null) {
 			lblRegistroApellidos = new JLabel("Apellidos:");
@@ -353,6 +402,7 @@ public class MainWindow extends JFrame {
 		}
 		return lblRegistroApellidos;
 	}
+
 	private JButton getBtnRegistroSiguiente() {
 		if (btnRegistroSiguiente == null) {
 			btnRegistroSiguiente = new JButton("Siguiente");
@@ -367,6 +417,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnRegistroSiguiente;
 	}
+
 	private JButton getBtnRegistroCancelar() {
 		if (btnRegistroCancelar == null) {
 			btnRegistroCancelar = new JButton("Cancelar");
@@ -381,6 +432,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnRegistroCancelar;
 	}
+
 	private JLabel getLblRegistro() {
 		if (lblRegistro == null) {
 			lblRegistro = new JLabel("REGISTRO DE CUENTA");
@@ -389,6 +441,7 @@ public class MainWindow extends JFrame {
 		}
 		return lblRegistro;
 	}
+
 	private JLabel getLblRegistroSexo() {
 		if (lblRegistroSexo == null) {
 			lblRegistroSexo = new JLabel("Sexo:");
@@ -397,6 +450,7 @@ public class MainWindow extends JFrame {
 		}
 		return lblRegistroSexo;
 	}
+
 	private JLabel getLblRegistroDiscapacidad() {
 		if (lblRegistroDiscapacidad == null) {
 			lblRegistroDiscapacidad = new JLabel("Discapacidad:");
@@ -405,6 +459,7 @@ public class MainWindow extends JFrame {
 		}
 		return lblRegistroDiscapacidad;
 	}
+
 	private JLabel getLblRegistroDNI() {
 		if (lblRegistroDNI == null) {
 			lblRegistroDNI = new JLabel("DNI:");
@@ -413,6 +468,7 @@ public class MainWindow extends JFrame {
 		}
 		return lblRegistroDNI;
 	}
+
 	private JTextField getTextRegistroDNI() {
 		if (textRegistroDNI == null) {
 			textRegistroDNI = new JTextField();
@@ -422,6 +478,7 @@ public class MainWindow extends JFrame {
 		}
 		return textRegistroDNI;
 	}
+
 	private JCheckBox getChckbxRegistroDiscapacidad() {
 		if (chckbxRegistroDiscapacidad == null) {
 			chckbxRegistroDiscapacidad = new JCheckBox("");
@@ -429,6 +486,7 @@ public class MainWindow extends JFrame {
 		}
 		return chckbxRegistroDiscapacidad;
 	}
+
 	private JComboBox getComboRegistroSexo() {
 		if (comboRegistroSexo == null) {
 			comboRegistroSexo = new JComboBox();
@@ -437,6 +495,7 @@ public class MainWindow extends JFrame {
 		}
 		return comboRegistroSexo;
 	}
+
 	private JPanel getPnIngreso() {
 		if (pnIngreso == null) {
 			pnIngreso = new JPanel();
@@ -445,6 +504,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnIngreso;
 	}
+
 	private JPanel getPnIngresoCenter() {
 		if (pnIngresoCenter == null) {
 			pnIngresoCenter = new JPanel();
@@ -458,6 +518,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnIngresoCenter;
 	}
+
 	private JTextField getTextIngresoEmail() {
 		if (textIngresoEmail == null) {
 			textIngresoEmail = new JTextField();
@@ -467,6 +528,7 @@ public class MainWindow extends JFrame {
 		}
 		return textIngresoEmail;
 	}
+
 	private JLabel getLblIngesoEmail() {
 		if (lblIngesoEmail == null) {
 			lblIngesoEmail = new JLabel("Email:");
@@ -476,6 +538,7 @@ public class MainWindow extends JFrame {
 		}
 		return lblIngesoEmail;
 	}
+
 	private JLabel getLblIngresoDeCuenta() {
 		if (lblIngresoDeCuenta == null) {
 			lblIngresoDeCuenta = new JLabel("Ingresar como atleta");
@@ -484,6 +547,7 @@ public class MainWindow extends JFrame {
 		}
 		return lblIngresoDeCuenta;
 	}
+
 	private JButton getBtnIngresoCancelar() {
 		if (btnIngresoCancelar == null) {
 			btnIngresoCancelar = new JButton("Cancelar");
@@ -498,6 +562,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnIngresoCancelar;
 	}
+
 	private JButton getBtnIngresoSiguiente() {
 		if (btnIngresoSiguiente == null) {
 			btnIngresoSiguiente = new JButton("Siguiente");
@@ -512,15 +577,18 @@ public class MainWindow extends JFrame {
 		}
 		return btnIngresoSiguiente;
 	}
+
 	private JPanel getPnOrganizadorCentro() {
 		if (pnOrganizadorCentro == null) {
 			pnOrganizadorCentro = new JPanel();
 			pnOrganizadorCentro.setLayout(null);
 			pnOrganizadorCentro.add(getBtnOrganizadorCancelar());
 			pnOrganizadorCentro.add(getBtnOrganizadorSiguiente());
+			pnOrganizadorCentro.add(getBtVerVarrerasOrganizacion());
 		}
 		return pnOrganizadorCentro;
 	}
+
 	private JButton getBtnOrganizadorCancelar() {
 		if (btnOrganizadorCancelar == null) {
 			btnOrganizadorCancelar = new JButton("Cancelar");
@@ -535,6 +603,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnOrganizadorCancelar;
 	}
+
 	private JButton getBtnOrganizadorSiguiente() {
 		if (btnOrganizadorSiguiente == null) {
 			btnOrganizadorSiguiente = new JButton("Siguiente");
@@ -548,6 +617,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnOrganizadorSiguiente;
 	}
+
 	private JButton getBtnIngresoRegistro() {
 		if (btnIngresoRegistro == null) {
 			btnIngresoRegistro = new JButton("Registrarme");
@@ -560,6 +630,123 @@ public class MainWindow extends JFrame {
 		}
 		return btnIngresoRegistro;
 	}
+
+	private JPanel getPnVerCarreras() {
+		if (pnVerCarreras == null) {
+			pnVerCarreras = new JPanel();
+			pnVerCarreras.setLayout(new BorderLayout(0, 0));
+			pnVerCarreras.add(getPnPrincipalVerCarreras(), BorderLayout.CENTER);
+		}
+		return pnVerCarreras;
+	}
+
+	private JPanel getPnPrincipalVerCarreras() {
+		if (pnPrincipalVerCarreras == null) {
+			pnPrincipalVerCarreras = new JPanel();
+			pnPrincipalVerCarreras.setLayout(null);
+			pnPrincipalVerCarreras.add(getScVerCarreras());
+			pnPrincipalVerCarreras.add(getBtVerAtletasInscritosPorXCarrera());
+			pnPrincipalVerCarreras.add(getScVerAtletasInscritosPorXCarrera());
+		}
+		return pnPrincipalVerCarreras;
+	}
+
+	private JButton getBtVerVarrerasOrganizacion() {
+		if (btVerVarrerasOrganizacion == null) {
+			btVerVarrerasOrganizacion = new JButton("Ver Carreras");
+			btVerVarrerasOrganizacion.setMnemonic('v');
+			btVerVarrerasOrganizacion.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_VERCARRERAS);
+				}
+			});
+			btVerVarrerasOrganizacion.setBounds(218, 129, 153, 42);
+		}
+		return btVerVarrerasOrganizacion;
+	}
+
+	private JScrollPane getScVerCarreras() {
+		if (scVerCarreras == null) {
+			scVerCarreras = new JScrollPane();
+			scVerCarreras.setBounds(161, 27, 233, 149);
+			scVerCarreras.setViewportView(getTbVerCarreras());
+		}
+		return scVerCarreras;
+	}
+
+	public JTable getTbVerCarreras() {
+		if (tbVerCarreras == null) {
+			tbVerCarreras = new JTable();
+			tbVerCarreras
+					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Tipo", "Max plazas" }));
+
+		}
+		return tbVerCarreras;
+	}
+
+	/**
+	 * Metodo para ver las Carreras en la tabla de organizador
+	 */
+	public void VerCarreras() {
+		GestorDB db = new GestorDB();
+
+		ArrayList<CarreraDto> carreras = db.selectCarrera();
+
+		for (CarreraDto carreraDto : carreras) {
+
+			String[] carrerasTabla = { carreraDto.getId(), carreraDto.getTipo(),
+					String.valueOf(carreraDto.getPlazasDisp()) };
+			tb.addRow(carrerasTabla);
+		}
+	}
+
+  /**
+  * Metofo cambiar
+  */
+	private JButton getBtVerAtletasInscritosPorXCarrera() {
+		if (btVerAtletasInscritosPorXCarrera == null) {
+			btVerAtletasInscritosPorXCarrera = new JButton("Ver atletas inscritos de esa carrera");
+			btVerAtletasInscritosPorXCarrera.setMnemonic('v');
+			btVerAtletasInscritosPorXCarrera.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					String codigo = (String) tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0);
+
+					ArrayList<InscripcionDto> atletas = db.estadoInscripcion(codigo);
+
+					for (InscripcionDto inscripcionDto : atletas) {
+
+						System.out.println(inscripcionDto.toString());
+
+						getTxaAtletasInscritosEnXCarrera().setText(inscripcionDto.toStringVerAtletas());
+
+					}
+
+				}
+			});
+			btVerAtletasInscritosPorXCarrera.setBounds(161, 198, 233, 21);
+		}
+		return btVerAtletasInscritosPorXCarrera;
+	}
+
+	private JScrollPane getScVerAtletasInscritosPorXCarrera() {
+		if (scVerAtletasInscritosPorXCarrera == null) {
+			scVerAtletasInscritosPorXCarrera = new JScrollPane();
+			scVerAtletasInscritosPorXCarrera.setBounds(161, 246, 238, 98);
+			scVerAtletasInscritosPorXCarrera.setViewportView(getTxaAtletasInscritosEnXCarrera());
+		}
+		return scVerAtletasInscritosPorXCarrera;
+	}
+
+	private JTextArea getTxaAtletasInscritosEnXCarrera() {
+		if (txaAtletasInscritosEnXCarrera == null) {
+			txaAtletasInscritosEnXCarrera = new JTextArea();
+			txaAtletasInscritosEnXCarrera.setEditable(false);
+
+		}
+		return txaAtletasInscritosEnXCarrera;
+  }
+  
 	private JList<String> getListCarreras() {
 		if (listCarreras == null) {
 			String[] toDisplay = new ListCarreras().execute();
