@@ -8,7 +8,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.List;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -19,20 +19,16 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import ipsTeamwork.controller.CarrerasControlador;
+import ipsTeamwork.controller.CosasAMover;
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.model.carrera.CarreraDto;
-import ipsTeamwork.model.inscripcion.InscripcionDto;
-
-import javax.swing.JTextArea;
-
 import ipsTeamwork.model.carrera.crud.ListCarreras;
-import java.awt.FlowLayout;
-import javax.swing.JScrollPane;
+import ipsTeamwork.model.inscripcion.InscripcionDto;
 
 public class MainWindow extends JFrame {
 
@@ -261,8 +257,8 @@ public class MainWindow extends JFrame {
 			btnListaInscribirse = new JButton("Inscribirse");
 			btnListaInscribirse.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					//if selected from table register person into race.
-						//then printear justificante. CosasAMover.printJustificante(email);
+					// if selected from table register person into race.
+					// then printear justificante. CosasAMover.printJustificante(email);
 				}
 			});
 			btnListaInscribirse.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -572,7 +568,7 @@ public class MainWindow extends JFrame {
 			btnIngresoSiguiente = new JButton("Siguiente");
 			btnIngresoSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(CosasAMover.checkAtleta(textIngresoEmail.getSelectedText()))
+					if (CosasAMover.checkAtleta(textIngresoEmail.getSelectedText()))
 						showCard(PANEL_LISTA_CARRERAS);
 				}
 			});

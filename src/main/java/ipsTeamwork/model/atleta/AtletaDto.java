@@ -113,24 +113,10 @@ public class AtletaDto {
 		this.email = email;
 	}
 
-	/**
-	 * @return the apellido
-	 */
-	public String getApellido() {
-		return apellido;
-	}
-
-	/**
-	 * @param apellido the apellido to set
-	 */
-	public void setApellido(String apellido) {
-		this.apellido = apellido;
-	}
-
 	@Override
 	public String toString() {
-		return "Atleta [DNI=" + DNI + ", idAtleta=" + idAtleta + ", edad=" + edad + ", nombre=" + nombre + ", apellido="
-				+ apellido + ", sexo=" + sexo + ", discapacitado=" + discapacitado + ", email=" + email + "]";
+		return "Atleta [DNI=" + DNI + ", idAtleta=" + idAtleta + ", edad=" + edad + ", nombre=" + nombre + ", sexo="
+				+ sexo + ", discapacitado=" + discapacitado + ", email=" + email + "]";
 	}
 
 }

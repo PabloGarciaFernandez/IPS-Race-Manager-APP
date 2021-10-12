@@ -6,24 +6,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class CosasAMover {
-	
-	//QUERY PARA CHECKEAR EN EL INGRESO.
-	
+
+	// QUERY PARA CHECKEAR EN EL INGRESO.
+
 	private static String QUERY_DE_INGRESO = "SELECT 1 FROM ATLETA WHERE EMAIL = ?";
 	private static String QUERY_DE_INSCRIPCION_A_CARRERA = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, "
 			+ "estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
-	
-	//INTRODUCCIÓN DATOS A LA DB		
+
+	// INTRODUCCIï¿½N DATOS A LA DB
 	private static Connection conn = null;
 
 	private static PreparedStatement pst = null;
 
 	private static ResultSet rs = null;
-	
+
 	/**
 	 * MÃ©todo que establece una conexion con la base de datos.
 	 */
@@ -37,11 +36,12 @@ public class CosasAMover {
 			System.out.println("Error en la conexiÃ³n de la base de datos: " + e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * @author Pablo García Fernández
+	 * @author Pablo Garcï¿½a Fernï¿½ndez
 	 * 
-	 * Metodo que se usa en la pestaña de registro para almacenarlo en la base de datos.
+	 *         Metodo que se usa en la pestaï¿½a de registro para almacenarlo en la
+	 *         base de datos.
 	 * 
 	 * @param List<String> Con todos los datos para ser insertados.
 	 */
@@ -53,19 +53,19 @@ public class CosasAMover {
 			pst.setString(2, datos.get(1));
 			pst.setString(3, datos.get(3) + datos.get(4));
 			pst.setInt(4, Integer.parseInt(datos.get(2)));
-			pst.setString(5, ""+(datos.get(5).charAt(0)));
-			pst.setBoolean(6, (datos.get(5).equals("Si") ? true : false));	
-			//pst.setString(7, datos.get(0));	//NECESITO QUE SE AÑADA EL PARAMETRO DE EMAIL
+			pst.setString(5, "" + (datos.get(5).charAt(0)));
+			pst.setBoolean(6, (datos.get(5).equals("Si") ? true : false));
+			// pst.setString(7, datos.get(0)); //NECESITO QUE SE Aï¿½ADA EL PARAMETRO DE EMAIL
 			pst.executeUpdate();
 			pst.close();
-		
+
 		} catch (Exception e) {
-			
+
 		} finally {
 			cerrar();
 		}
 	}
-	
+
 	private static void cerrar() {
 		try {
 
@@ -82,7 +82,7 @@ public class CosasAMover {
 			System.out.println("Error al cerrar la base de datos: " + e.getMessage());
 		}
 	}
-	
+
 	public static boolean checkAtleta(String email) {
 		conectar();
 		boolean res = false;
@@ -91,26 +91,26 @@ public class CosasAMover {
 			pst.setString(1, email);
 			res = rs.next();
 			pst.executeUpdate();
-			pst.close();		
+			pst.close();
 		} catch (Exception e) {
-			
+
 		} finally {
 			cerrar();
 		}
 		return res;
 	}
-	
+
 	public static void printJustificante(String algo) {
 		System.out.println("JUSTIFICANTE CARRERA: ");
 		System.out.println("Nombre: ");
-		System.out.println("Competición: ");
-		System.out.println("Categoría: ");
-		System.out.println("Fecha inscripción: ");
+		System.out.println("Competiciï¿½n: ");
+		System.out.println("Categorï¿½a: ");
+		System.out.println("Fecha inscripciï¿½n: ");
 		System.out.println("Abono: ");
-		//ESTADO PRE-INSCRITO modificar tabla inscripcion
+		// ESTADO PRE-INSCRITO modificar tabla inscripcion
 	}
-	
+
 	public void calculadorDeCategoria() {
-		
+
 	}
 }
