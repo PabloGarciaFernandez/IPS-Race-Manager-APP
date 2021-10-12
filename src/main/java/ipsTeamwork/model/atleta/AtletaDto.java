@@ -6,5 +6,7 @@ public class AtletaDto {
 	public String nombre;
 	public String sexo;
 	public int edad;
+	public String email;
+	public boolean discapacidad;
 	
 }

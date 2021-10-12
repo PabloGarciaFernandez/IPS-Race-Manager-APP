@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -14,9 +16,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import ipsTeamwork.controller.CosasAMover;
 
 public class MainWindow extends JFrame {
 
@@ -190,6 +195,7 @@ public class MainWindow extends JFrame {
 
 	private void showCard(String name) {
 		CardLayout c1 = (CardLayout) contentPane.getLayout();
+		
 		c1.show(contentPane, name);
 	}
 	
@@ -225,6 +231,8 @@ public class MainWindow extends JFrame {
 			btnListaInscribirse = new JButton("Inscribirse");
 			btnListaInscribirse.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					//if selected from table register person into race.
+						//then printear justificante. CosasAMover.printJustificante(email);
 				}
 			});
 			btnListaInscribirse.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -357,7 +365,18 @@ public class MainWindow extends JFrame {
 			btnRegistroSiguiente = new JButton("Siguiente");
 			btnRegistroSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_ATLETA);
+					List<String> lista = new ArrayList<String>();
+					lista.add(textRegistroEmail.getSelectedText());
+					lista.add(textRegistroDNI.getSelectedText());
+					lista.add(textRegistroEdad.getSelectedText());
+					lista.add(textRegistroNombre.getSelectedText());
+					lista.add(textRegistroApellidos.getSelectedText());
+					lista.add(comboRegistroSexo.getToolTipText());
+					lista.add(chckbxRegistroDiscapacidad.isSelected() == true ? "Si" : "No");
+					if(checkeo(lista)) {
+						CosasAMover.registroAtleta(lista);
+						showCard(PANEL_ATLETA);						
+					}
 				}
 			});
 			btnRegistroSiguiente.setForeground(Color.BLACK);
@@ -365,6 +384,28 @@ public class MainWindow extends JFrame {
 			btnRegistroSiguiente.setBounds(452, 348, 121, 23);
 		}
 		return btnRegistroSiguiente;
+	}
+	
+	/**
+	 * @author Pablo García Fernández
+	 * 
+	 * Metodo que se usa para checkear la validad de los datos
+	 * 
+	 * @param List<String> Con todos los datos para ser checkeados.
+	 */
+	private boolean checkeo(List<String> lista) {
+		for(String item : lista) {
+			if(item == null) {
+				JOptionPane.showMessageDialog(null, "No puedes dejar en blanco ningun apartado");
+				return false;
+			}
+		}
+		if(Integer.parseInt(lista.get(2)) < 18) {
+			JOptionPane.showMessageDialog(null, "No pueden participar menores de 18 años");
+			return false;
+		}
+	
+		return true;
 	}
 	private JButton getBtnRegistroCancelar() {
 		if (btnRegistroCancelar == null) {
@@ -431,6 +472,10 @@ public class MainWindow extends JFrame {
 	private JComboBox getComboRegistroSexo() {
 		if (comboRegistroSexo == null) {
 			comboRegistroSexo = new JComboBox();
+			comboRegistroSexo.addItem("Masculino");
+			comboRegistroSexo.addItem("Femenino");
+			comboRegistroSexo.addItem("Otro");
+			comboRegistroSexo.setSelectedIndex(-1);
 			comboRegistroSexo.setFont(new Font("Arial", Font.PLAIN, 14));
 			comboRegistroSexo.setBounds(169, 254, 370, 22);
 		}
@@ -501,7 +546,8 @@ public class MainWindow extends JFrame {
 			btnIngresoSiguiente = new JButton("Siguiente");
 			btnIngresoSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_LISTA_CARRERAS);
+					if(CosasAMover.checkAtleta(textIngresoEmail.getSelectedText()))
+						showCard(PANEL_LISTA_CARRERAS);
 				}
 			});
 			btnIngresoSiguiente.setForeground(Color.BLACK);
