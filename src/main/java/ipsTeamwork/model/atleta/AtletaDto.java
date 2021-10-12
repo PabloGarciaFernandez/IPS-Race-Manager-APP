@@ -7,7 +7,6 @@ package ipsTeamwork.model.atleta;
  *
  */
 public class AtletaDto {
-
 	private String DNI;
 	private String idAtleta;
 	private int edad;
@@ -15,7 +14,6 @@ public class AtletaDto {
 	private String sexo;
 	private boolean discapacitado;
 	private String email;
-	private String apellido;
 
 	/**
 	 * @return the dNI

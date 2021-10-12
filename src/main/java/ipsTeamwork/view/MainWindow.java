@@ -261,6 +261,8 @@ public class MainWindow extends JFrame {
 			btnListaInscribirse = new JButton("Inscribirse");
 			btnListaInscribirse.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					//if selected from table register person into race.
+						//then printear justificante. CosasAMover.printJustificante(email);
 				}
 			});
 			btnListaInscribirse.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -488,6 +490,10 @@ public class MainWindow extends JFrame {
 	private JComboBox getComboRegistroSexo() {
 		if (comboRegistroSexo == null) {
 			comboRegistroSexo = new JComboBox();
+			comboRegistroSexo.addItem("Masculino");
+			comboRegistroSexo.addItem("Femenino");
+			comboRegistroSexo.addItem("Otro");
+			comboRegistroSexo.setSelectedIndex(-1);
 			comboRegistroSexo.setFont(new Font("Arial", Font.PLAIN, 14));
 			comboRegistroSexo.setBounds(169, 254, 370, 22);
 		}
@@ -566,7 +572,8 @@ public class MainWindow extends JFrame {
 			btnIngresoSiguiente = new JButton("Siguiente");
 			btnIngresoSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_ATLETA);
+					if(CosasAMover.checkAtleta(textIngresoEmail.getSelectedText()))
+						showCard(PANEL_LISTA_CARRERAS);
 				}
 			});
 			btnIngresoSiguiente.setForeground(Color.BLACK);
