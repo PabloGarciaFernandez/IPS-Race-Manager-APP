@@ -4,10 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -15,7 +15,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -24,11 +23,11 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import ipsTeamwork.controller.CosasAMover;
 import ipsTeamwork.controller.GestorDB;
+import ipsTeamwork.model.atleta.crud.ExisteAtletaByEmail;
 import ipsTeamwork.model.carrera.CarreraDto;
-import ipsTeamwork.model.carrera.crud.ListCarreras;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
+import ipsTeamwork.util.DtoBuilder;
 
 public class MainWindow extends JFrame {
 
@@ -54,7 +53,7 @@ public class MainWindow extends JFrame {
 	private JPanel pnVistaOrganizador;
 	private JButton btnListaCarreras;
 	private JButton btnMisCarreras;
-	private JPanel pnListaCarreras;
+	private JPanel pnListaCarrerasAtleta;
 	private JPanel pnLista14473;
 	private JPanel pnListaNorth;
 	private JButton btnListaInscribirse;
@@ -90,8 +89,8 @@ public class MainWindow extends JFrame {
 	private JButton btnOrganizadorCancelar;
 	private JButton btnOrganizadorSiguiente;
 	private JButton btnIngresoRegistro;
-	private JPanel pnVerCarreras;
-	private JPanel pnPrincipalVerCarreras;
+	private JPanel pnVerCarrerasOrganizador;
+	private JPanel pnPrincipalVerCarrerasOrganizador;
 	private JButton btVerVarrerasOrganizacion;
 	private JScrollPane scVerCarreras;
 	private JTable tbVerCarreras;
@@ -100,8 +99,8 @@ public class MainWindow extends JFrame {
 	private JTextArea txaAtletasInscritosEnXCarrera;
 	private DefaultTableModel tb;
 	private GestorDB db;
-	private JList<String> listCarreras;
-	private JScrollPane scrollPane;
+	private JScrollPane scrollPaneListaCarrerasAtleta;
+	private JTable tablaCarrerasParaAtleta;
 
 	/**
 	 * Create the frame.
@@ -120,11 +119,11 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnInicio(), PANEL_INICIO);
 		contentPane.add(getPnVistaAtleta(), PANEL_ATLETA);
 		contentPane.add(getPnVistaOrganizador(), PANEL_ORGANIZADOR);
-		contentPane.add(getPnListaCarreras(), PANEL_LISTA_CARRERAS);
+		contentPane.add(getPnListaCarrerasAtleta(), PANEL_LISTA_CARRERAS);
 		contentPane.add(getPnRegistro(), PANEL_REGISTRO);
 		contentPane.add(getPnIngreso(), PANEL_INGRESO);
-		contentPane.add(getPnVerCarreras(), PANEL_VERCARRERAS);
-		VerCarreras();
+		contentPane.add(getPnVerCarrerasOrganizador(), PANEL_VERCARRERAS);
+		verCarrerasOrganizador();
 	}
 
 	private JPanel getPnInicio() {
@@ -205,6 +204,7 @@ public class MainWindow extends JFrame {
 			});
 			btnListaCarreras.setBounds(197, 205, 192, 23);
 		}
+		cargarTablaCarrerasAtleta();
 		return btnListaCarreras;
 	}
 
@@ -222,27 +222,33 @@ public class MainWindow extends JFrame {
 		c1.show(contentPane, name);
 	}
 
-	private JPanel getPnListaCarreras() {
+	private JPanel getPnListaCarrerasAtleta() {
 
-		if (pnListaCarreras == null) {
-			pnListaCarreras = new JPanel();
-			pnListaCarreras.setLayout(new BorderLayout(0, 0));
-			pnListaCarreras.add(getScrollPane(), BorderLayout.CENTER);
-			pnListaCarreras.add(getPnListaNorth(), BorderLayout.NORTH);
-			pnListaCarreras.add(getPnListaSouth(), BorderLayout.SOUTH);
+		if (pnListaCarrerasAtleta == null) {
+			pnListaCarrerasAtleta = new JPanel();
+			pnListaCarrerasAtleta.setLayout(new BorderLayout(0, 0));
+			pnListaCarrerasAtleta.add(getScrollPaneListaCarrerasAtleta(), BorderLayout.CENTER);
+			pnListaCarrerasAtleta.add(getPnListaNorth(), BorderLayout.NORTH);
+			pnListaCarrerasAtleta.add(getPnListaSouth(), BorderLayout.SOUTH);
 		}
-		return pnListaCarreras;
+		return pnListaCarrerasAtleta;
 	}
 
-	private JPanel getPnLista14473() {
-		if (pnLista14473 == null) {
-			pnLista14473 = new JPanel();
-			pnLista14473.setBackground(Color.DARK_GRAY);
-			pnLista14473.setLayout(new GridLayout(1, 0, 0, 0));
-		}
-		return pnLista14473;
-	}
+	public DefaultTableModel cargarTablaCarrerasAtleta() {
+		GestorDB db = new GestorDB();
+		DefaultTableModel dtm = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
+		
+		List<CarreraDto> carreras = db.listarCarreras();
 
+		for (CarreraDto dto : carreras) {
+			String[] carrerasTabla = { dto.getNombre(), dto.getFecha().toString(), dto.getTipo(), String.valueOf(dto.getDistancia()), String.valueOf(dto.getCuota()), String.valueOf(dto.getFechaFin()), String.valueOf(dto.getPlazasDisp()) };
+			//"Nombre", "Fecha", "Tipo", "Distancia", "Cuota", "Fecha l\u00EDm. insc.", "Plazas disponibles"
+			dtm.addRow(carrerasTabla);
+		}
+		
+		return dtm;
+	}
+	
 	private JPanel getPnListaNorth() {
 		if (pnListaNorth == null) {
 			pnListaNorth = new JPanel();
@@ -568,7 +574,7 @@ public class MainWindow extends JFrame {
 			btnIngresoSiguiente = new JButton("Siguiente");
 			btnIngresoSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (CosasAMover.checkAtleta(textIngresoEmail.getSelectedText()))
+					if (new ExisteAtletaByEmail().execute(textIngresoEmail.getText()))
 						showCard(PANEL_LISTA_CARRERAS);
 				}
 			});
@@ -632,24 +638,24 @@ public class MainWindow extends JFrame {
 		return btnIngresoRegistro;
 	}
 
-	private JPanel getPnVerCarreras() {
-		if (pnVerCarreras == null) {
-			pnVerCarreras = new JPanel();
-			pnVerCarreras.setLayout(new BorderLayout(0, 0));
-			pnVerCarreras.add(getPnPrincipalVerCarreras(), BorderLayout.CENTER);
+	private JPanel getPnVerCarrerasOrganizador() {
+		if (pnVerCarrerasOrganizador == null) {
+			pnVerCarrerasOrganizador = new JPanel();
+			pnVerCarrerasOrganizador.setLayout(new BorderLayout(0, 0));
+			pnVerCarrerasOrganizador.add(getPnPrincipalVerCarrerasOrganizador(), BorderLayout.CENTER);
 		}
-		return pnVerCarreras;
+		return pnVerCarrerasOrganizador;
 	}
 
-	private JPanel getPnPrincipalVerCarreras() {
-		if (pnPrincipalVerCarreras == null) {
-			pnPrincipalVerCarreras = new JPanel();
-			pnPrincipalVerCarreras.setLayout(null);
-			pnPrincipalVerCarreras.add(getScVerCarreras());
-			pnPrincipalVerCarreras.add(getBtVerAtletasInscritosPorXCarrera());
-			pnPrincipalVerCarreras.add(getScVerAtletasInscritosPorXCarrera());
+	private JPanel getPnPrincipalVerCarrerasOrganizador() {
+		if (pnPrincipalVerCarrerasOrganizador == null) {
+			pnPrincipalVerCarrerasOrganizador = new JPanel();
+			pnPrincipalVerCarrerasOrganizador.setLayout(null);
+			pnPrincipalVerCarrerasOrganizador.add(getScVerCarreras());
+			pnPrincipalVerCarrerasOrganizador.add(getBtVerAtletasInscritosPorXCarrera());
+			pnPrincipalVerCarrerasOrganizador.add(getScVerAtletasInscritosPorXCarrera());
 		}
-		return pnPrincipalVerCarreras;
+		return pnPrincipalVerCarrerasOrganizador;
 	}
 
 	private JButton getBtVerVarrerasOrganizacion() {
@@ -678,8 +684,7 @@ public class MainWindow extends JFrame {
 	public JTable getTbVerCarreras() {
 		if (tbVerCarreras == null) {
 			tbVerCarreras = new JTable();
-			tbVerCarreras
-					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Tipo", "Max plazas" }));
+			tbVerCarreras.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Tipo", "Max plazas" }));
 
 		}
 		return tbVerCarreras;
@@ -688,10 +693,10 @@ public class MainWindow extends JFrame {
 	/**
 	 * Metodo para ver las Carreras en la tabla de organizador
 	 */
-	public void VerCarreras() {
+	public void verCarrerasOrganizador() {
 		GestorDB db = new GestorDB();
 
-		ArrayList<CarreraDto> carreras = db.selectCarrera();
+		ArrayList<CarreraDto> carreras = db.getArrayCarreras();
 
 		for (CarreraDto carreraDto : carreras) {
 
@@ -748,19 +753,33 @@ public class MainWindow extends JFrame {
 		return txaAtletasInscritosEnXCarrera;
 	}
 
-	private JList<String> getListCarreras() {
-		if (listCarreras == null) {
-			String[] toDisplay = new ListCarreras().execute();
-			listCarreras = new JList<String>();
-			listCarreras.setListData(toDisplay);
+	private JScrollPane getScrollPaneListaCarrerasAtleta() {
+		if (scrollPaneListaCarrerasAtleta == null) {
+			scrollPaneListaCarrerasAtleta = new JScrollPane();
+			scrollPaneListaCarrerasAtleta.add(getTablaCarrerasParaAtleta());
 		}
-		return listCarreras;
+		return scrollPaneListaCarrerasAtleta;
 	}
+	private JTable getTablaCarrerasParaAtleta() {
+		if (tablaCarrerasParaAtleta == null) {
+			tablaCarrerasParaAtleta = new JTable();
 
-	private JScrollPane getScrollPane() {
-		if (scrollPane == null) {
-			scrollPane = new JScrollPane(getListCarreras());
+			tablaCarrerasParaAtleta.setModel(new DefaultTableModel(
+				new Object[][] {
+				},
+				new String[] {
+					"Nombre", "Fecha", "Tipo", "Distancia", "Cuota", "Fecha l\u00EDm. insc.", "Plazas disponibles"
+				}
+			));
+			tablaCarrerasParaAtleta.getColumnModel().getColumn(0).setPreferredWidth(57);
+			tablaCarrerasParaAtleta.getColumnModel().getColumn(1).setPreferredWidth(48);
+			tablaCarrerasParaAtleta.getColumnModel().getColumn(2).setPreferredWidth(37);
+			tablaCarrerasParaAtleta.getColumnModel().getColumn(3).setPreferredWidth(55);
+			tablaCarrerasParaAtleta.getColumnModel().getColumn(4).setPreferredWidth(53);
+			tablaCarrerasParaAtleta.getColumnModel().getColumn(5).setPreferredWidth(85);
+			tablaCarrerasParaAtleta.getColumnModel().getColumn(6).setPreferredWidth(100);
+			
 		}
-		return scrollPane;
+		return tablaCarrerasParaAtleta;
 	}
 }

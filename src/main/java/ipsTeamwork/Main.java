@@ -22,25 +22,20 @@ public class Main {
 		db.crearTablas();
 		db.poblarTablas();
 		
-//		db.insertarAtleta();
-//		db.insertarCarrera();
-//		db.insertarInscripcion();
-//		db.insertarAtleta1();
-//		db.insertarInscripcion1();
 		
 		System.out.println("Listado de carreras.");
 		System.out.println();
-		db.selectCarrera();
+		db.selectCarreras();
 		System.out.println();
 		System.out.println();
 		System.out.println();
-//
-//		System.out.println("Listado de atletas.");
-//		System.out.println();
-//		db.selectAtletas();
-//		System.out.println();
-//		System.out.println();
-//		System.out.println();
+
+		System.out.println("Listado de atletas.");
+		System.out.println();
+		db.selectAtletas();
+		System.out.println();
+		System.out.println();
+		System.out.println();
 //
 //		System.out.println("Listado de inscripciones.");
 //		System.out.println();
@@ -50,19 +45,19 @@ public class Main {
 //		System.out.println();
 //
 //		
-//		System.out.println("Clasificaci�n general.");
+//		System.out.println("Clasificacion general.");
 //		System.out.println();
 //		db.obtenerClasificacionGeneral();
 //		System.out.println();
 //		System.out.println();
 //
-//		System.out.println("Clasificaci�n general hombres.");
+//		System.out.println("Clasificacion general hombres.");
 //		System.out.println();
 //		db.obtenerClasificacionGeneralHombres();
 //		System.out.println();
 //		System.out.println();
 //
-//		System.out.println("Clasificaci�n general mujeres.");
+//		System.out.println("Clasificacion general mujeres.");
 //		System.out.println();
 //		db.obtenerClasificacionGeneralMujeres();
 		

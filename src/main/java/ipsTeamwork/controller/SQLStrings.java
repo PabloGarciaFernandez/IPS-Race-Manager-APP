@@ -27,8 +27,6 @@ public class SQLStrings {
 
 	public static String insterInscripcion2 = "Insert into inscripcion values('96','a0931d2e-cf27-4965-b395-a086aa0228a5','015','2021-05-01','Inscrito', 'Tarjeta'); ";
 
-	// selects
-
 	public static String insertCarreraValues = "insert into carrera(idCarrera, nombre, fecha, tipo, distancia, cuota, fechaFinInsc, plazasDisp, maxPlazas) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	public static String insertAtletaValues = "insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado, email) values (?, ?, ?, ?, ?, ?, ?)";
@@ -37,13 +35,13 @@ public class SQLStrings {
 
 	// selects
 
-	public static String AtletaEjemplo = "select * from atleta";
+	public static String selectAllAtleta = "select * from atleta";
 
-	public static String listaCarreras = "select * from carrera";
+	public static String selectAllCarrera = "select * from carrera";
 
-	public static String InscripcionEjemplo = "select * from inscripcion";
-
-	public static String selectCarrera = "select * from carrera";
+	public static String selectAllInscripcion = "select * from inscripcion";
+	
+	public static String existeAtletaByEmail = "select * from atleta where email = ?";
 
 	// Consulta para el metodo estadoInscripcion
 

@@ -204,10 +204,6 @@ public class GestorDB {
 		}
 	}
 
-	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇
-	// |BORRAR CARRERAS|
-	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭
-
 	public void deleteAtleta() {
 		conectar();
 		try {
@@ -236,7 +232,22 @@ public class GestorDB {
 	public void selectAtletas() {
 		conectar();
 		try {
-			PreparedStatement ps = conn.prepareStatement(SQLStrings.AtletaEjemplo);
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.selectAllAtleta);
+			ResultSet rs = ps.executeQuery();
+
+			printResultSet(rs);
+
+		} catch (SQLException e) {
+			System.out.println("Error de script de DB: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+	}
+	
+	public void selectCarreras() {
+		conectar();
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.selectAllCarrera);
 			ResultSet rs = ps.executeQuery();
 
 			printResultSet(rs);
@@ -253,12 +264,12 @@ public class GestorDB {
 	 * 
 	 *         Metodo que devuelve todas las carreras
 	 */
-	public ArrayList<CarreraDto> selectCarrera() {
+	public ArrayList<CarreraDto> getArrayCarreras() {
 		conectar();
 
 		ArrayList<CarreraDto> carreras = new ArrayList<CarreraDto>();
 		try {
-			PreparedStatement ps = conn.prepareStatement(SQLStrings.listaCarreras);
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.selectAllCarrera);
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
@@ -272,7 +283,6 @@ public class GestorDB {
 				carreras.add(carrera);
 			}
 
-//			printResultSet(rs);
 		} catch (SQLException e) {
 			System.out.println("Error de script de DB: " + e.getMessage());
 		} finally {
@@ -284,7 +294,7 @@ public class GestorDB {
 	public void selectInscripcion() {
 		conectar();
 		try {
-			PreparedStatement ps = conn.prepareStatement(SQLStrings.InscripcionEjemplo);
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.selectAllInscripcion);
 			ResultSet rs = ps.executeQuery();
 
 			printResultSet(rs);
@@ -316,12 +326,6 @@ public class GestorDB {
 		}
 	}
 
-	/**
-	 * utilidad para imprimir resultsets por consola
-	 * 
-	 * @param rs
-	 * @throws SQLException
-	 */
 	public static int printResultSetOrdenadoClasificaciones(ResultSet rs, int valorInicial, boolean tieneTiempo)
 			throws SQLException {
 
@@ -363,7 +367,7 @@ public class GestorDB {
 
 		try {
 
-			PreparedStatement pst2 = conn.prepareStatement(SQLStrings.AtletaEjemplo);
+			PreparedStatement pst2 = conn.prepareStatement(SQLStrings.selectAllAtleta);
 			pst = conn.prepareStatement(SQLStrings.estadoInscipcion);
 
 			pst.setString(1, idCarrera);
@@ -440,8 +444,7 @@ public class GestorDB {
 
 			}
 		} catch (Exception e) {
-			System.out.println("hadios");
-			System.out.println("hola     " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -453,11 +456,7 @@ public class GestorDB {
 		try {
 			for (int j = 0; j < i; j++) {
 				System.out.println("metiendo carrera " + j);
-				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertCarreraValues); // (idCarrera, nombre,
-																								// fecha, tipo,
-																								// distancia, cuota,
-																								// fechaFinInsc,
-																								// plazasDisp)
+				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertCarreraValues);
 
 				pst.setString(1, UUID.randomUUID().toString());
 				pst.setString(2, UUID.randomUUID().toString().substring(0, 5));
@@ -483,7 +482,6 @@ public class GestorDB {
 				System.out.println(d2.toString());
 			}
 		} catch (Exception e) {
-
 			e.printStackTrace();
 		} finally {
 			cerrar();
@@ -495,19 +493,20 @@ public class GestorDB {
 		Random r = new Random();
 		try {
 			for (int j = 0; j < i; j++) {
-				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertAtletaValues);
+				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertAtletaValues); //"insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado, email) values (?, ?, ?, ?, ?, ?, ?)";
 				pst.setString(1, UUID.randomUUID().toString());
-				pst.setString(2, (r.nextBoolean() ? "myDNI" : "myOtherDNI"));
-				pst.setString(3, (r.nextBoolean() ? "myName" : "myOtherName"));
-				pst.setInt(4, (r.nextBoolean() ? 30 : 60));
+				pst.setString(2, "dni" + UUID.randomUUID().toString().substring(0, 4));
+				pst.setString(3, "nombre" + UUID.randomUUID().toString().substring(0, 4));
+				pst.setInt(4, (r.nextInt(30)+20));
 				pst.setString(5, (r.nextBoolean() ? "M" : "F"));
-				pst.setBoolean(6, (r.nextBoolean() ? true : false));
-
+				pst.setBoolean(6, r.nextBoolean());
+				pst.setString(7, "unicoEmail"); //pst.setString(7, "email" + UUID.randomUUID().toString().substring(0, 4));
+				
 				pst.executeUpdate();
 				pst.close();
 			}
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -537,7 +536,7 @@ public class GestorDB {
 			printResultSetOrdenadoClasificaciones(rs, valor2, false);
 
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -609,16 +608,34 @@ public class GestorDB {
 		conectar();
 
 		try {
-			pst = conn.prepareStatement(SQLStrings.listaCarreras);
+			pst = conn.prepareStatement(SQLStrings.selectAllCarrera);
 			rs = pst.executeQuery();
 
 			ret = DtoBuilder.toCarreraDtoList(rs);
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			;
+			
 		}
 
 		return ret;
+	}
+
+	public Connection getConnection() {
+		try {
+			if (conn == null || conn.isClosed()) conectar();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return conn;
+	}
+	
+	public void cerrarCon() {
+		if (conn != null)
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 	}
 }

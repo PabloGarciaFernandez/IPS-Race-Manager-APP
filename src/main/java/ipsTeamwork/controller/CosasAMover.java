@@ -83,23 +83,6 @@ public class CosasAMover {
 		}
 	}
 
-	public static boolean checkAtleta(String email) {
-		conectar();
-		boolean res = false;
-		try {
-			PreparedStatement pst = conn.prepareStatement(SQLStrings.insertAtletaValues);
-			pst.setString(1, email);
-			res = rs.next();
-			pst.executeUpdate();
-			pst.close();
-		} catch (Exception e) {
-
-		} finally {
-			cerrar();
-		}
-		return res;
-	}
-
 	public static void printJustificante(String algo) {
 		System.out.println("JUSTIFICANTE CARRERA: ");
 		System.out.println("Nombre: ");
