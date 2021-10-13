@@ -31,9 +31,6 @@ import ipsTeamwork.util.DtoBuilder;
 
 public class MainWindow extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3073912408195015551L;
 
 	private static final String PANEL_ATLETA = "panel_atleta";
@@ -204,7 +201,7 @@ public class MainWindow extends JFrame {
 			});
 			btnListaCarreras.setBounds(197, 205, 192, 23);
 		}
-		cargarTablaCarrerasAtleta();
+		//cargarTablaCarrerasAtleta(); TODO
 		return btnListaCarreras;
 	}
 

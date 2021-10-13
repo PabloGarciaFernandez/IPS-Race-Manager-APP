@@ -114,32 +114,7 @@ public class GestorDB {
 			cerrar();
 		}
 	}
-
-	public void borrarTablas(boolean all) {
-		if (!all) {
-			conectar();
-			try {
-				pst = conn.prepareStatement("drop table Inscripcion");
-				pst.execute();
-			} catch (SQLException e) {
-				System.out.println("Error en la la base de datos: " + e.getMessage());
-			} finally {
-				cerrar();
-			}
-		} else {
-			conectar();
-			try {
-				pst = conn.prepareStatement("drop table *");
-				pst.execute();
-				pst.close();
-			} catch (SQLException e) {
-				System.out.println("Error en la la base de datos: " + e.getMessage());
-			} finally {
-				cerrar();
-			}
-		}
-	}
-
+	
 	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇
 	// |INSERT DATOS |
 	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭
@@ -431,7 +406,7 @@ public class GestorDB {
 			for (int j = 0; j < i; j++) {
 				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertInscrpcionValues);
 				pst.setString(1, UUID.randomUUID().toString());
-				pst.setString(2, UUID.randomUUID().toString());
+				pst.setString(2, UUID.randomUUID().toString().substring(0,6));
 				pst.setString(3, (r.nextBoolean() ? "myDorsal" : "myOtherDorsal"));
 				pst.setDate(4, java.sql.Date.valueOf(LocalDate.now().getYear() + "-" + LocalDate.now().getMonthValue()
 						+ "-" + LocalDate.now().getDayOfMonth()));
