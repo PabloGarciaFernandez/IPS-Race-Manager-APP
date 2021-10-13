@@ -12,9 +12,6 @@ public class CarreraDto {
 	private Date fechaFin;
 	private int maxPlazas;
 
-	// idCarrera varchar2 NOT NULL,tipo varchar2 NOT NULL, maxPlazas integer NOT
-	// NULL
-
 	private int plazasDisp;
 
 	/**

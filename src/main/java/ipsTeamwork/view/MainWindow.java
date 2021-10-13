@@ -24,10 +24,10 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import ipsTeamwork.controller.CosasAMover;
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.model.atleta.AtletaDto;
-//import ipsTeamwork.model.atleta.crud.ExisteAtletaByEmail;
+import ipsTeamwork.model.atleta.crud.ExisteAtletaByEmail;
+import ipsTeamwork.model.atleta.crud.ReadAtletaByEmail;
 import ipsTeamwork.model.carrera.CarreraDto;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 
@@ -53,7 +53,6 @@ public class MainWindow extends JFrame {
 	private JButton btnListaCarreras;
 	private JButton btnMisCarreras;
 	private JPanel pnListaCarrerasAtleta;
-	private JPanel pnLista14473;
 	private JPanel pnListaNorth;
 	private JButton btnListaInscribirse;
 	private JPanel pnListaSouth;
@@ -93,10 +92,11 @@ public class MainWindow extends JFrame {
 	private JButton btVerVarrerasOrganizacion;
 	private JScrollPane scVerCarreras;
 	private JTable tbVerCarreras;
-	private JButton btVerAtletasInscritosPorXCarrera;
+	private JButton tbVerAtletasInscritosPorXCarrera;
 	private JScrollPane scVerAtletasInscritosPorXCarrera;
 	private JTextArea txaAtletasInscritosEnXCarrera;
 	private DefaultTableModel tb;
+	private DefaultTableModel tablaAtleta;
 	private GestorDB db;
 	private JScrollPane scrollPaneListaCarrerasAtleta;
 	private JTable tablaCarrerasParaAtleta;
@@ -109,6 +109,7 @@ public class MainWindow extends JFrame {
 	public MainWindow() {
 		db = new GestorDB();
 		tb = (DefaultTableModel) getTbVerCarreras().getModel();
+		tablaAtleta = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
 		setResizable(false);
 		setTitle("App");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -124,7 +125,8 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnRegistro(), PANEL_REGISTRO);
 		contentPane.add(getPnIngreso(), PANEL_INGRESO);
 		contentPane.add(getPnVerCarrerasOrganizador(), PANEL_VERCARRERAS);
-		verCarrerasOrganizador();
+		cargarTablaCarrerasOrganizador();
+		cargarTablaCarrerasAtleta();
 	}
 
 	private JPanel getPnInicio() {
@@ -235,10 +237,8 @@ public class MainWindow extends JFrame {
 		return pnListaCarrerasAtleta;
 	}
 
-	public DefaultTableModel cargarTablaCarrerasAtleta() {
+	public void cargarTablaCarrerasAtleta() { //TODO
 		GestorDB db = new GestorDB();
-		DefaultTableModel dtm = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
-
 		List<CarreraDto> carreras = db.listarCarreras();
 
 		for (CarreraDto dto : carreras) {
@@ -247,10 +247,22 @@ public class MainWindow extends JFrame {
 					String.valueOf(dto.getFechaFin()), String.valueOf(dto.getPlazasDisp()) };
 			// "Nombre", "Fecha", "Tipo", "Distancia", "Cuota", "Fecha l\u00EDm. insc.",
 			// "Plazas disponibles"
-			dtm.addRow(carrerasTabla);
+			tablaAtleta.addRow(carrerasTabla);
+			System.out.println("aÃ±adida linea a tabla: " + carrerasTabla);
 		}
+	}
+	
+	public void cargarTablaCarrerasOrganizador() {
+		GestorDB db = new GestorDB();
 
-		return dtm;
+		ArrayList<CarreraDto> carreras = db.getArrayCarreras();
+
+		for (CarreraDto carreraDto : carreras) {
+
+			String[] carrerasTabla = { carreraDto.getId(), carreraDto.getTipo(),
+					String.valueOf(carreraDto.getPlazasDisp()) };
+			tb.addRow(carrerasTabla);
+		}
 	}
 
 	private JPanel getPnListaNorth() {
@@ -445,7 +457,7 @@ public class MainWindow extends JFrame {
 	
 	private boolean checkFieldsRegisters() {
 		if(isEmptyLogin()) {
-			JOptionPane.showMessageDialog(null, "Error: Algunos campos están vacios.");
+			JOptionPane.showMessageDialog(null, "Error: Algunos campos estï¿½n vacios.");
 			return false;
 		}
 		return true;
@@ -611,14 +623,14 @@ public class MainWindow extends JFrame {
 			btnIngresoSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(!textIngresoEmail.getText().equals("")) {
-						if(CosasAMover.comprobarAtleta((textIngresoEmail.getText()))) {
-							atleta = CosasAMover.generarAtletaEnBaseADatos(textIngresoEmail.getText());
+						if(new ExisteAtletaByEmail().execute(textIngresoEmail.getText())) {
+							atleta = new ReadAtletaByEmail(textIngresoEmail.getText()).execute();
 							showCard(PANEL_LISTA_CARRERAS);
 							textIngresoEmail.setText("");
 						}
 					}
 					else {
-						JOptionPane.showMessageDialog(null, "Error: Algunos campos están vacios.");
+						JOptionPane.showMessageDialog(null, "Error: Algunos campos estï¿½n vacios.");
 					}
 				}
 			});
@@ -735,30 +747,16 @@ public class MainWindow extends JFrame {
 		return tbVerCarreras;
 	}
 
-	/**
-	 * Metodo para ver las Carreras en la tabla de organizador
-	 */
-	public void verCarrerasOrganizador() {
-		GestorDB db = new GestorDB();
 
-		ArrayList<CarreraDto> carreras = db.getArrayCarreras();
-
-		for (CarreraDto carreraDto : carreras) {
-
-			String[] carrerasTabla = { carreraDto.getId(), carreraDto.getTipo(),
-					String.valueOf(carreraDto.getPlazasDisp()) };
-			tb.addRow(carrerasTabla);
-		}
-	}
 
 	/**
 	 * Metodo cambiar
 	 */
 	private JButton getBtVerAtletasInscritosPorXCarrera() {
-		if (btVerAtletasInscritosPorXCarrera == null) {
-			btVerAtletasInscritosPorXCarrera = new JButton("Ver atletas inscritos de esa carrera");
-			btVerAtletasInscritosPorXCarrera.setMnemonic('v');
-			btVerAtletasInscritosPorXCarrera.addActionListener(new ActionListener() {
+		if (tbVerAtletasInscritosPorXCarrera == null) {
+			tbVerAtletasInscritosPorXCarrera = new JButton("Ver atletas inscritos de esa carrera");
+			tbVerAtletasInscritosPorXCarrera.setMnemonic('v');
+			tbVerAtletasInscritosPorXCarrera.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
 					String codigo = (String) tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0);
@@ -775,9 +773,9 @@ public class MainWindow extends JFrame {
 
 				}
 			});
-			btVerAtletasInscritosPorXCarrera.setBounds(161, 198, 233, 21);
+			tbVerAtletasInscritosPorXCarrera.setBounds(161, 198, 233, 21);
 		}
-		return btVerAtletasInscritosPorXCarrera;
+		return tbVerAtletasInscritosPorXCarrera;
 	}
 
 	private JScrollPane getScVerAtletasInscritosPorXCarrera() {
@@ -801,7 +799,7 @@ public class MainWindow extends JFrame {
 	private JScrollPane getScrollPaneListaCarrerasAtleta() {
 		if (scrollPaneListaCarrerasAtleta == null) {
 			scrollPaneListaCarrerasAtleta = new JScrollPane();
-			scrollPaneListaCarrerasAtleta.add(getTablaCarrerasParaAtleta());
+			scrollPaneListaCarrerasAtleta.setViewportView(getTablaCarrerasParaAtleta());
 		}
 		return scrollPaneListaCarrerasAtleta;
 	}
@@ -810,15 +808,13 @@ public class MainWindow extends JFrame {
 		if (tablaCarrerasParaAtleta == null) {
 			tablaCarrerasParaAtleta = new JTable();
 
-			tablaCarrerasParaAtleta.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Nombre", "Fecha",
-					"Tipo", "Distancia", "Cuota", "Fecha l\u00EDm. insc.", "Plazas disponibles" }));
-			tablaCarrerasParaAtleta.getColumnModel().getColumn(0).setPreferredWidth(57);
-			tablaCarrerasParaAtleta.getColumnModel().getColumn(1).setPreferredWidth(48);
-			tablaCarrerasParaAtleta.getColumnModel().getColumn(2).setPreferredWidth(37);
-			tablaCarrerasParaAtleta.getColumnModel().getColumn(3).setPreferredWidth(55);
-			tablaCarrerasParaAtleta.getColumnModel().getColumn(4).setPreferredWidth(53);
-			tablaCarrerasParaAtleta.getColumnModel().getColumn(5).setPreferredWidth(85);
-			tablaCarrerasParaAtleta.getColumnModel().getColumn(6).setPreferredWidth(100);
+			tablaCarrerasParaAtleta.setModel(new DefaultTableModel(
+				new Object[][] {
+				},
+				new String[] {
+					"Nombre", "Fecha", "Tipo", "Distancia", "Cuota", "Fecha lim. insc.", "Plazas disponibles"
+				}
+			));
 
 		}
 		return tablaCarrerasParaAtleta;

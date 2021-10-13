@@ -1,9 +1,8 @@
-package ipsTeamwork.model.carrera.crud;
+package ipsTeamwork.model.carrera;
 
 import java.util.List;
 
 import ipsTeamwork.controller.GestorDB;
-import ipsTeamwork.model.carrera.CarreraDto;
 
 public class ListCarreras {
 	

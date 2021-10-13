@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.carrera.CarreraDto;
 
 public class DtoBuilder {
@@ -32,5 +33,24 @@ public class DtoBuilder {
 		}
 		
 		return ret;
+	}
+
+	public static AtletaDto toAtletaDto(ResultSet rs) {
+		AtletaDto dto = new AtletaDto();
+		
+		try {
+			dto.setSexo(rs.getString("sexo"));
+			dto.setNombre(rs.getString("nombre"));
+			dto.setIdAtleta(rs.getString("idAtleta"));
+			dto.setEmail(rs.getString("email"));
+			dto.setEdad(rs.getInt("edad"));
+			dto.setDNI(rs.getString("dni"));
+			dto.setDiscapacitado(rs.getBoolean("discapacitado"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return dto;
 	}
 }
