@@ -24,10 +24,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import ipsTeamwork.controller.GestorDB;
-import ipsTeamwork.model.atleta.crud.ExisteAtletaByEmail;
+//import ipsTeamwork.model.atleta.crud.ExisteAtletaByEmail;
 import ipsTeamwork.model.carrera.CarreraDto;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
-import ipsTeamwork.util.DtoBuilder;
 
 public class MainWindow extends JFrame {
 
@@ -237,18 +236,21 @@ public class MainWindow extends JFrame {
 	public DefaultTableModel cargarTablaCarrerasAtleta() {
 		GestorDB db = new GestorDB();
 		DefaultTableModel dtm = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
-		
+
 		List<CarreraDto> carreras = db.listarCarreras();
 
 		for (CarreraDto dto : carreras) {
-			String[] carrerasTabla = { dto.getNombre(), dto.getFecha().toString(), dto.getTipo(), String.valueOf(dto.getDistancia()), String.valueOf(dto.getCuota()), String.valueOf(dto.getFechaFin()), String.valueOf(dto.getPlazasDisp()) };
-			//"Nombre", "Fecha", "Tipo", "Distancia", "Cuota", "Fecha l\u00EDm. insc.", "Plazas disponibles"
+			String[] carrerasTabla = { dto.getNombre(), dto.getFecha().toString(), dto.getTipo(),
+					String.valueOf(dto.getDistancia()), String.valueOf(dto.getCuota()),
+					String.valueOf(dto.getFechaFin()), String.valueOf(dto.getPlazasDisp()) };
+			// "Nombre", "Fecha", "Tipo", "Distancia", "Cuota", "Fecha l\u00EDm. insc.",
+			// "Plazas disponibles"
 			dtm.addRow(carrerasTabla);
 		}
-		
+
 		return dtm;
 	}
-	
+
 	private JPanel getPnListaNorth() {
 		if (pnListaNorth == null) {
 			pnListaNorth = new JPanel();
@@ -574,8 +576,8 @@ public class MainWindow extends JFrame {
 			btnIngresoSiguiente = new JButton("Siguiente");
 			btnIngresoSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (new ExisteAtletaByEmail().execute(textIngresoEmail.getText()))
-						showCard(PANEL_LISTA_CARRERAS);
+//					if (new ExisteAtletaByEmail().execute(textIngresoEmail.getText()))
+//						showCard(PANEL_LISTA_CARRERAS);
 				}
 			});
 			btnIngresoSiguiente.setForeground(Color.BLACK);
@@ -684,7 +686,8 @@ public class MainWindow extends JFrame {
 	public JTable getTbVerCarreras() {
 		if (tbVerCarreras == null) {
 			tbVerCarreras = new JTable();
-			tbVerCarreras.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Tipo", "Max plazas" }));
+			tbVerCarreras
+					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Tipo", "Max plazas" }));
 
 		}
 		return tbVerCarreras;
@@ -760,17 +763,13 @@ public class MainWindow extends JFrame {
 		}
 		return scrollPaneListaCarrerasAtleta;
 	}
+
 	private JTable getTablaCarrerasParaAtleta() {
 		if (tablaCarrerasParaAtleta == null) {
 			tablaCarrerasParaAtleta = new JTable();
 
-			tablaCarrerasParaAtleta.setModel(new DefaultTableModel(
-				new Object[][] {
-				},
-				new String[] {
-					"Nombre", "Fecha", "Tipo", "Distancia", "Cuota", "Fecha l\u00EDm. insc.", "Plazas disponibles"
-				}
-			));
+			tablaCarrerasParaAtleta.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Nombre", "Fecha",
+					"Tipo", "Distancia", "Cuota", "Fecha l\u00EDm. insc.", "Plazas disponibles" }));
 			tablaCarrerasParaAtleta.getColumnModel().getColumn(0).setPreferredWidth(57);
 			tablaCarrerasParaAtleta.getColumnModel().getColumn(1).setPreferredWidth(48);
 			tablaCarrerasParaAtleta.getColumnModel().getColumn(2).setPreferredWidth(37);
@@ -778,7 +777,7 @@ public class MainWindow extends JFrame {
 			tablaCarrerasParaAtleta.getColumnModel().getColumn(4).setPreferredWidth(53);
 			tablaCarrerasParaAtleta.getColumnModel().getColumn(5).setPreferredWidth(85);
 			tablaCarrerasParaAtleta.getColumnModel().getColumn(6).setPreferredWidth(100);
-			
+
 		}
 		return tablaCarrerasParaAtleta;
 	}
