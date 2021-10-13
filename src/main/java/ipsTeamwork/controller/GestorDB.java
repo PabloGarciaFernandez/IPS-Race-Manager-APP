@@ -114,7 +114,7 @@ public class GestorDB {
 			cerrar();
 		}
 	}
-	
+
 	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇
 	// |INSERT DATOS |
 	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭
@@ -218,7 +218,7 @@ public class GestorDB {
 			cerrar();
 		}
 	}
-	
+
 	public void selectCarreras() {
 		conectar();
 		try {
@@ -406,7 +406,7 @@ public class GestorDB {
 			for (int j = 0; j < i; j++) {
 				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertInscrpcionValues);
 				pst.setString(1, UUID.randomUUID().toString());
-				pst.setString(2, UUID.randomUUID().toString().substring(0,6));
+				pst.setString(2, UUID.randomUUID().toString().substring(0, 6));
 				pst.setString(3, (r.nextBoolean() ? "myDorsal" : "myOtherDorsal"));
 				pst.setDate(4, java.sql.Date.valueOf(LocalDate.now().getYear() + "-" + LocalDate.now().getMonthValue()
 						+ "-" + LocalDate.now().getDayOfMonth()));
@@ -468,15 +468,21 @@ public class GestorDB {
 		Random r = new Random();
 		try {
 			for (int j = 0; j < i; j++) {
-				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertAtletaValues); //"insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado, email) values (?, ?, ?, ?, ?, ?, ?)";
+				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertAtletaValues); // "insert into
+																								// atleta(idAtleta, dni,
+																								// nombre, edad, sexo,
+																								// discapacitado, email)
+																								// values (?, ?, ?, ?,
+																								// ?, ?, ?)";
 				pst.setString(1, UUID.randomUUID().toString());
 				pst.setString(2, "dni" + UUID.randomUUID().toString().substring(0, 4));
 				pst.setString(3, "nombre" + UUID.randomUUID().toString().substring(0, 4));
-				pst.setInt(4, (r.nextInt(30)+20));
+				pst.setInt(4, (r.nextInt(30) + 20));
 				pst.setString(5, (r.nextBoolean() ? "M" : "F"));
 				pst.setBoolean(6, r.nextBoolean());
-				pst.setString(7, "unicoEmail"); //pst.setString(7, "email" + UUID.randomUUID().toString().substring(0, 4));
-				
+				pst.setString(7, "unicoEmail"); // pst.setString(7, "email" + UUID.randomUUID().toString().substring(0,
+												// 4));
+
 				pst.executeUpdate();
 				pst.close();
 			}
@@ -590,7 +596,7 @@ public class GestorDB {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			
+
 		}
 
 		return ret;
@@ -598,13 +604,14 @@ public class GestorDB {
 
 	public Connection getConnection() {
 		try {
-			if (conn == null || conn.isClosed()) conectar();
+			if (conn == null || conn.isClosed())
+				conectar();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return conn;
 	}
-	
+
 	public void cerrarCon() {
 		if (conn != null)
 			try {

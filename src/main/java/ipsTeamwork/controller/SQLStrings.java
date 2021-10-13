@@ -17,7 +17,7 @@ public class SQLStrings {
 	// inserts
 
 	public static String insertBolt = "Insert into atleta values('96','11122234A','Bolt',35,'F',0); ";
-	
+
 	public static String insertUsain = "Insert into atleta values('69','11122233A','Usain',25,'M',1); ";
 
 	public static String insertNewYork = "Insert into carrera values('5','Asfalto',25); ";
@@ -31,7 +31,7 @@ public class SQLStrings {
 	public static String insertCarreraValues = "insert into carrera(idCarrera, nombre, fecha, tipo, distancia, cuota, fechaFinInsc, plazasDisp, maxPlazas) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	public static String insertAtletaValues = "insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado, email) values (?, ?, ?, ?, ?, ?, ?)";
-	
+
 	public static String insertInscrpcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
 
 	// selects
@@ -41,13 +41,13 @@ public class SQLStrings {
 	public static String selectAllCarrera = "select * from carrera";
 
 	public static String selectAllInscripcion = "select * from inscripcion";
-	
+
 	public static String existeAtletaByEmail = "select * from atleta where email = ?";
 
 	// Consulta para el metodo estadoInscripcion
 
 	protected static String estadoInscipcion = "select * from inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' order by fechaInscripcion, estadoInscripcion";
-	
+
 	protected static String estadoInscipcionAtleta = "select * from atleta where idAtleta = ?";
 
 	// Consultas para sacar las clasificaciones
