@@ -14,6 +14,19 @@ public class AtletaDto {
 	private String sexo;
 	private boolean discapacitado;
 	private String email;
+	
+	public AtletaDto() {
+		
+	}
+	
+	public AtletaDto(String dni, String name, int edad, String sexo, int discapacitado, String email) {
+		this.DNI = dni;
+		this.nombre = name;
+		this.edad = edad;
+		this.sexo = sexo;
+		this.discapacitado = (discapacitado == 1 ? true : false);
+		this.email = email;
+	}
 
 	/**
 	 * @return the dNI
