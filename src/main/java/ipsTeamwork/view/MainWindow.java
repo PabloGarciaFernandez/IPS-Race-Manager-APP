@@ -41,7 +41,8 @@ public class MainWindow extends JFrame {
 	private static final String PANEL_LISTA_CARRERAS = "panel_lista";
 	private static final String PANEL_REGISTRO = "panel_registro";
 	private static final String PANEL_INGRESO = "panel_ingreso";
-	private static final String PANEL_VERCARRERAS = "panel_verCarreras";
+	private static final String PANEL_VERCARRERASORGANIZADOR = "panel_verCarrerasOrganizador";
+	private static final String PANEL_PAGARINSCRIPCION = "panel_PagarInscripcion";
 
 	private JPanel contentPane;
 	private JPanel pnInicio;
@@ -100,8 +101,13 @@ public class MainWindow extends JFrame {
 	private GestorDB db;
 	private JScrollPane scrollPaneListaCarrerasAtleta;
 	private JTable tablaCarrerasParaAtleta;
-	
-	private AtletaDto atleta = null; //Atleta que esta usando la app ya sea registrado o logeado.
+
+	private AtletaDto atleta = null; // Atleta que esta usando la app ya sea registrado o logeado.
+	private JButton btAtrasVerCarrerasOrganizador;
+	private JPanel pnPagarInscripcion;
+	private JPanel pnPrincipalPagarInscripcion;
+	private JButton btPagarInscripcionTarjeta;
+	private JButton btPagarInscripcionTransferencia;
 
 	/**
 	 * Create the frame.
@@ -124,7 +130,8 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnListaCarrerasAtleta(), PANEL_LISTA_CARRERAS);
 		contentPane.add(getPnRegistro(), PANEL_REGISTRO);
 		contentPane.add(getPnIngreso(), PANEL_INGRESO);
-		contentPane.add(getPnVerCarrerasOrganizador(), PANEL_VERCARRERAS);
+		contentPane.add(getPnVerCarrerasOrganizador(), PANEL_VERCARRERASORGANIZADOR);
+		contentPane.add(getPnPagarInscripcion(), PANEL_PAGARINSCRIPCION);
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
 	}
@@ -207,7 +214,7 @@ public class MainWindow extends JFrame {
 			});
 			btnListaCarreras.setBounds(197, 205, 192, 23);
 		}
-		//cargarTablaCarrerasAtleta(); TODO
+		// cargarTablaCarrerasAtleta(); TODO
 		return btnListaCarreras;
 	}
 
@@ -237,7 +244,7 @@ public class MainWindow extends JFrame {
 		return pnListaCarrerasAtleta;
 	}
 
-	public void cargarTablaCarrerasAtleta() {
+	public void cargarTablaCarrerasAtleta() { 
 		GestorDB db = new GestorDB();
 		List<CarreraDto> carreras = db.listarCarreras();
 
@@ -251,7 +258,7 @@ public class MainWindow extends JFrame {
 			System.out.println("añadida linea a tabla: " + carrerasTabla);
 		}
 	}
-	
+
 	public void cargarTablaCarrerasOrganizador() {
 		GestorDB db = new GestorDB();
 
@@ -281,6 +288,7 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					// if selected from table register person into race.
 					// then printear justificante. CosasAMover.printJustificante(email);
+					showCard(PANEL_PAGARINSCRIPCION);
 				}
 			});
 			btnListaInscribirse.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -426,11 +434,13 @@ public class MainWindow extends JFrame {
 			btnRegistroSiguiente = new JButton("Siguiente");
 			btnRegistroSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(checkFieldsRegisters()) {
-						if(Integer.parseInt(textRegistroEdad.getText())>= 18) {
-							atleta = new AtletaDto(textRegistroDNI.getText(),textRegistroNombre.getText() + " " + textRegistroApellidos.getText(),
-									Integer.parseInt(textRegistroEdad.getText()),(""+ ((String) comboRegistroSexo.getSelectedItem()).charAt(0)),
-									chckbxRegistroDiscapacidad.isSelected()? 1 : 0, textRegistroEmail.getText());
+					if (checkFieldsRegisters()) {
+						if (Integer.parseInt(textRegistroEdad.getText()) >= 18) {
+							atleta = new AtletaDto(textRegistroDNI.getText(),
+									textRegistroNombre.getText() + " " + textRegistroApellidos.getText(),
+									Integer.parseInt(textRegistroEdad.getText()),
+									("" + ((String) comboRegistroSexo.getSelectedItem()).charAt(0)),
+									chckbxRegistroDiscapacidad.isSelected() ? 1 : 0, textRegistroEmail.getText());
 							showCard(PANEL_ATLETA);
 							cleanRegistro();
 							JOptionPane.showMessageDialog(null, "Registro satisfactorio , bienvenido.");
@@ -444,7 +454,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnRegistroSiguiente;
 	}
-	
+
 	private void cleanRegistro() {
 		textRegistroDNI.setText("");
 		textRegistroNombre.setText("");
@@ -454,9 +464,9 @@ public class MainWindow extends JFrame {
 		comboRegistroSexo.setSelectedIndex(-1);
 		chckbxRegistroDiscapacidad.setSelected(false);
 	}
-	
+
 	private boolean checkFieldsRegisters() {
-		if(isEmptyLogin()) {
+		if (isEmptyLogin()) {
 			JOptionPane.showMessageDialog(null, "Error: Algunos campos est�n vacios.");
 			return false;
 		}
@@ -464,10 +474,11 @@ public class MainWindow extends JFrame {
 	}
 
 	private boolean isEmptyLogin() {
-		return (textRegistroDNI.getText().equals("") || textRegistroNombre.equals("") || textRegistroApellidos.equals("") ||
-				textRegistroEmail.getText().equals("") || textRegistroEdad.getText().equals("") || comboRegistroSexo.getSelectedItem().equals(""));
+		return (textRegistroDNI.getText().equals("") || textRegistroNombre.equals("")
+				|| textRegistroApellidos.equals("") || textRegistroEmail.getText().equals("")
+				|| textRegistroEdad.getText().equals("") || comboRegistroSexo.getSelectedItem().equals(""));
 	}
-	
+
 	private JButton getBtnRegistroCancelar() {
 		if (btnRegistroCancelar == null) {
 			btnRegistroCancelar = new JButton("Cancelar");
@@ -622,14 +633,13 @@ public class MainWindow extends JFrame {
 			btnIngresoSiguiente = new JButton("Siguiente");
 			btnIngresoSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(!textIngresoEmail.getText().equals("")) {
-						if(new ExisteAtletaByEmail().execute(textIngresoEmail.getText())) {
+					if (!textIngresoEmail.getText().equals("")) {
+						if (new ExisteAtletaByEmail().execute(textIngresoEmail.getText())) {
 							atleta = new ReadAtletaByEmail(textIngresoEmail.getText()).execute();
 							showCard(PANEL_LISTA_CARRERAS);
 							textIngresoEmail.setText("");
 						}
-					}
-					else {
+					} else {
 						JOptionPane.showMessageDialog(null, "Error: Algunos campos est�n vacios.");
 					}
 				}
@@ -710,6 +720,7 @@ public class MainWindow extends JFrame {
 			pnPrincipalVerCarrerasOrganizador.add(getScVerCarreras());
 			pnPrincipalVerCarrerasOrganizador.add(getBtVerAtletasInscritosPorXCarrera());
 			pnPrincipalVerCarrerasOrganizador.add(getScVerAtletasInscritosPorXCarrera());
+			pnPrincipalVerCarrerasOrganizador.add(getBtAtrasVerCarrerasOrganizador());
 		}
 		return pnPrincipalVerCarrerasOrganizador;
 	}
@@ -720,7 +731,7 @@ public class MainWindow extends JFrame {
 			btVerVarrerasOrganizacion.setMnemonic('v');
 			btVerVarrerasOrganizacion.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_VERCARRERAS);
+					showCard(PANEL_VERCARRERASORGANIZADOR);
 				}
 			});
 			btVerVarrerasOrganizacion.setBounds(218, 129, 153, 42);
@@ -743,11 +754,11 @@ public class MainWindow extends JFrame {
 			tbVerCarreras
 					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Tipo", "Max plazas" }));
 
+			tbVerCarreras.setDefaultEditor(Object.class, null);
+
 		}
 		return tbVerCarreras;
 	}
-
-
 
 	/**
 	 * Metodo cambiar
@@ -808,15 +819,80 @@ public class MainWindow extends JFrame {
 		if (tablaCarrerasParaAtleta == null) {
 			tablaCarrerasParaAtleta = new JTable();
 
-			tablaCarrerasParaAtleta.setModel(new DefaultTableModel(
-				new Object[][] {
-				},
-				new String[] {
-					"Nombre", "Fecha", "Tipo", "Distancia", "Cuota", "Fecha lim. insc.", "Plazas disponibles"
-				}
-			));
+			tablaCarrerasParaAtleta.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Nombre", "Fecha",
+					"Tipo", "Distancia", "Cuota", "Fecha lim. insc.", "Plazas disponibles" }));
+
+			tablaCarrerasParaAtleta.setDefaultEditor(Object.class, null);
 
 		}
 		return tablaCarrerasParaAtleta;
+	}
+
+	private JButton getBtAtrasVerCarrerasOrganizador() {
+		if (btAtrasVerCarrerasOrganizador == null) {
+			btAtrasVerCarrerasOrganizador = new JButton("Atras");
+			btAtrasVerCarrerasOrganizador.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_ORGANIZADOR);
+//					showCard(PANEL_PAGARINSCRIPCION);
+				}
+			});
+			btAtrasVerCarrerasOrganizador.setBounds(10, 323, 85, 21);
+		}
+		return btAtrasVerCarrerasOrganizador;
+	}
+
+	private JPanel getPnPagarInscripcion() {
+		if (pnPagarInscripcion == null) {
+			pnPagarInscripcion = new JPanel();
+			pnPagarInscripcion.setLayout(new BorderLayout(0, 0));
+			pnPagarInscripcion.add(getPnPrincipalPagarInscripcion(), BorderLayout.CENTER);
+		}
+		return pnPagarInscripcion;
+	}
+
+	private JPanel getPnPrincipalPagarInscripcion() {
+		if (pnPrincipalPagarInscripcion == null) {
+			pnPrincipalPagarInscripcion = new JPanel();
+			pnPrincipalPagarInscripcion.setLayout(null);
+			pnPrincipalPagarInscripcion.add(getBtPagarInscripcionTarjeta());
+			pnPrincipalPagarInscripcion.add(getBtPagarInscripcionTransferencia());
+		}
+		return pnPrincipalPagarInscripcion;
+	}
+
+	private JButton getBtPagarInscripcionTarjeta() {
+		if (btPagarInscripcionTarjeta == null) {
+			btPagarInscripcionTarjeta = new JButton("Tarjeta");
+			btPagarInscripcionTarjeta.setBounds(71, 279, 134, 55);
+		}
+		return btPagarInscripcionTarjeta;
+	}
+
+	private JButton getBtPagarInscripcionTransferencia() {
+		if (btPagarInscripcionTransferencia == null) {
+			btPagarInscripcionTransferencia = new JButton("Trasferencia");
+			btPagarInscripcionTransferencia.setBounds(377, 279, 143, 55);
+			btPagarInscripcionTransferencia.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int pagaste;
+					int confirmado = JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia,
+							"Importe de x$, ingresar a la cuenta ESXXX-XXX-XXX con un plazo maximo de 48 horas.",
+							"Muchas gracias por inscribirse", JOptionPane.DEFAULT_OPTION);
+					System.out.println("Crear inscripcion");
+					if (JOptionPane.OK_OPTION == confirmado) {
+						pagaste = JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, "¿Ya pagaste?",
+								"Muchas gracias por inscribirse", JOptionPane.YES_NO_OPTION);
+						if (JOptionPane.YES_OPTION == pagaste) {
+							System.out.println("Update inscripcion");
+						}
+						if (JOptionPane.NO_OPTION == pagaste) {
+							System.out.println("Esperar 48 horas");
+						}
+					}
+				}
+			});
+		}
+		return btPagarInscripcionTransferencia;
 	}
 }
