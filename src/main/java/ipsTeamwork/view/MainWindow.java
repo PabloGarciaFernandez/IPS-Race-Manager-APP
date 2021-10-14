@@ -6,8 +6,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -103,6 +106,7 @@ public class MainWindow extends JFrame {
 	private JTable tablaCarrerasParaAtleta;
 
 	private AtletaDto atleta = null; // Atleta que esta usando la app ya sea registrado o logeado.
+	private CarreraDto carreraActual = null;
 	private JButton btAtrasVerCarrerasOrganizador;
 	private JPanel pnPagarInscripcion;
 	private JPanel pnPrincipalPagarInscripcion;
@@ -153,7 +157,7 @@ public class MainWindow extends JFrame {
 			btnAtleta.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnAtleta.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_INGRESO);
+					showCard(PANEL_ATLETA);
 				}
 			});
 			btnAtleta.setBounds(217, 247, 146, 23);
@@ -286,12 +290,63 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					// if selected from table register person into race.
 					// then printear justificante. CosasAMover.printJustificante(email);
-					showCard(PANEL_PAGARINSCRIPCION);
+					if(checkCarreraRow()) {
+						if(checkIfParticipable()) {
+							showCard(PANEL_INGRESO);
+						}
+					}
+					else {
+						
+					}
 				}
 			});
 			btnListaInscribirse.setFont(new Font("Arial", Font.PLAIN, 14));
 		}
 		return btnListaInscribirse;
+	}
+	
+	private boolean checkIfParticipable() {
+		
+//		return checkValidDate();
+		//check si no se inscribe varias veces.
+		db.comprobarAtletaEnCarrera(); // todo
+		//check si plazas libres.
+		return false;
+	}
+
+	private boolean checkValidDate() {
+		//check si plazo abierto.
+		String todayDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+		String limitDate = new SimpleDateFormat("yyyy-MM-dd").format(carreraActual.getFechaFin());
+		if(limitDate.compareTo(todayDate) < 0) { //if limit date passed
+			JOptionPane.showMessageDialog(null, "La fecha de inscripción a la carrera ya ha pasado.");
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+	
+	private boolean checkCarreraRow() {
+		try{
+			Vector vector = tablaAtleta.getDataVector().elementAt(tablaCarrerasParaAtleta.getSelectedRow());
+			if(vector != null) {
+				carreraActual = new CarreraDto();
+				carreraActual.setNombre((String)vector.get(0));
+				Date date =new SimpleDateFormat("yyyy-MM-dd").parse((String)vector.get(1));  
+				carreraActual.setFecha(date);
+				carreraActual.setTipo((String)vector.get(2));
+				carreraActual.setDistancia(Double.parseDouble((String)vector.get(3)));
+				carreraActual.setCuota(Float.parseFloat((String)vector.get(4)));
+				Date date1 =new SimpleDateFormat("yyyy-MM-dd").parse((String)vector.get(5));  
+				carreraActual.setFechaFin(date1);
+				carreraActual.setPlazasDisp(Integer.parseInt((String)vector.get(6)));
+				return true;
+			}		
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null, "No has seleccionado ninguna carrera");
+		}
+		return false;
 	}
 
 	private JPanel getPnListaSouth() {
@@ -615,7 +670,7 @@ public class MainWindow extends JFrame {
 			btnIngresoCancelar = new JButton("Cancelar");
 			btnIngresoCancelar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_INICIO);
+					showCard(PANEL_LISTA_CARRERAS);
 				}
 			});
 			btnIngresoCancelar.setForeground(Color.BLACK);
@@ -633,7 +688,7 @@ public class MainWindow extends JFrame {
 					if (!textIngresoEmail.getText().equals("")) {
 						if (new ExisteAtletaByEmail().execute(textIngresoEmail.getText())) {
 							atleta = new ReadAtletaByEmail(textIngresoEmail.getText()).execute();
-							showCard(PANEL_LISTA_CARRERAS);
+							showCard(PANEL_PAGARINSCRIPCION);
 							textIngresoEmail.setText("");
 						}
 					} else {

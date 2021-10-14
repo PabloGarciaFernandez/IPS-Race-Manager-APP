@@ -49,6 +49,8 @@ public class SQLStrings {
 	protected static String estadoInscipcion = "select * from inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' order by fechaInscripcion, estadoInscripcion";
 
 	protected static String estadoInscipcionAtleta = "select * from atleta where idAtleta = ?";
+	
+	protected static String atletaParticipanteDeCarrera = "select * from atleta a, inscripcion i where i.idAtleta = a.idAtleta";
 
 	// Consultas para sacar las clasificaciones
 

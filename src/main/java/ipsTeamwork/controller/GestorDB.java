@@ -602,6 +602,9 @@ public class GestorDB {
 		return ret;
 	}
 	
+	public void comprobarAtletaEnCarrera() {
+		//todo
+	}
 	
 
 	public Connection getConnection() {
