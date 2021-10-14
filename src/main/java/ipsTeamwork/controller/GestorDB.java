@@ -394,7 +394,7 @@ public class GestorDB {
 	 */
 	public void poblarTablas() {
 		poblarCarreras(25);
-		poblarAtletas(25);
+		poblarAtletas(1);
 		poblarInscripciones(25);
 	}
 
@@ -433,28 +433,28 @@ public class GestorDB {
 				System.out.println("metiendo carrera " + j);
 				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertCarreraValues);
 
+				
+				
+				java.sql.Date fechaFinInsc = new java.sql.Date(DateUtil.between(new Calendar.Builder().setDate(2021, 4, 1).build().getTime(), new Calendar.Builder().setDate(2022, 7, 1).build().getTime()).getTime());
+				java.sql.Date fechaCarrera = new java.sql.Date(DateUtil.between(new Date(fechaFinInsc.getTime()), new Calendar.Builder().setDate(2023, 12, 31).build().getTime()).getTime());
+				
 				pst.setString(1, UUID.randomUUID().toString());
 				pst.setString(2, UUID.randomUUID().toString().substring(0, 5));
 
-				java.sql.Date d = new java.sql.Date(DateUtil
-						.between(new Date(), new Calendar.Builder().setDate(2023, 12, 31).build().getTime()).getTime());
-				pst.setDate(3, d); // fecha origen
+				pst.setDate(3, fechaCarrera); // fecha origen
 
 				pst.setString(4, (r.nextBoolean() ? "Asfalto" : "Montaña"));
 				pst.setInt(5, r.nextInt(24) + 1); // distancia en km
-				pst.setInt(6, r.nextInt(50 + 1)); // cuota
-
-				java.sql.Date d2 = new java.sql.Date(
-						new Calendar.Builder().setDate(2022, 1, 1).build().getTimeInMillis());
-				pst.setDate(7, d2); // fecha origen
+				pst.setInt(6, r.nextInt(50 + 1)); // cuota;
+				
+				
+				pst.setDate(7, fechaFinInsc); // fecha fin insc
 
 				pst.setInt(8, r.nextInt(100 + 1));
 				pst.setInt(9, r.nextInt(100 + 1));
 
 				pst.executeUpdate();
 				pst.close();
-
-				System.out.println(d2.toString());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -601,6 +601,8 @@ public class GestorDB {
 
 		return ret;
 	}
+	
+	
 
 	public Connection getConnection() {
 		try {

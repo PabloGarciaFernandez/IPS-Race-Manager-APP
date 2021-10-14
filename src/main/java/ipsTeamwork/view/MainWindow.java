@@ -29,6 +29,7 @@ import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.atleta.crud.ExisteAtletaByEmail;
 import ipsTeamwork.model.atleta.crud.ReadAtletaByEmail;
 import ipsTeamwork.model.carrera.CarreraDto;
+import ipsTeamwork.model.carrera.crud.SelectAllVistaAtleta;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 
 public class MainWindow extends JFrame {
@@ -87,7 +88,6 @@ public class MainWindow extends JFrame {
 	private JPanel pnOrganizadorCentro;
 	private JButton btnOrganizadorCancelar;
 	private JButton btnOrganizadorSiguiente;
-	private JButton btnIngresoRegistro;
 	private JPanel pnVerCarrerasOrganizador;
 	private JPanel pnPrincipalVerCarrerasOrganizador;
 	private JButton btVerVarrerasOrganizacion;
@@ -214,7 +214,6 @@ public class MainWindow extends JFrame {
 			});
 			btnListaCarreras.setBounds(197, 205, 192, 23);
 		}
-		// cargarTablaCarrerasAtleta(); TODO
 		return btnListaCarreras;
 	}
 
@@ -244,14 +243,13 @@ public class MainWindow extends JFrame {
 		return pnListaCarrerasAtleta;
 	}
 
-	public void cargarTablaCarrerasAtleta() { 
-		GestorDB db = new GestorDB();
-		List<CarreraDto> carreras = db.listarCarreras();
+	public void cargarTablaCarrerasAtleta() {
+		List<CarreraDto> carreras = new SelectAllVistaAtleta().execute();
 
 		for (CarreraDto dto : carreras) {
 			String[] carrerasTabla = { dto.getNombre(), dto.getFecha().toString(), dto.getTipo(),
 					String.valueOf(dto.getDistancia()), String.valueOf(dto.getCuota()),
-					String.valueOf(dto.getFechaFin()), String.valueOf(dto.getPlazasDisp()) };
+					dto.getFechaFin().toString(), String.valueOf(dto.getPlazasDisp()) };
 			// "Nombre", "Fecha", "Tipo", "Distancia", "Cuota", "Fecha l\u00EDm. insc.",
 			// "Plazas disponibles"
 			tablaAtleta.addRow(carrerasTabla);
@@ -310,7 +308,7 @@ public class MainWindow extends JFrame {
 			btnListaAtras = new JButton("Atras");
 			btnListaAtras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_INICIO);
+					showCard(PANEL_ATLETA);
 				}
 			});
 			btnListaAtras.setForeground(Color.BLACK);
@@ -474,9 +472,9 @@ public class MainWindow extends JFrame {
 	}
 
 	private boolean isEmptyLogin() {
-		return (textRegistroDNI.getText().equals("") || textRegistroNombre.equals("")
-				|| textRegistroApellidos.equals("") || textRegistroEmail.getText().equals("")
-				|| textRegistroEdad.getText().equals("") || comboRegistroSexo.getSelectedItem().equals(""));
+		return (textRegistroDNI.getText().isEmpty() || textRegistroNombre.getText().isEmpty()
+				|| textRegistroApellidos.getText().isEmpty()  || textRegistroEmail.getText().isEmpty()
+				|| textRegistroEdad.getText().isEmpty() ); //esto no va a funcionar comboRegistroSexo.getSelectedItem().equals(""));
 	}
 
 	private JButton getBtnRegistroCancelar() {
@@ -579,7 +577,6 @@ public class MainWindow extends JFrame {
 			pnIngresoCenter.add(getLblIngresoDeCuenta());
 			pnIngresoCenter.add(getBtnIngresoCancelar());
 			pnIngresoCenter.add(getBtnIngresoSiguiente());
-			pnIngresoCenter.add(getBtnIngresoRegistro());
 		}
 		return pnIngresoCenter;
 	}
@@ -689,19 +686,6 @@ public class MainWindow extends JFrame {
 			btnOrganizadorSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
 		}
 		return btnOrganizadorSiguiente;
-	}
-
-	private JButton getBtnIngresoRegistro() {
-		if (btnIngresoRegistro == null) {
-			btnIngresoRegistro = new JButton("Registrarme");
-			btnIngresoRegistro.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_REGISTRO);
-				}
-			});
-			btnIngresoRegistro.setBounds(241, 236, 100, 23);
-		}
-		return btnIngresoRegistro;
 	}
 
 	private JPanel getPnVerCarrerasOrganizador() {
