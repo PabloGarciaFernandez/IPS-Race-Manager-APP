@@ -237,7 +237,7 @@ public class MainWindow extends JFrame {
 		return pnListaCarrerasAtleta;
 	}
 
-	public void cargarTablaCarrerasAtleta() { //TODO
+	public void cargarTablaCarrerasAtleta() {
 		GestorDB db = new GestorDB();
 		List<CarreraDto> carreras = db.listarCarreras();
 
