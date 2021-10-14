@@ -168,16 +168,4 @@ public class InscripcionDto {
 				+ ", carrera=" + carrera + ", formaDePago=" + formaDePago + "]";
 	}
 
-	/**
-	 * @author Sergio Arroni
-	 * 
-	 *         DNI, Nombre, Categoría, Fecha de Inscripción y Estado de Inscripción
-	 * @return
-	 */
-	public String toStringVerAtletas() {
-		return "DNI: " + atleta.getDNI() + ", nombre: " + atleta.getNombre() + ", categoria: "
-				+ calculaCategoria(atleta.getEdad(), atleta.getSexo()) + ", Fecha de inscripción: " + fechaInscripcion
-				+ " y Estado inscipcion: " + estadoInscripcion;
-	}
-
 }

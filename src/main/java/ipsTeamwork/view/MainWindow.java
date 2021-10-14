@@ -16,13 +16,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -98,13 +98,13 @@ public class MainWindow extends JFrame {
 	private JTable tbVerCarreras;
 	private JButton tbVerAtletasInscritosPorXCarrera;
 	private JScrollPane scVerAtletasInscritosPorXCarrera;
-	private JTextArea txaAtletasInscritosEnXCarrera;
+	private JTable tbAtletasInscritosEnXCarrera;
 	private DefaultTableModel tb;
 	private DefaultTableModel tablaAtleta;
+	private DefaultTableModel tablaAtletasInscritosX;
 	private GestorDB db;
 	private JScrollPane scrollPaneListaCarrerasAtleta;
 	private JTable tablaCarrerasParaAtleta;
-
 	private AtletaDto atleta = null; // Atleta que esta usando la app ya sea registrado o logeado.
 	private CarreraDto carreraActual = null;
 	private JButton btAtrasVerCarrerasOrganizador;
@@ -112,6 +112,7 @@ public class MainWindow extends JFrame {
 	private JPanel pnPrincipalPagarInscripcion;
 	private JButton btPagarInscripcionTarjeta;
 	private JButton btPagarInscripcionTransferencia;
+	private JButton btPagarinscripcionAtras;
 
 	/**
 	 * Create the frame.
@@ -120,6 +121,7 @@ public class MainWindow extends JFrame {
 		db = new GestorDB();
 		tb = (DefaultTableModel) getTbVerCarreras().getModel();
 		tablaAtleta = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
+		tablaAtletasInscritosX = (DefaultTableModel) getTbAtletasInscritosEnXCarrera().getModel();
 		setResizable(false);
 		setTitle("App");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -252,8 +254,8 @@ public class MainWindow extends JFrame {
 
 		for (CarreraDto dto : carreras) {
 			String[] carrerasTabla = { dto.getNombre(), dto.getFecha().toString(), dto.getTipo(),
-					String.valueOf(dto.getDistancia()), String.valueOf(dto.getCuota()),
-					dto.getFechaFin().toString(), String.valueOf(dto.getPlazasDisp()) };
+					String.valueOf(dto.getDistancia()), String.valueOf(dto.getCuota()), dto.getFechaFin().toString(),
+					String.valueOf(dto.getPlazasDisp()) };
 			// "Nombre", "Fecha", "Tipo", "Distancia", "Cuota", "Fecha l\u00EDm. insc.",
 			// "Plazas disponibles"
 			tablaAtleta.addRow(carrerasTabla);
@@ -290,13 +292,13 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					// if selected from table register person into race.
 					// then printear justificante. CosasAMover.printJustificante(email);
-					if(checkCarreraRow()) {
-						if(checkIfParticipable()) {
+					if (checkCarreraRow()) {
+						if (checkIfParticipable()) {
 							showCard(PANEL_INGRESO);
+						} else {
+							showCard(PANEL_PAGARINSCRIPCION);
 						}
-					}
-					else {
-						
+					} else {
 					}
 				}
 			});
@@ -304,46 +306,45 @@ public class MainWindow extends JFrame {
 		}
 		return btnListaInscribirse;
 	}
-	
+
 	private boolean checkIfParticipable() {
-		
+
 //		return checkValidDate();
-		//check si no se inscribe varias veces.
+		// check si no se inscribe varias veces.
 		db.comprobarAtletaEnCarrera(); // todo
-		//check si plazas libres.
+		// check si plazas libres.
 		return false;
 	}
 
 	private boolean checkValidDate() {
-		//check si plazo abierto.
+		// check si plazo abierto.
 		String todayDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 		String limitDate = new SimpleDateFormat("yyyy-MM-dd").format(carreraActual.getFechaFin());
-		if(limitDate.compareTo(todayDate) < 0) { //if limit date passed
-			JOptionPane.showMessageDialog(null, "La fecha de inscripci髇 a la carrera ya ha pasado.");
+		if (limitDate.compareTo(todayDate) < 0) { // if limit date passed
+			JOptionPane.showMessageDialog(null, "La fecha de inscripci锟絥 a la carrera ya ha pasado.");
 			return false;
-		}
-		else {
+		} else {
 			return true;
 		}
 	}
-	
+
 	private boolean checkCarreraRow() {
-		try{
+		try {
 			Vector vector = tablaAtleta.getDataVector().elementAt(tablaCarrerasParaAtleta.getSelectedRow());
-			if(vector != null) {
+			if (vector != null) {
 				carreraActual = new CarreraDto();
-				carreraActual.setNombre((String)vector.get(0));
-				Date date =new SimpleDateFormat("yyyy-MM-dd").parse((String)vector.get(1));  
+				carreraActual.setNombre((String) vector.get(0));
+				Date date = new SimpleDateFormat("yyyy-MM-dd").parse((String) vector.get(1));
 				carreraActual.setFecha(date);
-				carreraActual.setTipo((String)vector.get(2));
-				carreraActual.setDistancia(Double.parseDouble((String)vector.get(3)));
-				carreraActual.setCuota(Float.parseFloat((String)vector.get(4)));
-				Date date1 =new SimpleDateFormat("yyyy-MM-dd").parse((String)vector.get(5));  
+				carreraActual.setTipo((String) vector.get(2));
+				carreraActual.setDistancia(Double.parseDouble((String) vector.get(3)));
+				carreraActual.setCuota(Float.parseFloat((String) vector.get(4)));
+				Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse((String) vector.get(5));
 				carreraActual.setFechaFin(date1);
-				carreraActual.setPlazasDisp(Integer.parseInt((String)vector.get(6)));
+				carreraActual.setPlazasDisp(Integer.parseInt((String) vector.get(6)));
 				return true;
-			}		
-		} catch(Exception e) {
+			}
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "No has seleccionado ninguna carrera");
 		}
 		return false;
@@ -528,8 +529,9 @@ public class MainWindow extends JFrame {
 
 	private boolean isEmptyLogin() {
 		return (textRegistroDNI.getText().isEmpty() || textRegistroNombre.getText().isEmpty()
-				|| textRegistroApellidos.getText().isEmpty()  || textRegistroEmail.getText().isEmpty()
-				|| textRegistroEdad.getText().isEmpty() ); //esto no va a funcionar comboRegistroSexo.getSelectedItem().equals(""));
+				|| textRegistroApellidos.getText().isEmpty() || textRegistroEmail.getText().isEmpty()
+				|| textRegistroEdad.getText().isEmpty()); // esto no va a funcionar
+															// comboRegistroSexo.getSelectedItem().equals(""));
 	}
 
 	private JButton getBtnRegistroCancelar() {
@@ -815,9 +817,13 @@ public class MainWindow extends JFrame {
 
 					for (InscripcionDto inscripcionDto : atletas) {
 
-						System.out.println(inscripcionDto.toString());
+						String[] alluneedislove = { inscripcionDto.getAtleta().getDNI(),
+								inscripcionDto.calculaCategoria(inscripcionDto.getAtleta().getEdad(),
+										inscripcionDto.getAtleta().getSexo()),
+								String.valueOf(inscripcionDto.getFechaInscripcion()),
+								inscripcionDto.getEstadoInscripcion() };
 
-						getTxaAtletasInscritosEnXCarrera().setText(inscripcionDto.toStringVerAtletas());
+						tablaAtletasInscritosX.addRow(alluneedislove);
 
 					}
 
@@ -832,18 +838,31 @@ public class MainWindow extends JFrame {
 		if (scVerAtletasInscritosPorXCarrera == null) {
 			scVerAtletasInscritosPorXCarrera = new JScrollPane();
 			scVerAtletasInscritosPorXCarrera.setBounds(161, 246, 238, 98);
-			scVerAtletasInscritosPorXCarrera.setViewportView(getTxaAtletasInscritosEnXCarrera());
+			scVerAtletasInscritosPorXCarrera.setViewportView(getTbAtletasInscritosEnXCarrera());
 		}
 		return scVerAtletasInscritosPorXCarrera;
 	}
 
-	private JTextArea getTxaAtletasInscritosEnXCarrera() {
-		if (txaAtletasInscritosEnXCarrera == null) {
-			txaAtletasInscritosEnXCarrera = new JTextArea();
-			txaAtletasInscritosEnXCarrera.setEditable(false);
+	/**
+	 * 
+	 * @author Sergio Arroni
+	 * 
+	 *         Tabla con DNI, Nombre, Categor铆a, Fecha de Inscripci贸n y Estado de
+	 *         Inscripci贸n
+	 * 
+	 * @return
+	 */
+
+	private JTable getTbAtletasInscritosEnXCarrera() {
+		if (tbAtletasInscritosEnXCarrera == null) {
+			tbAtletasInscritosEnXCarrera = new JTable();
+			tbAtletasInscritosEnXCarrera.setModel(new DefaultTableModel(new Object[][] {},
+					new String[] { "DNI", "Nombre", "Categor铆a", "Fecha de Inscripci贸n", "Estado de Inscripci贸n" }));
+
+			tbAtletasInscritosEnXCarrera.setDefaultEditor(Object.class, null);
 
 		}
-		return txaAtletasInscritosEnXCarrera;
+		return tbAtletasInscritosEnXCarrera;
 	}
 
 	private JScrollPane getScrollPaneListaCarrerasAtleta() {
@@ -857,7 +876,6 @@ public class MainWindow extends JFrame {
 	private JTable getTablaCarrerasParaAtleta() {
 		if (tablaCarrerasParaAtleta == null) {
 			tablaCarrerasParaAtleta = new JTable();
-
 			tablaCarrerasParaAtleta.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Nombre", "Fecha",
 					"Tipo", "Distancia", "Cuota", "Fecha lim. insc.", "Plazas disponibles" }));
 
@@ -896,6 +914,7 @@ public class MainWindow extends JFrame {
 			pnPrincipalPagarInscripcion.setLayout(null);
 			pnPrincipalPagarInscripcion.add(getBtPagarInscripcionTarjeta());
 			pnPrincipalPagarInscripcion.add(getBtPagarInscripcionTransferencia());
+			pnPrincipalPagarInscripcion.add(getBtPagarinscripcionAtras());
 		}
 		return pnPrincipalPagarInscripcion;
 	}
@@ -903,7 +922,7 @@ public class MainWindow extends JFrame {
 	private JButton getBtPagarInscripcionTarjeta() {
 		if (btPagarInscripcionTarjeta == null) {
 			btPagarInscripcionTarjeta = new JButton("Tarjeta");
-			btPagarInscripcionTarjeta.setBounds(71, 279, 134, 55);
+			btPagarInscripcionTarjeta.setBounds(62, 121, 134, 55);
 		}
 		return btPagarInscripcionTarjeta;
 	}
@@ -911,27 +930,58 @@ public class MainWindow extends JFrame {
 	private JButton getBtPagarInscripcionTransferencia() {
 		if (btPagarInscripcionTransferencia == null) {
 			btPagarInscripcionTransferencia = new JButton("Trasferencia");
-			btPagarInscripcionTransferencia.setBounds(377, 279, 143, 55);
+			btPagarInscripcionTransferencia.setBounds(367, 121, 143, 55);
 			btPagarInscripcionTransferencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+
+					String nombre = String
+							.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 0));
+					String fecha = String
+							.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 1));
+					String tipo = String
+							.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 2));
+					String distancia = String
+							.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 3));
+					String cuota = String
+							.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 4));
+
+					String todo = "Estas apuntado a la carrera con nombre: " + nombre + "\nLa carrera se efectuara el "
+							+ fecha + "\nDel tipo " + tipo + "\nCon una distancia real de " + distancia
+							+ "km\nLa cual tiene un coste de " + cuota
+							+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
+
+					JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, todo,
+							"Este es tu justifcante de pago por Transacci贸n", JOptionPane.DEFAULT_OPTION);
+					db.insertarInscripcionParametros(new InscripcionDto());
+
 					int pagaste;
-					int confirmado = JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia,
-							"Importe de x$, ingresar a la cuenta ESXXX-XXX-XXX con un plazo maximo de 48 horas.",
-							"Muchas gracias por inscribirse", JOptionPane.DEFAULT_OPTION);
 					System.out.println("Crear inscripcion");
-					if (JOptionPane.OK_OPTION == confirmado) {
-						pagaste = JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, "驴Ya pagaste?",
-								"Muchas gracias por inscribirse", JOptionPane.YES_NO_OPTION);
-						if (JOptionPane.YES_OPTION == pagaste) {
-							System.out.println("Update inscripcion");
-						}
-						if (JOptionPane.NO_OPTION == pagaste) {
-							System.out.println("Esperar 48 horas");
-						}
+
+					pagaste = JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, "驴Ya pagaste?",
+							"Muchas gracias por inscribirse", JOptionPane.YES_NO_OPTION);
+					if (JOptionPane.YES_OPTION == pagaste) {
+						System.out.println("Update inscripcion");
 					}
+					if (JOptionPane.NO_OPTION == pagaste) {
+						System.out.println("Esperar 48 horas");
+					}
+
 				}
 			});
 		}
 		return btPagarInscripcionTransferencia;
+	}
+
+	private JButton getBtPagarinscripcionAtras() {
+		if (btPagarinscripcionAtras == null) {
+			btPagarinscripcionAtras = new JButton("Atras");
+			btPagarinscripcionAtras.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_INGRESO);
+				}
+			});
+			btPagarinscripcionAtras.setBounds(53, 319, 143, 36);
+		}
+		return btPagarinscripcionAtras;
 	}
 }

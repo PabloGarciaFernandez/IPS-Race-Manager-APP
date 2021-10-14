@@ -155,10 +155,16 @@ public class GestorDB {
 		}
 	}
 
-	public void insertarInscripcion() {
+	public void insertarInscripcionParametros(InscripcionDto i1) {
 		conectar();
 		try {
-			pst = conn.prepareStatement(SQLStrings.insertInscripcion);
+			pst = conn.prepareStatement(SQLStrings.insertInscrpcionValues);
+			pst.setString(0, i1.getIdAtleta());
+			pst.setString(1, i1.getIdCarrera());
+			pst.setString(2, i1.getDorsal());
+			pst.setString(3, String.valueOf(i1.getFechaInscripcion()));
+			pst.setString(4, i1.getEstadoInscripcion());
+			pst.setString(5, i1.getFormaDePago());
 			pst.execute();
 		} catch (SQLException e) {
 			System.out.println("Error en la base de datos: " + e.getMessage());
@@ -433,11 +439,12 @@ public class GestorDB {
 				System.out.println("metiendo carrera " + j);
 				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertCarreraValues);
 
-				
-				
-				java.sql.Date fechaFinInsc = new java.sql.Date(DateUtil.between(new Calendar.Builder().setDate(2021, 4, 1).build().getTime(), new Calendar.Builder().setDate(2022, 7, 1).build().getTime()).getTime());
-				java.sql.Date fechaCarrera = new java.sql.Date(DateUtil.between(new Date(fechaFinInsc.getTime()), new Calendar.Builder().setDate(2023, 12, 31).build().getTime()).getTime());
-				
+				java.sql.Date fechaFinInsc = new java.sql.Date(
+						DateUtil.between(new Calendar.Builder().setDate(2021, 4, 1).build().getTime(),
+								new Calendar.Builder().setDate(2022, 7, 1).build().getTime()).getTime());
+				java.sql.Date fechaCarrera = new java.sql.Date(DateUtil.between(new Date(fechaFinInsc.getTime()),
+						new Calendar.Builder().setDate(2023, 12, 31).build().getTime()).getTime());
+
 				pst.setString(1, UUID.randomUUID().toString());
 				pst.setString(2, UUID.randomUUID().toString().substring(0, 5));
 
@@ -446,8 +453,7 @@ public class GestorDB {
 				pst.setString(4, (r.nextBoolean() ? "Asfalto" : "Montaña"));
 				pst.setInt(5, r.nextInt(24) + 1); // distancia en km
 				pst.setInt(6, r.nextInt(50 + 1)); // cuota;
-				
-				
+
 				pst.setDate(7, fechaFinInsc); // fecha fin insc
 
 				pst.setInt(8, r.nextInt(100 + 1));
@@ -601,11 +607,10 @@ public class GestorDB {
 
 		return ret;
 	}
-	
+
 	public void comprobarAtletaEnCarrera() {
-		//todo
+		// todo
 	}
-	
 
 	public Connection getConnection() {
 		try {
