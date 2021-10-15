@@ -52,7 +52,7 @@ public class SQLStrings {
 
 	protected static String estadoInscipcionAtleta = "select * from atleta where idAtleta = ?";
 	
-	public static String atletaParticipanteDeCarrera = "select count(*) from inscripcion i where i.idAtleta = ? and i.idCarrera = ?";
+	public static String atletaParticipanteDeCarrera = "select a.idAtleta from inscripcion i, atleta a where i.idAtleta = ? and i.idCarrera = ? and i.idAtleta = a.idAtleta";
 
 	// Consultas para sacar las clasificaciones
 
