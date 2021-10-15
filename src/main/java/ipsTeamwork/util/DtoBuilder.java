@@ -39,13 +39,13 @@ public class DtoBuilder {
 		AtletaDto dto = new AtletaDto();
 
 		try {
-			dto.setSexo(rs.getString("sexo"));
-			dto.setNombre(rs.getString("nombre"));
-			dto.setIdAtleta(rs.getString("idAtleta"));
-			dto.setEmail(rs.getString("email"));
-			dto.setEdad(rs.getInt("edad"));
-			dto.setDNI(rs.getString("dni"));
-			dto.setDiscapacitado(rs.getBoolean("discapacitado"));
+			dto.setSexo(rs.getString(5));
+			dto.setNombre(rs.getString(3));
+			dto.setIdAtleta(rs.getString(1));
+			dto.setEmail(rs.getString(7));
+			dto.setEdad(Integer.parseInt(rs.getString(4)));
+			dto.setDNI(rs.getString(2));
+			dto.setDiscapacitado(Integer.parseInt(rs.getString(6))== 1 ? true : false);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

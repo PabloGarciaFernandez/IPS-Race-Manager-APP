@@ -14,7 +14,12 @@ public class AtletaDto {
 	private String sexo;
 	private boolean discapacitado;
 	private String email;
+	private String categoria;
 	
+	public String getCategoria() {
+		return categoria;
+	}
+
 	public AtletaDto() {
 		
 	}

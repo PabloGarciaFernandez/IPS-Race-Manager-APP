@@ -7,9 +7,11 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -30,10 +32,13 @@ import javax.swing.table.DefaultTableModel;
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.atleta.crud.ExisteAtletaByEmail;
+import ipsTeamwork.model.atleta.crud.FindAtletaInCarrera;
 import ipsTeamwork.model.atleta.crud.ReadAtletaByEmail;
 import ipsTeamwork.model.carrera.CarreraDto;
+import ipsTeamwork.model.carrera.crud.MirarLimiteCarrera;
 import ipsTeamwork.model.carrera.crud.SelectAllVistaAtleta;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
+import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
 
 public class MainWindow extends JFrame {
 
@@ -107,6 +112,7 @@ public class MainWindow extends JFrame {
 	private JTable tablaCarrerasParaAtleta;
 	private AtletaDto atleta = null; // Atleta que esta usando la app ya sea registrado o logeado.
 	private CarreraDto carreraActual = null;
+	InscripcionDto inscripcion = null;
 	private JButton btAtrasVerCarrerasOrganizador;
 	private JPanel pnPagarInscripcion;
 	private JPanel pnPrincipalPagarInscripcion;
@@ -295,10 +301,7 @@ public class MainWindow extends JFrame {
 					if (checkCarreraRow()) {
 						if (checkIfParticipable()) {
 							showCard(PANEL_INGRESO);
-						} else {
-							showCard(PANEL_PAGARINSCRIPCION);
 						}
-					} else {
 					}
 				}
 			});
@@ -307,13 +310,26 @@ public class MainWindow extends JFrame {
 		return btnListaInscribirse;
 	}
 
+	/**
+	 * Metodo para comprobar si cumple los requisitos el atleta como para participar en dicha carrera
+	 * @return boolean
+	 */
 	private boolean checkIfParticipable() {
+		
+		boolean res = false;
 
-//		return checkValidDate();
-		// check si no se inscribe varias veces.
-		db.comprobarAtletaEnCarrera(); // todo
-		// check si plazas libres.
-		return false;
+		if(checkValidDate()) {
+			res = true;
+		}
+		if(new MirarLimiteCarrera().execute(carreraActual.getId(), carreraActual.getMaxPlazas())) {
+			res = true;
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "Error: La carrera actualmente no tiene mas plazas.");
+			res = false;
+		}
+		
+		return res;
 	}
 
 	private boolean checkValidDate() {
@@ -321,7 +337,7 @@ public class MainWindow extends JFrame {
 		String todayDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 		String limitDate = new SimpleDateFormat("yyyy-MM-dd").format(carreraActual.getFechaFin());
 		if (limitDate.compareTo(todayDate) < 0) { // if limit date passed
-			JOptionPane.showMessageDialog(null, "La fecha de inscripci�n a la carrera ya ha pasado.");
+			JOptionPane.showMessageDialog(null, "Error: La fecha de inscripcion a la carrera ya ha pasado.");
 			return false;
 		} else {
 			return true;
@@ -341,7 +357,7 @@ public class MainWindow extends JFrame {
 				carreraActual.setCuota(Float.parseFloat((String) vector.get(4)));
 				Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse((String) vector.get(5));
 				carreraActual.setFechaFin(date1);
-				carreraActual.setPlazasDisp(Integer.parseInt((String) vector.get(6)));
+				carreraActual.setMaxPlazas(Integer.parseInt((String) vector.get(6)));
 				return true;
 			}
 		} catch (Exception e) {
@@ -520,14 +536,14 @@ public class MainWindow extends JFrame {
 	}
 
 	private boolean checkFieldsRegisters() {
-		if (isEmptyLogin()) {
-			JOptionPane.showMessageDialog(null, "Error: Algunos campos est�n vacios.");
+		if (isEmptyRegister()) {
+			JOptionPane.showMessageDialog(null, "Error: Algunos campos estan vacios.");
 			return false;
 		}
 		return true;
 	}
 
-	private boolean isEmptyLogin() {
+	private boolean isEmptyRegister() { //modificar de cara a siguientes sprints.
 		return (textRegistroDNI.getText().isEmpty() || textRegistroNombre.getText().isEmpty()
 				|| textRegistroApellidos.getText().isEmpty() || textRegistroEmail.getText().isEmpty()
 				|| textRegistroEdad.getText().isEmpty()); // esto no va a funcionar
@@ -690,11 +706,17 @@ public class MainWindow extends JFrame {
 					if (!textIngresoEmail.getText().equals("")) {
 						if (new ExisteAtletaByEmail().execute(textIngresoEmail.getText())) {
 							atleta = new ReadAtletaByEmail(textIngresoEmail.getText()).execute();
-							showCard(PANEL_PAGARINSCRIPCION);
-							textIngresoEmail.setText("");
+							if(new FindAtletaInCarrera().execute(atleta.getIdAtleta(),carreraActual.getId())){ //ESTO NO SE PORQ NO DETECTA DOBLE REGISTRO
+								showCard(PANEL_PAGARINSCRIPCION);								
+								new InscribirseAtleta().execute(inscripcion());
+								textIngresoEmail.setText("");
+							}
+							else {
+								JOptionPane.showMessageDialog(null, "Error: Ya estas en esta carrera.");
+							}
 						}
 					} else {
-						JOptionPane.showMessageDialog(null, "Error: Algunos campos est�n vacios.");
+						JOptionPane.showMessageDialog(null, "Error: Algunos campos estan vacios.");
 					}
 				}
 			});
@@ -703,6 +725,19 @@ public class MainWindow extends JFrame {
 			btnIngresoSiguiente.setBounds(452, 348, 121, 23);
 		}
 		return btnIngresoSiguiente;
+	}
+	
+	private InscripcionDto inscripcion() {
+		Random r = new Random();
+		inscripcion = new InscripcionDto();
+		inscripcion.setIdAtleta(atleta.getIdAtleta());
+		inscripcion.setIdCarrera(carreraActual.getId());
+		inscripcion.setDorsal("myDorsal");
+		inscripcion.setFechaInscripcion(java.sql.Date.valueOf(LocalDate.now().getYear() + "-" + LocalDate.now().getMonthValue()
+						+ "-" + LocalDate.now().getDayOfMonth()));
+		inscripcion.setEstadoInscripcion("Pre-inscrito");
+		
+		return inscripcion;
 	}
 
 	private JPanel getPnOrganizadorCentro() {

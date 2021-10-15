@@ -43,6 +43,8 @@ public class SQLStrings {
 	public static String selectAllInscripcion = "select * from inscripcion";
 
 	public static String existeAtletaByEmail = "select * from atleta where email = ?";
+	
+	public static String estaLlenaLaLista = "select count(*) from inscripcion i where i.idcarrera = ?";
 
 	// Consulta para el metodo estadoInscripcion
 
@@ -50,7 +52,7 @@ public class SQLStrings {
 
 	protected static String estadoInscipcionAtleta = "select * from atleta where idAtleta = ?";
 	
-	protected static String atletaParticipanteDeCarrera = "select * from atleta a, inscripcion i where i.idAtleta = a.idAtleta";
+	public static String atletaParticipanteDeCarrera = "select count(*) from inscripcion i where i.idAtleta = ? and i.idCarrera = ?";
 
 	// Consultas para sacar las clasificaciones
 

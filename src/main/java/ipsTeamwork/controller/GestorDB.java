@@ -608,10 +608,6 @@ public class GestorDB {
 		return ret;
 	}
 
-	public void comprobarAtletaEnCarrera() {
-		// todo
-	}
-
 	public Connection getConnection() {
 		try {
 			if (conn == null || conn.isClosed())
