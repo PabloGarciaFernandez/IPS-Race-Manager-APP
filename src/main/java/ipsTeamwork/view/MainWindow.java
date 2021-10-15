@@ -11,14 +11,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -37,8 +36,11 @@ import ipsTeamwork.model.atleta.crud.ReadAtletaByEmail;
 import ipsTeamwork.model.carrera.CarreraDto;
 import ipsTeamwork.model.carrera.crud.MirarLimiteCarrera;
 import ipsTeamwork.model.carrera.crud.SelectAllVistaAtleta;
+import ipsTeamwork.model.categoria.Categoria;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
+import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtleta;
+import ipsTeamwork.util.DtoBuilder;
 
 public class MainWindow extends JFrame {
 
@@ -112,13 +114,14 @@ public class MainWindow extends JFrame {
 	private JTable tablaCarrerasParaAtleta;
 	private AtletaDto atleta = null; // Atleta que esta usando la app ya sea registrado o logeado.
 	private CarreraDto carreraActual = null;
-	InscripcionDto inscripcion = null;
+	private InscripcionDto inscripcion = null;
 	private JButton btAtrasVerCarrerasOrganizador;
 	private JPanel pnPagarInscripcion;
 	private JPanel pnPrincipalPagarInscripcion;
 	private JButton btPagarInscripcionTarjeta;
 	private JButton btPagarInscripcionTransferencia;
 	private JButton btPagarinscripcionAtras;
+	private JButton btVistaAtletaAtras;
 
 	/**
 	 * Create the frame.
@@ -202,6 +205,7 @@ public class MainWindow extends JFrame {
 			pnVistaAtleta.setLayout(null);
 			pnVistaAtleta.add(getBtnListaCarreras());
 			pnVistaAtleta.add(getBtnMisCarreras());
+			pnVistaAtleta.add(getBtVistaAtletaAtras());
 		}
 		return pnVistaAtleta;
 	}
@@ -276,7 +280,7 @@ public class MainWindow extends JFrame {
 
 		for (CarreraDto carreraDto : carreras) {
 
-			String[] carrerasTabla = { carreraDto.getId(), carreraDto.getTipo(),
+			String[] carrerasTabla = { carreraDto.getIdCarrea(), carreraDto.getTipo(),
 					String.valueOf(carreraDto.getPlazasDisp()) };
 			tb.addRow(carrerasTabla);
 		}
@@ -311,24 +315,25 @@ public class MainWindow extends JFrame {
 	}
 
 	/**
-	 * Metodo para comprobar si cumple los requisitos el atleta como para participar en dicha carrera
+	 * Metodo para comprobar si cumple los requisitos el atleta como para participar
+	 * en dicha carrera
+	 * 
 	 * @return boolean
 	 */
 	private boolean checkIfParticipable() {
-		
+
 		boolean res = false;
 
-		if(checkValidDate()) {
+		if (checkValidDate()) {
 			res = true;
 		}
-		if(new MirarLimiteCarrera().execute(carreraActual.getId(), carreraActual.getMaxPlazas())) {
+		if (new MirarLimiteCarrera().execute(carreraActual.getIdCarrea(), carreraActual.getMaxPlazas())) {
 			res = true;
-		}
-		else {
+		} else {
 			JOptionPane.showMessageDialog(null, "Error: La carrera actualmente no tiene mas plazas.");
 			res = false;
 		}
-		
+
 		return res;
 	}
 
@@ -543,7 +548,7 @@ public class MainWindow extends JFrame {
 		return true;
 	}
 
-	private boolean isEmptyRegister() { //modificar de cara a siguientes sprints.
+	private boolean isEmptyRegister() { // modificar de cara a siguientes sprints.
 		return (textRegistroDNI.getText().isEmpty() || textRegistroNombre.getText().isEmpty()
 				|| textRegistroApellidos.getText().isEmpty() || textRegistroEmail.getText().isEmpty()
 				|| textRegistroEdad.getText().isEmpty()); // esto no va a funcionar
@@ -706,12 +711,19 @@ public class MainWindow extends JFrame {
 					if (!textIngresoEmail.getText().equals("")) {
 						if (new ExisteAtletaByEmail().execute(textIngresoEmail.getText())) {
 							atleta = new ReadAtletaByEmail(textIngresoEmail.getText()).execute();
-							if(new FindAtletaInCarrera().execute(atleta.getIdAtleta(),carreraActual.getId())){ //ESTO NO SE PORQ NO DETECTA DOBLE REGISTRO
-								showCard(PANEL_PAGARINSCRIPCION);								
+							if (new FindAtletaInCarrera().execute(atleta.getIdAtleta(), carreraActual.getIdCarrea())) { // ESTO
+								// NO
+								// SE
+								// PORQ
+								// NO
+								// DETECTA
+								// DOBLE
+								// REGISTRO
+								showCard(PANEL_PAGARINSCRIPCION);
 								new InscribirseAtleta().execute(inscripcion());
 								textIngresoEmail.setText("");
-							}
-							else {
+							} else {
+//								showCard(PANEL_PAGARINSCRIPCION);
 								JOptionPane.showMessageDialog(null, "Error: Ya estas en esta carrera.");
 							}
 						}
@@ -726,17 +738,19 @@ public class MainWindow extends JFrame {
 		}
 		return btnIngresoSiguiente;
 	}
-	
+
 	private InscripcionDto inscripcion() {
-		Random r = new Random();
+//		Random r = new Random();
 		inscripcion = new InscripcionDto();
-		inscripcion.setIdAtleta(atleta.getIdAtleta());
-		inscripcion.setIdCarrera(carreraActual.getId());
+		inscripcion.setAtleta(atleta);
+		inscripcion.setCarrera(carreraActual);
 		inscripcion.setDorsal("myDorsal");
-		inscripcion.setFechaInscripcion(java.sql.Date.valueOf(LocalDate.now().getYear() + "-" + LocalDate.now().getMonthValue()
-						+ "-" + LocalDate.now().getDayOfMonth()));
+		inscripcion.setFechaInscripcion(LocalDate.now());
+
+//		inscripcion.setFechaInscripcion(java.sql.Date.valueOf(LocalDate.now().getYear() + "-"
+//				+ LocalDate.now().getMonthValue() + "-" + LocalDate.now().getDayOfMonth()));
 		inscripcion.setEstadoInscripcion("Pre-inscrito");
-		
+
 		return inscripcion;
 	}
 
@@ -853,7 +867,7 @@ public class MainWindow extends JFrame {
 					for (InscripcionDto inscripcionDto : atletas) {
 
 						String[] alluneedislove = { inscripcionDto.getAtleta().getDNI(),
-								inscripcionDto.calculaCategoria(inscripcionDto.getAtleta().getEdad(),
+								Categoria.calculaCategoria(inscripcionDto.getAtleta().getEdad(),
 										inscripcionDto.getAtleta().getSexo()),
 								String.valueOf(inscripcionDto.getFechaInscripcion()),
 								inscripcionDto.getEstadoInscripcion() };
@@ -968,43 +982,57 @@ public class MainWindow extends JFrame {
 			btPagarInscripcionTransferencia.setBounds(367, 121, 143, 55);
 			btPagarInscripcionTransferencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-
-					String nombre = String
-							.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 0));
-					String fecha = String
-							.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 1));
-					String tipo = String
-							.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 2));
-					String distancia = String
-							.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 3));
-					String cuota = String
-							.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 4));
-
-					String todo = "Estas apuntado a la carrera con nombre: " + nombre + "\nLa carrera se efectuara el "
-							+ fecha + "\nDel tipo " + tipo + "\nCon una distancia real de " + distancia
-							+ "km\nLa cual tiene un coste de " + cuota
-							+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
-
-					JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, todo,
-							"Este es tu justifcante de pago por Transacción", JOptionPane.DEFAULT_OPTION);
-					db.insertarInscripcionParametros(new InscripcionDto());
-
-					int pagaste;
-					System.out.println("Crear inscripcion");
-
-					pagaste = JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, "¿Ya pagaste?",
-							"Muchas gracias por inscribirse", JOptionPane.YES_NO_OPTION);
-					if (JOptionPane.YES_OPTION == pagaste) {
-						System.out.println("Update inscripcion");
-					}
-					if (JOptionPane.NO_OPTION == pagaste) {
-						System.out.println("Esperar 48 horas");
-					}
-
+					pagarTransferencia();
 				}
+
 			});
 		}
 		return btPagarInscripcionTransferencia;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo que realiza todo lo referido a pagar Transferencias
+	 * 
+	 */
+	private void pagarTransferencia() {
+		String nombre = String.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 0));
+
+		CarreraDto carreras = db.selectCarrerasNombre(nombre);
+
+		String todo = "Estas apuntado a la carrera con nombre: " + nombre + "\nLa carrera se efectuara el "
+				+ carreras.getFecha() + "\nDel tipo " + carreras.getTipo() + "\nCon una distancia real de "
+				+ carreras.getDistancia() + "km\nLa cual tiene un coste de " + carreras.getCuota()
+				+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
+
+		InscripcionDto ins = DtoBuilder.ParamsToInscripcionDto(atleta, carreras,
+				UUID.randomUUID().toString().substring(0, 3), "Pendiente de pago", LocalDate.now(), "Tranferencia");
+
+		JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, todo,
+				"Este es tu justifcante de pago por Transacción", JOptionPane.DEFAULT_OPTION);
+
+		InscribirseAtleta.execute(ins);
+
+		int pagaste;
+
+		pagaste = JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, "¿Ya pagaste?",
+				"Muchas gracias por inscribirse", JOptionPane.YES_NO_OPTION);
+		if (JOptionPane.YES_OPTION == pagaste) {
+			UpdateInscribirseAtleta.execute(ins, "Inscrito");
+
+			JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia,
+					"Muchas gracias por realizar el pago de la cuota. Disfrute de la carrera "
+							+ ins.getAtleta().getNombre(),
+					"Gracias :)", JOptionPane.DEFAULT_OPTION);
+
+		}
+		if (JOptionPane.NO_OPTION == pagaste) {
+			JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia,
+					"Tiene 48 horas para realizar el pago despues de ese tiempo perdera la plaza y tendra que volver a inscribirse en esta carrera",
+					"Moroso", JOptionPane.DEFAULT_OPTION);
+		}
+		showCard(PANEL_LISTA_CARRERAS);
 	}
 
 	private JButton getBtPagarinscripcionAtras() {
@@ -1018,5 +1046,18 @@ public class MainWindow extends JFrame {
 			btPagarinscripcionAtras.setBounds(53, 319, 143, 36);
 		}
 		return btPagarinscripcionAtras;
+	}
+
+	private JButton getBtVistaAtletaAtras() {
+		if (btVistaAtletaAtras == null) {
+			btVistaAtletaAtras = new JButton("Atras");
+			btVistaAtletaAtras.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_INICIO);
+				}
+			});
+			btVistaAtletaAtras.setBounds(10, 309, 107, 32);
+		}
+		return btVistaAtletaAtras;
 	}
 }

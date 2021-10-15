@@ -34,16 +34,20 @@ public class SQLStrings {
 
 	public static String insertInscrpcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
 
+	public static String updateInscrpcionValues = "UPDATE inscripcion SET estadoInscripcion = ? where idAtleta = ? and idCarrera = ? and dorsal = ?";
+
 	// selects
 
 	public static String selectAllAtleta = "select * from atleta";
 
 	public static String selectAllCarrera = "select * from carrera";
 
+	public static String selectCarreraByNombre = "select * from carrera where nombre = ?";
+
 	public static String selectAllInscripcion = "select * from inscripcion";
 
 	public static String existeAtletaByEmail = "select * from atleta where email = ?";
-	
+
 	public static String estaLlenaLaLista = "select count(*) from inscripcion i where i.idcarrera = ?";
 
 	// Consulta para el metodo estadoInscripcion
@@ -51,7 +55,7 @@ public class SQLStrings {
 	protected static String estadoInscipcion = "select * from inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' order by fechaInscripcion, estadoInscripcion";
 
 	protected static String estadoInscipcionAtleta = "select * from atleta where idAtleta = ?";
-	
+
 	public static String atletaParticipanteDeCarrera = "select a.idAtleta from inscripcion i, atleta a where i.idAtleta = ? and i.idCarrera = ? and i.idAtleta = a.idAtleta";
 
 	// Consultas para sacar las clasificaciones

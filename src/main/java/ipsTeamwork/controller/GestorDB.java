@@ -6,9 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,6 +34,8 @@ public class GestorDB {
 	private PreparedStatement pst = null;
 
 	private ResultSet rs = null;
+
+	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
 
 	/**
 	 * Método que establece una conexion con la base de datos.
@@ -159,8 +160,8 @@ public class GestorDB {
 		conectar();
 		try {
 			pst = conn.prepareStatement(SQLStrings.insertInscrpcionValues);
-			pst.setString(0, i1.getIdAtleta());
-			pst.setString(1, i1.getIdCarrera());
+			pst.setString(0, i1.getAtleta().getIdAtleta());
+			pst.setString(1, i1.getCarrera().getIdCarrea());
 			pst.setString(2, i1.getDorsal());
 			pst.setString(3, String.valueOf(i1.getFechaInscripcion()));
 			pst.setString(4, i1.getEstadoInscripcion());
@@ -243,6 +244,32 @@ public class GestorDB {
 	/**
 	 * @author Sergio Arroni
 	 * 
+	 *         Metodo para seleccionar carreras pasando un nombre
+	 * @return
+	 */
+	public CarreraDto selectCarrerasNombre(String nombre) {
+		conectar();
+
+		List<CarreraDto> carreras = new ArrayList<CarreraDto>();
+
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.selectCarreraByNombre);
+			ps.setString(1, nombre);
+			ResultSet rs = ps.executeQuery();
+
+			carreras = DtoBuilder.toCarreraDtoList(rs);
+
+		} catch (SQLException e) {
+			System.out.println("Error de script de DB: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+		return carreras.get(0);
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
 	 *         Metodo que devuelve todas las carreras
 	 */
 	public ArrayList<CarreraDto> getArrayCarreras() {
@@ -257,7 +284,7 @@ public class GestorDB {
 
 				CarreraDto carrera = new CarreraDto();
 
-				carrera.setId(rs.getString("idCarrera"));
+				carrera.setIdCarrera(rs.getString("idCarrera"));
 				carrera.setTipo(rs.getString("tipo"));
 				carrera.setPlazasDisp(rs.getInt("maxPlazas"));
 
@@ -377,16 +404,13 @@ public class GestorDB {
 				inscripcion.setAtleta(nuevoAtleta);
 				// Esto es para que me lea bien la fecha
 				inscripcion.setEstadoInscripcion(rs.getString("estadoInscripcion"));
-				Date date = new SimpleDateFormat("yyyy-MM-dd").parse(rs.getString("fechaInscripcion"));
-				inscripcion.setFechaInscripcion(new java.sql.Date(date.getTime()));
+				inscripcion.setFechaInscripcion(LocalDate.parse(rs.getString("fechaInscripcion"), formatter));
 				atletasInscritos.add(inscripcion);
 				rs2.close();
 			}
 			pst2.close();
 		} catch (SQLException e) {
 			System.out.println("Error en la base de datos: " + e.getMessage());
-		} catch (ParseException e) {
-			System.out.println("Error en el date: " + e.getMessage());
 		} finally {
 			cerrar();
 		}

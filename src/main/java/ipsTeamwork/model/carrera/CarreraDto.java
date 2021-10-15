@@ -3,7 +3,7 @@ package ipsTeamwork.model.carrera;
 import java.util.Date;
 
 public class CarreraDto {
-	private String id;
+	private String idCarrera;
 	private String nombre;
 	private String tipo;
 	private Date fecha;
@@ -17,15 +17,15 @@ public class CarreraDto {
 	/**
 	 * @return the id
 	 */
-	public String getId() {
-		return id;
+	public String getIdCarrea() {
+		return idCarrera;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(String id) {
-		this.id = id;
+	public void setIdCarrera(String idCarrera) {
+		this.idCarrera = idCarrera;
 	}
 
 	/**
