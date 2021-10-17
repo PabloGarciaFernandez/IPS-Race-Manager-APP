@@ -124,7 +124,7 @@ public class MainWindow extends JFrame {
 	private JButton btPagarinscripcionAtras;
 	private JButton btVistaAtletaAtras;
 	private JPanel pnVistaInscripcionesAtleta;
-	
+
 	/**
 	 * Create the frame.
 	 */
@@ -161,9 +161,9 @@ public class MainWindow extends JFrame {
 
 	public void setAtletaActual(AtletaDto atletaActual) {
 		this.atletaActual = atletaActual;
-		((PanelListarInscripciones)pnVistaInscripcionesAtleta).setAtleta(atletaActual);
+		((PanelListarInscripciones) pnVistaInscripcionesAtleta).setAtleta(atletaActual);
 	}
-	
+
 	private JPanel getPnInicio() {
 		if (pnInicio == null) {
 			pnInicio = new JPanel();
@@ -252,7 +252,7 @@ public class MainWindow extends JFrame {
 			btnMisCarreras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					showCard(PANEL_LISTA_INSCRIPCIONES);
-					((PanelListarInscripciones)pnVistaInscripcionesAtleta).cargarInscripcionesEnTabla();
+					((PanelListarInscripciones) pnVistaInscripcionesAtleta).cargarInscripcionesEnTabla();
 				}
 			});
 			btnMisCarreras.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -328,8 +328,6 @@ public class MainWindow extends JFrame {
 		}
 		return btnListaInscribirse;
 	}
-	
-	
 
 	/**
 	 * Metodo para comprobar si cumple los requisitos el atleta como para participar
@@ -533,7 +531,7 @@ public class MainWindow extends JFrame {
 									Integer.parseInt(textRegistroEdad.getText()),
 									("" + ((String) comboRegistroSexo.getSelectedItem()).charAt(0)),
 									chckbxRegistroDiscapacidad.isSelected() ? 1 : 0, textRegistroEmail.getText()));
-							
+
 							String cate = Categoria.calculaCategoria(atletaActual.getEdad(), atletaActual.getSexo());
 							atletaActual.setCategoria(cate);
 							showCard(PANEL_ATLETA);
@@ -737,37 +735,33 @@ public class MainWindow extends JFrame {
 		}
 		return btnIngresoSiguiente;
 	}
-	
+
 	private void inscribirAtleta() {
 		if (checkCarreraRow() && checkIfParticipable()) {
-			if (new FindAtletaInCarrera().execute(atletaActual.getIdAtleta(), carreraActual.getIdCarrera())) { //no va
+			if (new FindAtletaInCarrera().execute(atletaActual.getIdAtleta(), carreraActual.getIdCarrera())) { // no va
 				showCard(PANEL_PAGARINSCRIPCION);
 				textIngresoEmail.setText("");
 			} else {
-					JOptionPane.showMessageDialog(this, "Error: Ya estas en esta carrera.");
-			}			
+				JOptionPane.showMessageDialog(this, "Error: Ya estas en esta carrera.");
+			}
 		}
 	}
-	
+
 	private void ingresoAtleta(String email) {
-		if (email.trim().strip().isEmpty()) JOptionPane.showMessageDialog(this, "Introduce tu email");
+		if (email.trim().strip().isEmpty())
+			JOptionPane.showMessageDialog(this, "Introduce tu email");
 		else {
 			if (new ExisteAtletaByEmail().execute(email)) {
 				setAtletaActual(new ReadAtletaByEmail(email).execute());
-				atletaActual.setCategoria(
-						Categoria.calculaCategoria(
-								atletaActual.getEdad(), 
-								atletaActual.getSexo()));
+				atletaActual.setCategoria(Categoria.calculaCategoria(atletaActual.getEdad(), atletaActual.getSexo()));
 				System.out.println(atletaActual.getCategoria());
-				
+
 				showCard(PANEL_ATLETA);
 			} else {
 				JOptionPane.showMessageDialog(this, "No estás registrado.");
 			}
 		}
 	}
-		
-	
 
 	private JPanel getPnOrganizadorCentro() {
 		if (pnOrganizadorCentro == null) {
@@ -1016,14 +1010,12 @@ public class MainWindow extends JFrame {
 
 		CarreraDto carreras = db.selectCarrerasNombre(nombre);
 
-		String todo = "Nombre del corredor: " + atletaActual.getNombre()
-				+ "\nEstas apuntado a la carrera con nombre: " + nombre 
-				+ "\nEn la categoria: " + atletaActual.getCategoria()
-				+ "\nCon fecha de inscripcion: " + LocalDate.now()
-				+ "\nLa carrera se efectuara el " + carreras.getFecha() 
-				+ "\nDel tipo " + carreras.getTipo() 
-				+ "\nCon una distancia real de " + carreras.getDistancia() 
+		String todo = "Nombre del corredor: " + atletaActual.getNombre() + "\nEstas apuntado a la carrera con nombre: "
+				+ nombre + "\nEn la categoria: " + atletaActual.getCategoria() + "\nCon fecha de inscripcion: "
+				+ LocalDate.now() + "\nLa carrera se efectuara el " + carreras.getFecha() + "\nDel tipo "
+				+ carreras.getTipo() + "\nCon una distancia real de " + carreras.getDistancia()
 				+ "km\nLa cual tiene un coste de " + carreras.getCuota()
+				+ "Debe pagar a esta cuenta bancaria: ES6000491500051234567892"
 				+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
 
 		inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaActual, carreras,
