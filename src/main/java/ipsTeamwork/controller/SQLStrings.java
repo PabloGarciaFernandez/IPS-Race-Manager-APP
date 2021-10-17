@@ -32,7 +32,7 @@ public class SQLStrings {
 
 	public static String insertAtletaValues = "insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado, email) values (?, ?, ?, ?, ?, ?, ?)";
 
-	public static String insertInscrpcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
+	public static String insertInscripcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
 
 	public static String updateInscrpcionValues = "UPDATE inscripcion SET estadoInscripcion = ? where idAtleta = ? and idCarrera = ? and dorsal = ?";
 

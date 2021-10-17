@@ -159,9 +159,9 @@ public class GestorDB {
 	public void insertarInscripcionParametros(InscripcionDto i1) {
 		conectar();
 		try {
-			pst = conn.prepareStatement(SQLStrings.insertInscrpcionValues);
+			pst = conn.prepareStatement(SQLStrings.insertInscripcionValues);
 			pst.setString(0, i1.getAtleta().getIdAtleta());
-			pst.setString(1, i1.getCarrera().getIdCarrea());
+			pst.setString(1, i1.getCarrera().getIdCarrera());
 			pst.setString(2, i1.getDorsal());
 			pst.setString(3, String.valueOf(i1.getFechaInscripcion()));
 			pst.setString(4, i1.getEstadoInscripcion());
@@ -425,7 +425,6 @@ public class GestorDB {
 	public void poblarTablas() {
 		poblarCarreras(25);
 		poblarAtletas(1);
-		poblarInscripciones(25);
 	}
 
 	private void poblarInscripciones(int i) {
@@ -434,7 +433,7 @@ public class GestorDB {
 		try {
 
 			for (int j = 0; j < i; j++) {
-				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertInscrpcionValues);
+				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertInscripcionValues);
 				pst.setString(1, UUID.randomUUID().toString());
 				pst.setString(2, UUID.randomUUID().toString().substring(0, 6));
 				pst.setString(3, (r.nextBoolean() ? "myDorsal" : "myOtherDorsal"));
@@ -476,12 +475,12 @@ public class GestorDB {
 
 				pst.setString(4, (r.nextBoolean() ? "Asfalto" : "Montaña"));
 				pst.setInt(5, r.nextInt(24) + 1); // distancia en km
-				pst.setInt(6, r.nextInt(50 + 1)); // cuota;
+				pst.setInt(6, r.nextInt(50) + 1); // cuota;
 
 				pst.setDate(7, fechaFinInsc); // fecha fin insc
 
-				pst.setInt(8, r.nextInt(100 + 1));
-				pst.setInt(9, r.nextInt(100 + 1));
+				pst.setInt(8, r.nextInt(100));
+				pst.setInt(9, r.nextInt(100)+15);
 
 				pst.executeUpdate();
 				pst.close();

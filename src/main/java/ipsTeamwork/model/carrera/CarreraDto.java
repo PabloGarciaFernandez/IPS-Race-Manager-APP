@@ -17,7 +17,7 @@ public class CarreraDto {
 	/**
 	 * @return the id
 	 */
-	public String getIdCarrea() {
+	public String getIdCarrera() {
 		return idCarrera;
 	}
 

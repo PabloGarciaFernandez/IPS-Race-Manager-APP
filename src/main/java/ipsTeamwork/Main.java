@@ -36,14 +36,14 @@ public class Main {
 		System.out.println();
 		System.out.println();
 		System.out.println();
-//
-//		System.out.println("Listado de inscripciones.");
-//		System.out.println();
-//		db.selectInscripcion();
-//		System.out.println();
-//		System.out.println();
-//		System.out.println();
-//
+
+		System.out.println("Listado de inscripciones.");
+		System.out.println();
+		db.selectInscripcion();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+
 //		
 //		System.out.println("Clasificacion general.");
 //		System.out.println();

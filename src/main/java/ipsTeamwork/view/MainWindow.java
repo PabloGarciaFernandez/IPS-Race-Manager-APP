@@ -49,11 +49,12 @@ public class MainWindow extends JFrame {
 	private static final String PANEL_ATLETA = "panel_atleta";
 	private static final String PANEL_INICIO = "panel_inicio";
 	private static final String PANEL_ORGANIZADOR = "panel_organizador";
-	private static final String PANEL_LISTA_CARRERAS = "panel_lista";
+	private static final String PANEL_LISTA_CARRERAS = "panel_lista_carreras_atleta";
 	private static final String PANEL_REGISTRO = "panel_registro";
 	private static final String PANEL_INGRESO = "panel_ingreso";
-	private static final String PANEL_VERCARRERASORGANIZADOR = "panel_verCarrerasOrganizador";
+	private static final String PANEL_VERCARRERASORGANIZADOR = "panel_lista_carreras_organizador";
 	private static final String PANEL_PAGARINSCRIPCION = "panel_PagarInscripcion";
+	private static final String PANEL_LISTA_INSCRIPCIONES = "panel_lista_inscripciones_atleta";
 
 	private JPanel contentPane;
 	private JPanel pnInicio;
@@ -98,7 +99,7 @@ public class MainWindow extends JFrame {
 	private JPanel pnOrganizadorCentro;
 	private JButton btnOrganizadorCancelar;
 	private JButton btnOrganizadorSiguiente;
-	private JPanel pnVerCarrerasOrganizador;
+	private JPanel pnListaCarrerasOrganizador;
 	private JPanel pnPrincipalVerCarrerasOrganizador;
 	private JButton btVerVarrerasOrganizacion;
 	private JScrollPane scVerCarreras;
@@ -112,7 +113,7 @@ public class MainWindow extends JFrame {
 	private GestorDB db;
 	private JScrollPane scrollPaneListaCarrerasAtleta;
 	private JTable tablaCarrerasParaAtleta;
-	private AtletaDto atleta = null; // Atleta que esta usando la app ya sea registrado o logeado.
+	private AtletaDto atletaActual = null; // Atleta que esta usando la app ya sea registrado o logeado.
 	private CarreraDto carreraActual = null;
 	private InscripcionDto inscripcion = null;
 	private JButton btAtrasVerCarrerasOrganizador;
@@ -132,7 +133,7 @@ public class MainWindow extends JFrame {
 		tablaAtleta = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
 		tablaAtletasInscritosX = (DefaultTableModel) getTbAtletasInscritosEnXCarrera().getModel();
 		setResizable(false);
-		setTitle("App");
+		setTitle("Carreras");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 599, 421);
 		contentPane = new JPanel();
@@ -145,8 +146,9 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnListaCarrerasAtleta(), PANEL_LISTA_CARRERAS);
 		contentPane.add(getPnRegistro(), PANEL_REGISTRO);
 		contentPane.add(getPnIngreso(), PANEL_INGRESO);
-		contentPane.add(getPnVerCarrerasOrganizador(), PANEL_VERCARRERASORGANIZADOR);
+		contentPane.add(getPnListaCarrerasOrganizador(), PANEL_VERCARRERASORGANIZADOR);
 		contentPane.add(getPnPagarInscripcion(), PANEL_PAGARINSCRIPCION);
+		contentPane.add(new PanelListarInscripciones(), PANEL_LISTA_INSCRIPCIONES);
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
 	}
@@ -168,7 +170,7 @@ public class MainWindow extends JFrame {
 			btnAtleta.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnAtleta.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_ATLETA);
+					showCard(PANEL_INGRESO);
 				}
 			});
 			btnAtleta.setBounds(217, 247, 146, 23);
@@ -236,6 +238,11 @@ public class MainWindow extends JFrame {
 	private JButton getBtnMisCarreras() {
 		if (btnMisCarreras == null) {
 			btnMisCarreras = new JButton("Mis carreras");
+			btnMisCarreras.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_LISTA_INSCRIPCIONES);
+				}
+			});
 			btnMisCarreras.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnMisCarreras.setBounds(197, 239, 192, 23);
 		}
@@ -280,7 +287,7 @@ public class MainWindow extends JFrame {
 
 		for (CarreraDto carreraDto : carreras) {
 
-			String[] carrerasTabla = { carreraDto.getIdCarrea(), carreraDto.getTipo(),
+			String[] carrerasTabla = { carreraDto.getIdCarrera(), carreraDto.getTipo(),
 					String.valueOf(carreraDto.getPlazasDisp()) };
 			tb.addRow(carrerasTabla);
 		}
@@ -302,17 +309,15 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					// if selected from table register person into race.
 					// then printear justificante. CosasAMover.printJustificante(email);
-					if (checkCarreraRow()) {
-						if (checkIfParticipable()) {
-							showCard(PANEL_INGRESO);
-						}
-					}
+					inscribirAtleta();
 				}
 			});
 			btnListaInscribirse.setFont(new Font("Arial", Font.PLAIN, 14));
 		}
 		return btnListaInscribirse;
 	}
+	
+	
 
 	/**
 	 * Metodo para comprobar si cumple los requisitos el atleta como para participar
@@ -327,7 +332,7 @@ public class MainWindow extends JFrame {
 		if (checkValidDate()) {
 			res = true;
 		}
-		if (new MirarLimiteCarrera().execute(carreraActual.getIdCarrea(), carreraActual.getMaxPlazas())) {
+		if (new MirarLimiteCarrera().execute(carreraActual.getIdCarrera(), carreraActual.getMaxPlazas())) {
 			res = true;
 		} else {
 			JOptionPane.showMessageDialog(null, "Error: La carrera actualmente no tiene mas plazas.");
@@ -511,13 +516,13 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					if (checkFieldsRegisters()) {
 						if (Integer.parseInt(textRegistroEdad.getText()) >= 18) {
-							atleta = new AtletaDto(textRegistroDNI.getText(),
+							atletaActual = new AtletaDto(textRegistroDNI.getText(),
 									textRegistroNombre.getText() + " " + textRegistroApellidos.getText(),
 									Integer.parseInt(textRegistroEdad.getText()),
 									("" + ((String) comboRegistroSexo.getSelectedItem()).charAt(0)),
 									chckbxRegistroDiscapacidad.isSelected() ? 1 : 0, textRegistroEmail.getText());
-							String cate = Categoria.calculaCategoria(atleta.getEdad(), atleta.getSexo());
-							atleta.setCategoria(cate);
+							String cate = Categoria.calculaCategoria(atletaActual.getEdad(), atletaActual.getSexo());
+							atletaActual.setCategoria(cate);
 							showCard(PANEL_ATLETA);
 							cleanRegistro();
 							JOptionPane.showMessageDialog(null, "Registro satisfactorio , bienvenido.");
@@ -695,7 +700,7 @@ public class MainWindow extends JFrame {
 			btnIngresoCancelar = new JButton("Cancelar");
 			btnIngresoCancelar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_LISTA_CARRERAS);
+					showCard(PANEL_INICIO);
 				}
 			});
 			btnIngresoCancelar.setForeground(Color.BLACK);
@@ -710,30 +715,7 @@ public class MainWindow extends JFrame {
 			btnIngresoSiguiente = new JButton("Siguiente");
 			btnIngresoSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (!textIngresoEmail.getText().equals("")) {
-						if (new ExisteAtletaByEmail().execute(textIngresoEmail.getText())) {
-							atleta = new ReadAtletaByEmail(textIngresoEmail.getText()).execute();
-							String cate = Categoria.calculaCategoria(atleta.getEdad(), atleta.getSexo());
-							atleta.setCategoria(cate);
-							System.out.println(atleta.getCategoria());
-							if (new FindAtletaInCarrera().execute(atleta.getIdAtleta(), carreraActual.getIdCarrea())) { // ESTO
-								// NO
-								// SE
-								// PORQ
-								// NO
-								// DETECTA
-								// DOBLE
-								// REGISTRO
-								showCard(PANEL_PAGARINSCRIPCION);
-								textIngresoEmail.setText("");
-							} else {
-//								showCard(PANEL_PAGARINSCRIPCION);
-								JOptionPane.showMessageDialog(null, "Error: Ya estas en esta carrera.");
-							}
-						}
-					} else {
-						JOptionPane.showMessageDialog(null, "Error: Algunos campos estan vacios.");
-					}
+					ingresoAtleta(textIngresoEmail.getText());
 				}
 			});
 			btnIngresoSiguiente.setForeground(Color.BLACK);
@@ -742,6 +724,37 @@ public class MainWindow extends JFrame {
 		}
 		return btnIngresoSiguiente;
 	}
+	
+	private void inscribirAtleta() {
+		if (checkCarreraRow() && checkIfParticipable()) {
+			if (new FindAtletaInCarrera().execute(atletaActual.getIdAtleta(), carreraActual.getIdCarrera())) { //no va
+				showCard(PANEL_PAGARINSCRIPCION);
+				textIngresoEmail.setText("");
+			} else {
+					JOptionPane.showMessageDialog(this, "Error: Ya estas en esta carrera.");
+			}			
+		}
+	}
+	
+	private void ingresoAtleta(String email) {
+		if (email.trim().strip().isEmpty()) JOptionPane.showMessageDialog(this, "Introduce tu email");
+		else {
+			if (new ExisteAtletaByEmail().execute(email)) {
+				atletaActual = new ReadAtletaByEmail(email).execute();
+				atletaActual.setCategoria(
+						Categoria.calculaCategoria(
+								atletaActual.getEdad(), 
+								atletaActual.getSexo()));
+				System.out.println(atletaActual.getCategoria());
+				
+				showCard(PANEL_ATLETA);
+			} else {
+				JOptionPane.showMessageDialog(this, "No estás registrado.");
+			}
+		}
+	}
+		
+	
 
 	private JPanel getPnOrganizadorCentro() {
 		if (pnOrganizadorCentro == null) {
@@ -783,13 +796,13 @@ public class MainWindow extends JFrame {
 		return btnOrganizadorSiguiente;
 	}
 
-	private JPanel getPnVerCarrerasOrganizador() {
-		if (pnVerCarrerasOrganizador == null) {
-			pnVerCarrerasOrganizador = new JPanel();
-			pnVerCarrerasOrganizador.setLayout(new BorderLayout(0, 0));
-			pnVerCarrerasOrganizador.add(getPnPrincipalVerCarrerasOrganizador(), BorderLayout.CENTER);
+	private JPanel getPnListaCarrerasOrganizador() {
+		if (pnListaCarrerasOrganizador == null) {
+			pnListaCarrerasOrganizador = new JPanel();
+			pnListaCarrerasOrganizador.setLayout(new BorderLayout(0, 0));
+			pnListaCarrerasOrganizador.add(getPnPrincipalVerCarrerasOrganizador(), BorderLayout.CENTER);
 		}
-		return pnVerCarrerasOrganizador;
+		return pnListaCarrerasOrganizador;
 	}
 
 	private JPanel getPnPrincipalVerCarrerasOrganizador() {
@@ -967,7 +980,7 @@ public class MainWindow extends JFrame {
 
 	private JButton getBtPagarInscripcionTransferencia() {
 		if (btPagarInscripcionTransferencia == null) {
-			btPagarInscripcionTransferencia = new JButton("Trasferencia");
+			btPagarInscripcionTransferencia = new JButton("Transferencia");
 			btPagarInscripcionTransferencia.setBounds(367, 121, 143, 55);
 			btPagarInscripcionTransferencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -990,9 +1003,9 @@ public class MainWindow extends JFrame {
 
 		CarreraDto carreras = db.selectCarrerasNombre(nombre);
 
-		String todo = "Nombre del corredor: " + atleta.getNombre()
+		String todo = "Nombre del corredor: " + atletaActual.getNombre()
 				+ "\nEstas apuntado a la carrera con nombre: " + nombre 
-				+ "\nEn la categoria: " + atleta.getCategoria()
+				+ "\nEn la categoria: " + atletaActual.getCategoria()
 				+ "\nCon fecha de inscripcion: " + LocalDate.now()
 				+ "\nLa carrera se efectuara el " + carreras.getFecha() 
 				+ "\nDel tipo " + carreras.getTipo() 
@@ -1000,7 +1013,7 @@ public class MainWindow extends JFrame {
 				+ "km\nLa cual tiene un coste de " + carreras.getCuota()
 				+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
 
-		inscripcion = DtoBuilder.ParamsToInscripcionDto(atleta, carreras,
+		inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaActual, carreras,
 				UUID.randomUUID().toString().substring(0, 3), "Pre-inscrito", LocalDate.now(), "Tranferencia");
 
 		JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, todo,
@@ -1037,7 +1050,7 @@ public class MainWindow extends JFrame {
 					showCard(PANEL_INGRESO);
 				}
 			});
-			btPagarinscripcionAtras.setBounds(53, 319, 143, 36);
+			btPagarinscripcionAtras.setBounds(10, 348, 143, 23);
 		}
 		return btPagarinscripcionAtras;
 	}
@@ -1050,7 +1063,7 @@ public class MainWindow extends JFrame {
 					showCard(PANEL_INICIO);
 				}
 			});
-			btVistaAtletaAtras.setBounds(10, 309, 107, 32);
+			btVistaAtletaAtras.setBounds(10, 348, 107, 23);
 		}
 		return btVistaAtletaAtras;
 	}

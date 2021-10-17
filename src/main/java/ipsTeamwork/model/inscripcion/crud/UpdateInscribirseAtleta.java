@@ -17,7 +17,7 @@ public class UpdateInscribirseAtleta {
 
 			pst.setString(1, estadoInscripcion);
 			pst.setString(2, inscripcion.getAtleta().getIdAtleta());
-			pst.setString(3, inscripcion.getCarrera().getIdCarrea());
+			pst.setString(3, inscripcion.getCarrera().getIdCarrera());
 			pst.setString(4, inscripcion.getDorsal());
 
 			pst.executeUpdate();

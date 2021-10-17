@@ -14,9 +14,9 @@ public class InscribirseAtleta {
 		GestorDB gdb = new GestorDB();
 		Connection con = gdb.getConnection();
 		try {
-			PreparedStatement pst = con.prepareStatement(SQLStrings.insertInscrpcionValues);
+			PreparedStatement pst = con.prepareStatement(SQLStrings.insertInscripcionValues);
 			pst.setString(1, inscripcion.getAtleta().getIdAtleta());
-			pst.setString(2, inscripcion.getCarrera().getIdCarrea());
+			pst.setString(2, inscripcion.getCarrera().getIdCarrera());
 			pst.setString(3, inscripcion.getDorsal());
 			pst.setDate(4, Date.valueOf(inscripcion.getFechaInscripcion()));
 			pst.setString(5, inscripcion.getEstadoInscripcion());
