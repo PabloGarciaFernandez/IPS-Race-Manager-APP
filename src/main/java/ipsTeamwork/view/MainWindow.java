@@ -516,6 +516,8 @@ public class MainWindow extends JFrame {
 									Integer.parseInt(textRegistroEdad.getText()),
 									("" + ((String) comboRegistroSexo.getSelectedItem()).charAt(0)),
 									chckbxRegistroDiscapacidad.isSelected() ? 1 : 0, textRegistroEmail.getText());
+							String cate = Categoria.calculaCategoria(atleta.getEdad(), atleta.getSexo());
+							atleta.setCategoria(cate);
 							showCard(PANEL_ATLETA);
 							cleanRegistro();
 							JOptionPane.showMessageDialog(null, "Registro satisfactorio , bienvenido.");
@@ -711,6 +713,9 @@ public class MainWindow extends JFrame {
 					if (!textIngresoEmail.getText().equals("")) {
 						if (new ExisteAtletaByEmail().execute(textIngresoEmail.getText())) {
 							atleta = new ReadAtletaByEmail(textIngresoEmail.getText()).execute();
+							String cate = Categoria.calculaCategoria(atleta.getEdad(), atleta.getSexo());
+							atleta.setCategoria(cate);
+							System.out.println(atleta.getCategoria());
 							if (new FindAtletaInCarrera().execute(atleta.getIdAtleta(), carreraActual.getIdCarrea())) { // ESTO
 								// NO
 								// SE
@@ -720,7 +725,6 @@ public class MainWindow extends JFrame {
 								// DOBLE
 								// REGISTRO
 								showCard(PANEL_PAGARINSCRIPCION);
-								new InscribirseAtleta().execute(inscripcion());
 								textIngresoEmail.setText("");
 							} else {
 //								showCard(PANEL_PAGARINSCRIPCION);
@@ -737,21 +741,6 @@ public class MainWindow extends JFrame {
 			btnIngresoSiguiente.setBounds(452, 348, 121, 23);
 		}
 		return btnIngresoSiguiente;
-	}
-
-	private InscripcionDto inscripcion() {
-//		Random r = new Random();
-		inscripcion = new InscripcionDto();
-		inscripcion.setAtleta(atleta);
-		inscripcion.setCarrera(carreraActual);
-		inscripcion.setDorsal("myDorsal");
-		inscripcion.setFechaInscripcion(LocalDate.now());
-
-//		inscripcion.setFechaInscripcion(java.sql.Date.valueOf(LocalDate.now().getYear() + "-"
-//				+ LocalDate.now().getMonthValue() + "-" + LocalDate.now().getDayOfMonth()));
-		inscripcion.setEstadoInscripcion("Pre-inscrito");
-
-		return inscripcion;
 	}
 
 	private JPanel getPnOrganizadorCentro() {
@@ -1001,29 +990,34 @@ public class MainWindow extends JFrame {
 
 		CarreraDto carreras = db.selectCarrerasNombre(nombre);
 
-		String todo = "Estas apuntado a la carrera con nombre: " + nombre + "\nLa carrera se efectuara el "
-				+ carreras.getFecha() + "\nDel tipo " + carreras.getTipo() + "\nCon una distancia real de "
-				+ carreras.getDistancia() + "km\nLa cual tiene un coste de " + carreras.getCuota()
+		String todo = "Nombre del corredor: " + atleta.getNombre()
+				+ "\nEstas apuntado a la carrera con nombre: " + nombre 
+				+ "\nEn la categoria: " + atleta.getCategoria()
+				+ "\nCon fecha de inscripcion: " + LocalDate.now()
+				+ "\nLa carrera se efectuara el " + carreras.getFecha() 
+				+ "\nDel tipo " + carreras.getTipo() 
+				+ "\nCon una distancia real de " + carreras.getDistancia() 
+				+ "km\nLa cual tiene un coste de " + carreras.getCuota()
 				+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
 
-		InscripcionDto ins = DtoBuilder.ParamsToInscripcionDto(atleta, carreras,
-				UUID.randomUUID().toString().substring(0, 3), "Pendiente de pago", LocalDate.now(), "Tranferencia");
+		inscripcion = DtoBuilder.ParamsToInscripcionDto(atleta, carreras,
+				UUID.randomUUID().toString().substring(0, 3), "Pre-inscrito", LocalDate.now(), "Tranferencia");
 
 		JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, todo,
 				"Este es tu justifcante de pago por Transacción", JOptionPane.DEFAULT_OPTION);
 
-		InscribirseAtleta.execute(ins);
+		new InscribirseAtleta().execute(inscripcion);
 
 		int pagaste;
 
 		pagaste = JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, "¿Ya pagaste?",
 				"Muchas gracias por inscribirse", JOptionPane.YES_NO_OPTION);
 		if (JOptionPane.YES_OPTION == pagaste) {
-			UpdateInscribirseAtleta.execute(ins, "Inscrito");
+			UpdateInscribirseAtleta.execute(inscripcion, "Inscrito");
 
 			JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia,
 					"Muchas gracias por realizar el pago de la cuota. Disfrute de la carrera "
-							+ ins.getAtleta().getNombre(),
+							+ inscripcion.getAtleta().getNombre(),
 					"Gracias :)", JOptionPane.DEFAULT_OPTION);
 
 		}

@@ -21,12 +21,12 @@ public class FindAtletaInCarrera {
 			pst.setString(2, idCarrera);
 			
 			rs = pst.executeQuery();
-			String str = rs.getString(1);
-			if(str.equals(idAtleta)) {
-				res = true;
+			int numb = rs.getInt(1);
+			if(numb == 1) {
+				res = false;
 			}
 			else {
-				res = false;
+				res = true;
 			}
 			
 			rs.close();

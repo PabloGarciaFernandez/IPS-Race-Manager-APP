@@ -10,7 +10,7 @@ import ipsTeamwork.model.inscripcion.InscripcionDto;
 
 public class InscribirseAtleta {
 
-	public static void execute(InscripcionDto inscripcion) {
+	public void execute(InscripcionDto inscripcion) {
 		GestorDB gdb = new GestorDB();
 		Connection con = gdb.getConnection();
 		try {

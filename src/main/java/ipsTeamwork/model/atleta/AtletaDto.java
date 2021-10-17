@@ -33,6 +33,10 @@ public class AtletaDto {
 		this.email = email;
 	}
 
+	public void setCategoria(String categoria) {
+		this.categoria = categoria;
+	}
+
 	/**
 	 * @return the dNI
 	 */
