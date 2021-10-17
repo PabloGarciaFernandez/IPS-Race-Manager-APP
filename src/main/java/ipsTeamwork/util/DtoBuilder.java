@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ipsTeamwork.model.atleta.AtletaDto;
@@ -56,13 +57,15 @@ public class DtoBuilder {
 	}
 
 	public static InscripcionDto ParamsToInscripcionDto(AtletaDto atleta, CarreraDto carrera, String dorsal,
-			String estadoInscripcion, LocalDate localDate, String formaDePago) {
+			String estadoInscripcion, Date date, String formaDePago) {
 		InscripcionDto dto = new InscripcionDto();
 		dto.setAtleta(atleta);
+		dto.setIdAtleta(atleta.getIdAtleta());
 		dto.setCarrera(carrera);
+		dto.setIdCarrera(carrera.getIdCarrera());
 		dto.setDorsal(dorsal);
 		dto.setEstadoInscripcion(estadoInscripcion);
-		dto.setFechaInscripcion(localDate);
+		dto.setFechaInscripcion(date);
 		dto.setFormaDePago(formaDePago);
 
 		return dto;
@@ -81,5 +84,27 @@ public class DtoBuilder {
 		dto.setTipo(tipo);
 
 		return dto;
+	}
+
+	public static List<InscripcionDto> toInscripcionDtoList(ResultSet rs) {
+		List<InscripcionDto> ret = new ArrayList<InscripcionDto>();
+		InscripcionDto dto = null;
+
+		try {
+			while (rs.next()) {
+				dto = new InscripcionDto();
+				dto.setIdAtleta(rs.getString("idAtleta"));
+				dto.setIdCarrera(rs.getString("idCarrera"));
+				dto.setFechaInscripcion(rs.getDate("fechaInscripcion"));
+				dto.setDorsal(rs.getString("dorsal"));
+				dto.setEstadoInscripcion(rs.getString("estadoInscripcion"));
+				dto.setFormaDePago(rs.getString("formaDePago"));
+				ret.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return ret;
 	}
 }

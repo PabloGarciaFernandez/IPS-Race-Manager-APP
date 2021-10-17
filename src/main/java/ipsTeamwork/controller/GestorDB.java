@@ -404,7 +404,7 @@ public class GestorDB {
 				inscripcion.setAtleta(nuevoAtleta);
 				// Esto es para que me lea bien la fecha
 				inscripcion.setEstadoInscripcion(rs.getString("estadoInscripcion"));
-				inscripcion.setFechaInscripcion(LocalDate.parse(rs.getString("fechaInscripcion"), formatter));
+				inscripcion.setFechaInscripcion(rs.getDate("fechaInscripcion"));
 				atletasInscritos.add(inscripcion);
 				rs2.close();
 			}

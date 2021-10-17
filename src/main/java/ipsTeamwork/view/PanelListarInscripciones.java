@@ -1,12 +1,22 @@
 package ipsTeamwork.view;
 
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
 import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+import ipsTeamwork.controller.GestorDB;
+import ipsTeamwork.model.atleta.AtletaDto;
+import ipsTeamwork.model.inscripcion.InscripcionDto;
+import ipsTeamwork.model.inscripcion.crud.SelectAllInscripcionForAtleta;
 
 public class PanelListarInscripciones extends JPanel {
 
@@ -18,19 +28,28 @@ public class PanelListarInscripciones extends JPanel {
 	private Component verticalStrut_1;
 	private JButton btnAtras;
 	private JTable tableInscripciones;
+	private DefaultTableModel dtm;
+	
+	private AtletaDto atleta;
+	
+	private MainWindow parent;
 
 	/**
 	 * Create the panel.
 	 */
-	public PanelListarInscripciones() {
+	public PanelListarInscripciones(MainWindow parent, AtletaDto atleta) {
 		setBounds(100, 100, 599, 421);
 		setLayout(new BorderLayout(0, 0));
 		add(getPanelNorth(), BorderLayout.NORTH);
 		add(getPanelSouth(), BorderLayout.SOUTH);
 		add(getScrollPane(), BorderLayout.CENTER);
-		add(getTableInscripciones(), BorderLayout.WEST);
-
+		
+		dtm = (DefaultTableModel) getTableInscripciones().getModel();
+		
+		this.atleta = atleta;
+		this.parent = parent;
 	}
+	
 	private JPanel getPanelNorth() {
 		if (panelNorth == null) {
 			panelNorth = new JPanel();
@@ -68,6 +87,11 @@ public class PanelListarInscripciones extends JPanel {
 	private JButton getBtnAtras() {
 		if (btnAtras == null) {
 			btnAtras = new JButton("Atrás");
+			btnAtras.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					atras();
+				}
+			});
 		}
 		return btnAtras;
 	}
@@ -75,7 +99,41 @@ public class PanelListarInscripciones extends JPanel {
 	private JTable getTableInscripciones() {
 		if (tableInscripciones == null) {
 			tableInscripciones = new JTable();
+			tableInscripciones.setModel(new DefaultTableModel(
+				new Object[][] {
+				},
+				new String[] {
+					"Nombre", "Estado", "Desde"
+				}
+			));
 		}
+		
 		return tableInscripciones;
+	}
+
+	public void setAtleta(AtletaDto atletaActual) {
+		this.atleta = atletaActual;
+		cargarInscripcionesEnTabla();
+	}
+	
+	public void cargarInscripcionesEnTabla() {
+		List<InscripcionDto> insc = new SelectAllInscripcionForAtleta(atleta.getIdAtleta()).execute();
+		System.out.println("\n\n\nCargando inscripciones en tabla:\n");
+		for (InscripcionDto dto : insc) {
+			String[] inscRow = { dto.getCarrera().getNombre(), dto.getEstadoInscripcion(), dto.getFechaInscripcion().toString()};
+
+			System.out.println(inscRow);
+			dtm.addRow(inscRow);
+		}
+		
+		
+		System.out.println("\n\n\nInscripciones en select:\n");
+		new GestorDB().selectInscripcion();
+		getTableInscripciones().setModel(dtm);
+	}
+	
+	public void atras() {
+		parent.showCard(MainWindow.PANEL_ATLETA);
+		//this.setVisible(false);
 	}
 }

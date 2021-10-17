@@ -1,6 +1,6 @@
 package ipsTeamwork.model.inscripcion;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.carrera.CarreraDto;
@@ -13,7 +13,7 @@ import ipsTeamwork.model.carrera.CarreraDto;
  */
 public class InscripcionDto {
 
-	private LocalDate fechaInscripcion;
+	private Date fechaInscripcion;
 	private String idAtleta;
 	private String idCarrera;
 	private String dorsal;
@@ -25,14 +25,30 @@ public class InscripcionDto {
 	/**
 	 * @return the fechaInscripcion
 	 */
-	public LocalDate getFechaInscripcion() {
+	public Date getFechaInscripcion() {
 		return fechaInscripcion;
+	}
+
+	public String getIdAtleta() {
+		return idAtleta;
+	}
+
+	public void setIdAtleta(String idAtleta) {
+		this.idAtleta = idAtleta;
+	}
+
+	public String getIdCarrera() {
+		return idCarrera;
+	}
+
+	public void setIdCarrera(String idCarrera) {
+		this.idCarrera = idCarrera;
 	}
 
 	/**
 	 * @param fechaInscripcion the fechaInscripcion to set
 	 */
-	public void setFechaInscripcion(LocalDate fechaInscripcion) {
+	public void setFechaInscripcion(Date fechaInscripcion) {
 		this.fechaInscripcion = fechaInscripcion;
 	}
 

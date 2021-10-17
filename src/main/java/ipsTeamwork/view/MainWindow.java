@@ -46,7 +46,7 @@ public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 3073912408195015551L;
 
-	private static final String PANEL_ATLETA = "panel_atleta";
+	public static final String PANEL_ATLETA = "panel_atleta";
 	private static final String PANEL_INICIO = "panel_inicio";
 	private static final String PANEL_ORGANIZADOR = "panel_organizador";
 	private static final String PANEL_LISTA_CARRERAS = "panel_lista_carreras_atleta";
@@ -123,7 +123,8 @@ public class MainWindow extends JFrame {
 	private JButton btPagarInscripcionTransferencia;
 	private JButton btPagarinscripcionAtras;
 	private JButton btVistaAtletaAtras;
-
+	private JPanel pnVistaInscripcionesAtleta;
+	
 	/**
 	 * Create the frame.
 	 */
@@ -132,6 +133,7 @@ public class MainWindow extends JFrame {
 		tb = (DefaultTableModel) getTbVerCarreras().getModel();
 		tablaAtleta = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
 		tablaAtletasInscritosX = (DefaultTableModel) getTbAtletasInscritosEnXCarrera().getModel();
+		pnVistaInscripcionesAtleta = new PanelListarInscripciones(this, atletaActual);
 		setResizable(false);
 		setTitle("Carreras");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -148,11 +150,20 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnIngreso(), PANEL_INGRESO);
 		contentPane.add(getPnListaCarrerasOrganizador(), PANEL_VERCARRERASORGANIZADOR);
 		contentPane.add(getPnPagarInscripcion(), PANEL_PAGARINSCRIPCION);
-		contentPane.add(new PanelListarInscripciones(), PANEL_LISTA_INSCRIPCIONES);
+		contentPane.add(pnVistaInscripcionesAtleta, PANEL_LISTA_INSCRIPCIONES);
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
 	}
 
+	public AtletaDto getAtletaActual() {
+		return atletaActual;
+	}
+
+	public void setAtletaActual(AtletaDto atletaActual) {
+		this.atletaActual = atletaActual;
+		((PanelListarInscripciones)pnVistaInscripcionesAtleta).setAtleta(atletaActual);
+	}
+	
 	private JPanel getPnInicio() {
 		if (pnInicio == null) {
 			pnInicio = new JPanel();
@@ -241,6 +252,7 @@ public class MainWindow extends JFrame {
 			btnMisCarreras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					showCard(PANEL_LISTA_INSCRIPCIONES);
+					((PanelListarInscripciones)pnVistaInscripcionesAtleta).cargarInscripcionesEnTabla();
 				}
 			});
 			btnMisCarreras.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -249,7 +261,7 @@ public class MainWindow extends JFrame {
 		return btnMisCarreras;
 	}
 
-	private void showCard(String name) {
+	public void showCard(String name) {
 		CardLayout c1 = (CardLayout) contentPane.getLayout();
 		c1.show(contentPane, name);
 	}
@@ -516,11 +528,12 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					if (checkFieldsRegisters()) {
 						if (Integer.parseInt(textRegistroEdad.getText()) >= 18) {
-							atletaActual = new AtletaDto(textRegistroDNI.getText(),
+							setAtletaActual(new AtletaDto(textRegistroDNI.getText(),
 									textRegistroNombre.getText() + " " + textRegistroApellidos.getText(),
 									Integer.parseInt(textRegistroEdad.getText()),
 									("" + ((String) comboRegistroSexo.getSelectedItem()).charAt(0)),
-									chckbxRegistroDiscapacidad.isSelected() ? 1 : 0, textRegistroEmail.getText());
+									chckbxRegistroDiscapacidad.isSelected() ? 1 : 0, textRegistroEmail.getText()));
+							
 							String cate = Categoria.calculaCategoria(atletaActual.getEdad(), atletaActual.getSexo());
 							atletaActual.setCategoria(cate);
 							showCard(PANEL_ATLETA);
@@ -740,7 +753,7 @@ public class MainWindow extends JFrame {
 		if (email.trim().strip().isEmpty()) JOptionPane.showMessageDialog(this, "Introduce tu email");
 		else {
 			if (new ExisteAtletaByEmail().execute(email)) {
-				atletaActual = new ReadAtletaByEmail(email).execute();
+				setAtletaActual(new ReadAtletaByEmail(email).execute());
 				atletaActual.setCategoria(
 						Categoria.calculaCategoria(
 								atletaActual.getEdad(), 
@@ -1014,7 +1027,7 @@ public class MainWindow extends JFrame {
 				+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
 
 		inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaActual, carreras,
-				UUID.randomUUID().toString().substring(0, 3), "Pre-inscrito", LocalDate.now(), "Tranferencia");
+				UUID.randomUUID().toString().substring(0, 3), "Pre-inscrito", new Date(), "Tranferencia");
 
 		JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, todo,
 				"Este es tu justifcante de pago por Transacción", JOptionPane.DEFAULT_OPTION);

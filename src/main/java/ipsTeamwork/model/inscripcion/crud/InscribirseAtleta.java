@@ -15,10 +15,10 @@ public class InscribirseAtleta {
 		Connection con = gdb.getConnection();
 		try {
 			PreparedStatement pst = con.prepareStatement(SQLStrings.insertInscripcionValues);
-			pst.setString(1, inscripcion.getAtleta().getIdAtleta());
-			pst.setString(2, inscripcion.getCarrera().getIdCarrera());
+			pst.setString(1, inscripcion.getIdAtleta());
+			pst.setString(2, inscripcion.getIdCarrera());
 			pst.setString(3, inscripcion.getDorsal());
-			pst.setDate(4, Date.valueOf(inscripcion.getFechaInscripcion()));
+			pst.setDate(4, new java.sql.Date(inscripcion.getFechaInscripcion().getTime()));
 			pst.setString(5, inscripcion.getEstadoInscripcion());
 			pst.setString(6, inscripcion.getFormaDePago());
 			pst.setString(7, null);
