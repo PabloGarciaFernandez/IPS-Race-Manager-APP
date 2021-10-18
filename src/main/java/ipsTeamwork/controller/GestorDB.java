@@ -16,7 +16,9 @@ import java.util.Random;
 import java.util.UUID;
 
 import ipsTeamwork.model.atleta.AtletaDto;
+import ipsTeamwork.model.atleta.crud.ListarAtletasArray;
 import ipsTeamwork.model.carrera.CarreraDto;
+import ipsTeamwork.model.carrera.crud.ListCarreras;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.util.DateUtil;
 import ipsTeamwork.util.DtoBuilder;
@@ -598,19 +600,23 @@ public class GestorDB {
 		poblarInscripciones(25);
 	}
 
-	private void poblarInscripciones(int i) {
+	private void poblarInscripciones(int num) {
 		conectar();
 		Random r = new Random();
+		
+		List<AtletaDto> atletas = new ListarAtletasArray().execute();
+		List<CarreraDto> carreras = listarCarreras();
+		
 		try {
 
-			for (int j = 0; j < i; j++) {
+			for (int j = 0; j < num; j++) {
 				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertInscripcionValues);
-				pst.setString(1, UUID.randomUUID().toString());
-				pst.setString(2, UUID.randomUUID().toString().substring(0, 6));
-				pst.setString(3, (r.nextBoolean() ? "myDorsal" : "myOtherDorsal"));
-				pst.setDate(4, java.sql.Date.valueOf(LocalDate.now().getYear() + "-" + LocalDate.now().getMonthValue()
-						+ "-" + LocalDate.now().getDayOfMonth()));
-				pst.setString(5, (r.nextBoolean() ? "Inscrito" : "Pendiente de pago"));
+				
+				pst.setString(1, atletas.get(j).getIdAtleta());
+				pst.setString(2, carreras.get(j).getIdCarrera());
+				pst.setString(3, Integer.toString(j));
+				pst.setDate(4, new java.sql.Date(new Date().getTime()));
+				pst.setString(5, "Pendiente de pago");
 				pst.setString(6, (r.nextBoolean() ? "Transferencia" : "Tarjeta"));
 				pst.setInt(7, r.nextInt(300));
 
@@ -618,6 +624,7 @@ public class GestorDB {
 				pst.close();
 
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
