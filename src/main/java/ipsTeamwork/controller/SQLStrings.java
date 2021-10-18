@@ -16,9 +16,9 @@ public class SQLStrings {
 
 	// inserts
 
-	public static String insertBolt = "Insert into atleta values('96','11122234A','Bolt',35,'F',0); ";
+	public static String insertBolt = "Insert into atleta values('69','11122234A','Bolt',35,'F',0); ";
 
-	public static String insertUsain = "Insert into atleta values('69','11122233A','Usain',25,'M',1); ";
+	public static String insertUsain = "Insert into atleta values('96','11122233A','Usain',25,'M',1); ";
 
 	public static String insertNewYork = "Insert into carrera values('5','Asfalto',25); ";
 
@@ -60,22 +60,27 @@ public class SQLStrings {
 
 	// Consultas para sacar las clasificaciones
 
-	public static String clasificacionGeneralPresentados = "select a.sexo, a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo > 0 order by i.tiempoCorriendo";
 
+	
+	public static String clasificacionGeneralPrueba = "select i.idAtleta, i.idCarrera, i.tiempoCorriendo from inscripcion i where  i.tiempoCorriendo > 0 order by i.tiempoCorriendo";
+
+	public static String clasificacionGeneralPresentados = "select a.sexo, a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo > 0  order by i.tiempoCorriendo";
+
+	
 	public static String clasificacionGeneralNoFinaliza = "select a.sexo, a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo = 0 order by a.nombre";
 
 	public static String clasificacionGeneralNoPresentados = "select a.sexo, a.nombre from atleta a where a.idAtleta NOT IN (select idAtleta from inscripcion)  order by a.nombre";
 
-	public static String clasificacionGeneralPresentadosHombres = "select a.sexo, a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo > 0 and a.sexo='M' order by i.tiempoCorriendo";
+	public static String clasificacionGeneralPresentadosHombres = "select a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo > 0 and a.sexo='M' order by i.tiempoCorriendo";
 
-	public static String clasificacionGeneralNoFinalizaHombres = "select a.sexo, a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo = 0 and a.sexo='M' order by a.nombre";
+	public static String clasificacionGeneralNoFinalizaHombres = "select a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo = 0 and a.sexo='M' order by a.nombre";
 
-	public static String clasificacionGeneralNoPresentadosHombres = "select a.sexo, a.nombre from atleta a where a.idAtleta NOT IN (select idAtleta from inscripcion)  and a.sexo='M' order by a.nombre";
+	public static String clasificacionGeneralNoPresentadosHombres = "select a.nombre from atleta a where a.idAtleta NOT IN (select idAtleta from inscripcion)  and a.sexo='M' order by a.nombre";
 
-	public static String clasificacionGeneralPresentadosMujeres = "select a.sexo, a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo > 0 and a.sexo='F' order by i.tiempoCorriendo";
+	public static String clasificacionGeneralPresentadosMujeres = "select  a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo > 0 and a.sexo='F' order by i.tiempoCorriendo";
 
-	public static String clasificacionGeneralNoFinalizaMujeres = "select a.sexo, a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo = 0 and a.sexo='F' order by a.nombre";
+	public static String clasificacionGeneralNoFinalizaMujeres = "select  a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo = 0 and a.sexo='F' order by a.nombre";
 
-	public static String clasificacionGeneralNoPresentadosMujeres = "select a.sexo, a.nombre from atleta a where a.idAtleta NOT IN (select idAtleta from inscripcion)  and a.sexo='F' order by a.nombre";
+	public static String clasificacionGeneralNoPresentadosMujeres = "select  a.nombre from atleta a where a.idAtleta NOT IN (select idAtleta from inscripcion)  and a.sexo='F' order by a.nombre";
 
 }

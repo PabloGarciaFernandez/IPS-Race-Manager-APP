@@ -298,7 +298,177 @@ public class GestorDB {
 		}
 		return carreras;
 	}
+	
+	public ArrayList<InscripcionDto> getArrayClasificaciones() {
+		conectar();
 
+		ArrayList<InscripcionDto> inscripciones = new ArrayList<InscripcionDto>();
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.clasificacionGeneralPresentados);//AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				InscripcionDto inscripcion = new InscripcionDto();
+				inscripcion.setAtleta(new AtletaDto());
+				
+				inscripcion.getAtleta().setNombre(rs.getString(2));
+				inscripcion.getAtleta().setSexo(rs.getString(1));
+				inscripcion.setTiempoCorriendo(Integer.toString(rs.getInt(3)));
+
+				inscripciones.add(inscripcion);
+			}
+			
+			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoFinaliza);//AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				InscripcionDto inscripcion = new InscripcionDto();
+				inscripcion.setAtleta(new AtletaDto());
+				
+				inscripcion.getAtleta().setNombre(rs.getString(2));
+				inscripcion.getAtleta().setSexo(rs.getString(1));
+				inscripcion.setTiempoCorriendo("NF");
+
+				inscripciones.add(inscripcion);
+			}
+			
+			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoPresentados);//AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				InscripcionDto inscripcion = new InscripcionDto();
+				
+				inscripcion.setAtleta(new AtletaDto());
+				
+				inscripcion.getAtleta().setSexo(rs.getString(1));
+				
+				inscripcion.getAtleta().setNombre(rs.getString(2));
+				inscripcion.setTiempoCorriendo("NP");
+
+				inscripciones.add(inscripcion);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Error de script de DB: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+		return inscripciones;
+	}
+	
+	public ArrayList<InscripcionDto> getArrayClasificacionesHombres() {
+		conectar();
+
+		ArrayList<InscripcionDto> inscripciones = new ArrayList<InscripcionDto>();
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.clasificacionGeneralPresentadosHombres);//AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				InscripcionDto inscripcion = new InscripcionDto();
+				inscripcion.setAtleta(new AtletaDto());
+				
+				inscripcion.getAtleta().setNombre(rs.getString(1));
+				inscripcion.setTiempoCorriendo(Integer.toString(rs.getInt(3)));
+
+				inscripciones.add(inscripcion);
+			}
+			
+			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoFinalizaHombres);//AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				InscripcionDto inscripcion = new InscripcionDto();
+				inscripcion.setAtleta(new AtletaDto());
+				
+				inscripcion.getAtleta().setNombre(rs.getString(1));
+				inscripcion.setTiempoCorriendo("NF");
+
+				inscripciones.add(inscripcion);
+			}
+			
+			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoPresentadosHombres);//AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				InscripcionDto inscripcion = new InscripcionDto();
+				inscripcion.setAtleta(new AtletaDto());
+				
+				inscripcion.getAtleta().setNombre(rs.getString(1));
+				inscripcion.setTiempoCorriendo("NP");
+
+				inscripciones.add(inscripcion);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Error de script de DB: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+		return inscripciones;
+	}
+	
+	
+	public ArrayList<InscripcionDto> getArrayClasificacionesMujeres() {
+		conectar();
+
+		ArrayList<InscripcionDto> inscripciones = new ArrayList<InscripcionDto>();
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.clasificacionGeneralPresentadosMujeres);//AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				InscripcionDto inscripcion = new InscripcionDto();
+				inscripcion.setAtleta(new AtletaDto());
+				
+				inscripcion.getAtleta().setNombre(rs.getString(1));
+				inscripcion.setTiempoCorriendo(Integer.toString(rs.getInt(3)));
+
+				inscripciones.add(inscripcion);
+			}
+			
+			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoFinalizaMujeres);//AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				InscripcionDto inscripcion = new InscripcionDto();
+				inscripcion.setAtleta(new AtletaDto());
+				
+				inscripcion.getAtleta().setNombre(rs.getString(1));
+				inscripcion.setTiempoCorriendo("NF");
+
+				inscripciones.add(inscripcion);
+			}
+			
+			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoPresentadosMujeres);//AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				InscripcionDto inscripcion = new InscripcionDto();
+				inscripcion.setAtleta(new AtletaDto());
+				
+				inscripcion.getAtleta().setNombre(rs.getString(1));
+				inscripcion.setTiempoCorriendo("NP");
+
+				inscripciones.add(inscripcion);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Error de script de DB: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+		return inscripciones;
+	}
 	public void selectInscripcion() {
 		conectar();
 		try {
@@ -341,7 +511,7 @@ public class GestorDB {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnsNumber = rsmd.getColumnCount();
 		while (rs.next()) {
-			System.out.print(orden + "� | ");
+			System.out.print(orden + "º | ");
 			for (int i = 1; i <= columnsNumber; i++) {
 				if (i > 1)
 					System.out.print(" | ");
@@ -424,7 +594,8 @@ public class GestorDB {
 	 */
 	public void poblarTablas() {
 		poblarCarreras(25);
-		poblarAtletas(1);
+		poblarAtletas(25);
+		poblarInscripciones(25);
 	}
 
 	private void poblarInscripciones(int i) {
@@ -524,9 +695,10 @@ public class GestorDB {
 
 	public void obtenerClasificacionGeneral() {
 
+		
+		
 		conectar();
 		try {
-
 			pst = conn.prepareStatement(SQLStrings.clasificacionGeneralPresentados);
 
 			rs = pst.executeQuery();
@@ -538,6 +710,7 @@ public class GestorDB {
 			rs = pst.executeQuery();
 
 			int valor2 = printResultSetOrdenadoClasificaciones(rs, valor, false);
+			
 
 			pst = conn.prepareStatement(SQLStrings.clasificacionGeneralNoPresentados);
 

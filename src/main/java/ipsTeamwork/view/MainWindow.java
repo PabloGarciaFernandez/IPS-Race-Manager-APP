@@ -3,6 +3,7 @@ package ipsTeamwork.view;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,6 +42,7 @@ import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
 import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtleta;
 import ipsTeamwork.util.DtoBuilder;
+import javax.swing.SwingConstants;
 
 public class MainWindow extends JFrame {
 
@@ -53,8 +55,11 @@ public class MainWindow extends JFrame {
 	private static final String PANEL_REGISTRO = "panel_registro";
 	private static final String PANEL_INGRESO = "panel_ingreso";
 	private static final String PANEL_VERCARRERASORGANIZADOR = "panel_lista_carreras_organizador";
+	private static final String PANEL_VERCLASIFICACIONESORGANIZADOR = "panel_lista_clasificaciones_organizador";
+
 	private static final String PANEL_PAGARINSCRIPCION = "panel_PagarInscripcion";
 	private static final String PANEL_LISTA_INSCRIPCIONES = "panel_lista_inscripciones_atleta";
+	
 
 	private JPanel contentPane;
 	private JPanel pnInicio;
@@ -100,16 +105,39 @@ public class MainWindow extends JFrame {
 	private JButton btnOrganizadorCancelar;
 	private JButton btnOrganizadorSiguiente;
 	private JPanel pnListaCarrerasOrganizador;
+	
+	private JPanel pnListaClasificacionesOrganizador;
+	private JPanel pnListaClasificacionesOrganizadorHombres;
+	private JPanel pnListaClasificacionesOrganizadorMujeres;
+
 	private JPanel pnPrincipalVerCarrerasOrganizador;
+	
+	private JPanel pnPrincipalVerClasificacionesOrganizador;
 	private JButton btVerVarrerasOrganizacion;
 	private JScrollPane scVerCarreras;
+	
+	private JLabel lbClasificacionGeneral;
+	private JScrollPane scVerClasificacionesHombres;
+	private JScrollPane scVerClasificacionesMujeres;
+	private JLabel lbClasificacionGeneralHombres;
+	private JLabel lbClasificacionGeneralMujeres;
+	private JScrollPane scVerClasificaciones;
+	
 	private JTable tbVerCarreras;
+	private JTable tbVerClasificaciones;
+	private JTable tbVerClasificacionesHombres;
+	private JTable tbVerClasificacionesMujeres;
 	private JButton tbVerAtletasInscritosPorXCarrera;
 	private JScrollPane scVerAtletasInscritosPorXCarrera;
 	private JTable tbAtletasInscritosEnXCarrera;
 	private DefaultTableModel tb;
 	private DefaultTableModel tablaAtleta;
 	private DefaultTableModel tablaAtletasInscritosX;
+	
+	private DefaultTableModel tablaClasificaciones;
+	private DefaultTableModel tablaClasificacionesHombres;
+	private DefaultTableModel tablaClasificacionesMujeres;
+
 	private GestorDB db;
 	private JScrollPane scrollPaneListaCarrerasAtleta;
 	private JTable tablaCarrerasParaAtleta;
@@ -124,6 +152,8 @@ public class MainWindow extends JFrame {
 	private JButton btPagarinscripcionAtras;
 	private JButton btVistaAtletaAtras;
 	private JPanel pnVistaInscripcionesAtleta;
+	private JButton btVerClasificacionesOrganizacion;
+	
 
 	/**
 	 * Create the frame.
@@ -131,13 +161,16 @@ public class MainWindow extends JFrame {
 	public MainWindow() {
 		db = new GestorDB();
 		tb = (DefaultTableModel) getTbVerCarreras().getModel();
+		tablaClasificaciones = (DefaultTableModel) getTbVerClasificaciones().getModel();
+		tablaClasificacionesHombres = (DefaultTableModel) getTbVerClasificacionesHombres().getModel();
+		tablaClasificacionesMujeres = (DefaultTableModel) getTbVerClasificacionesMujeres().getModel();
 		tablaAtleta = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
 		tablaAtletasInscritosX = (DefaultTableModel) getTbAtletasInscritosEnXCarrera().getModel();
 		pnVistaInscripcionesAtleta = new PanelListarInscripciones(this, atletaActual);
 		setResizable(false);
 		setTitle("Carreras");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 599, 421);
+		setBounds(100, 100, 921, 495);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -151,9 +184,15 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnListaCarrerasOrganizador(), PANEL_VERCARRERASORGANIZADOR);
 		contentPane.add(getPnPagarInscripcion(), PANEL_PAGARINSCRIPCION);
 		contentPane.add(pnVistaInscripcionesAtleta, PANEL_LISTA_INSCRIPCIONES);
+		contentPane.add(getPnListaClasificacionesOrganizador(), PANEL_VERCLASIFICACIONESORGANIZADOR);
+
+		
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
+		cargarTablaClasificacionesOrganizador();
 	}
+
+	
 
 	public AtletaDto getAtletaActual() {
 		return atletaActual;
@@ -304,7 +343,54 @@ public class MainWindow extends JFrame {
 			tb.addRow(carrerasTabla);
 		}
 	}
+	
+	
 
+	public void cargarTablaClasificacionesOrganizador() {
+		GestorDB db = new GestorDB();
+
+		ArrayList<InscripcionDto> inscripciones = db.getArrayClasificaciones();
+
+		int posicion = 1;
+		
+		for (InscripcionDto inscripcionDto : inscripciones) {
+
+			String[] clasificacionesTabla = { Integer.toString(posicion)+"º", inscripcionDto.getAtleta().getSexo(), inscripcionDto.getAtleta().getNombre(),
+					inscripcionDto.getTiempoCorriendo() };
+			tablaClasificaciones.addRow(clasificacionesTabla);
+			posicion++;
+		}
+		
+		
+		ArrayList<InscripcionDto> inscripcionesHombres = db.getArrayClasificacionesHombres();
+
+		posicion = 1;
+		
+		for (InscripcionDto inscripcionDto : inscripcionesHombres) {
+
+			String[] clasificacionesTabla = { Integer.toString(posicion)+"º", inscripcionDto.getAtleta().getNombre(), 
+					inscripcionDto.getTiempoCorriendo() };
+			tablaClasificacionesHombres.addRow(clasificacionesTabla);
+			posicion++;
+		}
+		
+		
+		ArrayList<InscripcionDto> inscripcionesMujeres = db.getArrayClasificacionesMujeres();
+
+		posicion = 1;
+		
+		for (InscripcionDto inscripcionDto : inscripcionesMujeres) {
+
+			String[] clasificacionesTabla = { Integer.toString(posicion)+"º", inscripcionDto.getAtleta().getNombre(), 
+					inscripcionDto.getTiempoCorriendo() };
+			tablaClasificacionesMujeres.addRow(clasificacionesTabla);
+			posicion++;
+		}
+		
+		
+	}
+	
+	
 	private JPanel getPnListaNorth() {
 		if (pnListaNorth == null) {
 			pnListaNorth = new JPanel();
@@ -770,6 +856,7 @@ public class MainWindow extends JFrame {
 			pnOrganizadorCentro.add(getBtnOrganizadorCancelar());
 			pnOrganizadorCentro.add(getBtnOrganizadorSiguiente());
 			pnOrganizadorCentro.add(getBtVerVarrerasOrganizacion());
+			pnOrganizadorCentro.add(getBtVerClasificacionesOrganizacion());
 		}
 		return pnOrganizadorCentro;
 	}
@@ -811,6 +898,53 @@ public class MainWindow extends JFrame {
 		}
 		return pnListaCarrerasOrganizador;
 	}
+	
+	private JPanel getPnListaClasificacionesOrganizador() {
+		if (pnListaClasificacionesOrganizador == null) {
+			pnListaClasificacionesOrganizador = new JPanel();
+			pnListaClasificacionesOrganizador.setLayout(new BorderLayout(0, 0));
+			pnListaClasificacionesOrganizador.add(getPnPrincipalVerClasificacionesOrganizador(), BorderLayout.CENTER);
+		}
+		return pnListaClasificacionesOrganizador;
+	}
+	
+	private JPanel getPnListaClasificacionesOrganizadorHombres() {
+		if (pnListaClasificacionesOrganizadorHombres == null) {
+			pnListaClasificacionesOrganizadorHombres = new JPanel();
+			pnListaClasificacionesOrganizadorHombres.setLayout(new BorderLayout(0, 0));
+			pnListaClasificacionesOrganizadorHombres.add(getPnPrincipalVerClasificacionesOrganizador(), BorderLayout.CENTER);
+		}
+		return pnListaClasificacionesOrganizadorHombres;
+	}
+
+	
+	private JPanel getPnListaClasificacionesOrganizadorMujeres() {
+		if (pnListaClasificacionesOrganizadorMujeres == null) {
+			pnListaClasificacionesOrganizadorMujeres = new JPanel();
+			pnListaClasificacionesOrganizadorMujeres.setLayout(new BorderLayout(0, 0));
+			pnListaClasificacionesOrganizadorMujeres.add(getPnPrincipalVerClasificacionesOrganizador(), BorderLayout.CENTER);
+		}
+		return pnListaClasificacionesOrganizadorMujeres;
+	}
+
+	
+	private Component getPnPrincipalVerClasificacionesOrganizador() {
+		if (pnPrincipalVerClasificacionesOrganizador == null) {
+			pnPrincipalVerClasificacionesOrganizador = new JPanel();
+			pnPrincipalVerClasificacionesOrganizador.setLayout(null);
+			pnPrincipalVerClasificacionesOrganizador.add(getScVerClasificaciones());
+			pnPrincipalVerClasificacionesOrganizador.add(getLbClasificacionGeneral());
+			pnPrincipalVerClasificacionesOrganizador.add(getScVerClasificacionesHombres());
+			pnPrincipalVerClasificacionesOrganizador.add(getScVerClasificacionesMujeres());
+			pnPrincipalVerClasificacionesOrganizador.add(getLbClasificacionGeneralHombres());
+			pnPrincipalVerClasificacionesOrganizador.add(getLbClasificacionGeneralMujeres());
+			
+			//pnPrincipalVerClasificacionesOrganizador.add(getBtAtrasVerCarrerasOrganizador());
+		}
+		return pnPrincipalVerClasificacionesOrganizador;
+	}
+
+
 
 	private JPanel getPnPrincipalVerCarrerasOrganizador() {
 		if (pnPrincipalVerCarrerasOrganizador == null) {
@@ -846,6 +980,60 @@ public class MainWindow extends JFrame {
 		}
 		return scVerCarreras;
 	}
+	
+	private JScrollPane getScVerClasificaciones() {
+		if (scVerClasificaciones == null) {
+			scVerClasificaciones = new JScrollPane();
+			scVerClasificaciones.setBounds(43, 56, 252, 369);
+			scVerClasificaciones.setViewportView(getTbVerClasificaciones());
+		}
+		return scVerClasificaciones;
+	}
+	
+	private JLabel getLbClasificacionGeneral() {
+		if (lbClasificacionGeneral == null) {
+			lbClasificacionGeneral = new JLabel("Clasificación General");
+			lbClasificacionGeneral.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lbClasificacionGeneral.setHorizontalAlignment(SwingConstants.CENTER);
+			lbClasificacionGeneral.setBounds(43, 25, 252, 22);
+		}
+		return lbClasificacionGeneral;
+	}
+	private JScrollPane getScVerClasificacionesHombres() {
+		if (scVerClasificacionesHombres == null) {
+			scVerClasificacionesHombres = new JScrollPane();
+			scVerClasificacionesHombres.setBounds(322, 56, 252, 369);
+			scVerClasificacionesHombres.setViewportView(getTbVerClasificacionesHombres());
+		}
+		return scVerClasificacionesHombres;
+	}
+	private JScrollPane getScVerClasificacionesMujeres() {
+		if (scVerClasificacionesMujeres == null) {
+			scVerClasificacionesMujeres = new JScrollPane();
+			scVerClasificacionesMujeres.setBounds(603, 56, 252, 369);
+			scVerClasificacionesMujeres.setViewportView(getTbVerClasificacionesMujeres());
+		}
+		return scVerClasificacionesMujeres;
+	}
+	private JLabel getLbClasificacionGeneralHombres() {
+		if (lbClasificacionGeneralHombres == null) {
+			lbClasificacionGeneralHombres = new JLabel("Clasificación General Hombres");
+			lbClasificacionGeneralHombres.setHorizontalAlignment(SwingConstants.CENTER);
+			lbClasificacionGeneralHombres.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lbClasificacionGeneralHombres.setBounds(322, 25, 252, 22);
+		}
+		return lbClasificacionGeneralHombres;
+	}
+	private JLabel getLbClasificacionGeneralMujeres() {
+		if (lbClasificacionGeneralMujeres == null) {
+			lbClasificacionGeneralMujeres = new JLabel("Clasificación General Mujeres");
+			lbClasificacionGeneralMujeres.setHorizontalAlignment(SwingConstants.CENTER);
+			lbClasificacionGeneralMujeres.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lbClasificacionGeneralMujeres.setBounds(603, 25, 252, 22);
+		}
+		return lbClasificacionGeneralMujeres;
+	}
+	
 
 	public JTable getTbVerCarreras() {
 		if (tbVerCarreras == null) {
@@ -858,7 +1046,43 @@ public class MainWindow extends JFrame {
 		}
 		return tbVerCarreras;
 	}
+	
+	public JTable getTbVerClasificaciones() {
+		if (tbVerClasificaciones == null) {
+			tbVerClasificaciones = new JTable();
+			tbVerClasificaciones
+					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Posición", "Género", "Nombre", "Tiempo" }));
 
+			tbVerClasificaciones.setDefaultEditor(Object.class, null);
+
+		}
+		return tbVerClasificaciones;
+	}
+
+	
+	public JTable getTbVerClasificacionesHombres() {
+		if (tbVerClasificacionesHombres == null) {
+			tbVerClasificacionesHombres = new JTable();
+			tbVerClasificacionesHombres
+					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Posición", "Nombre", "Tiempo" }));
+
+			tbVerClasificacionesHombres.setDefaultEditor(Object.class, null);
+
+		}
+		return tbVerClasificacionesHombres;
+	}
+	
+	public JTable getTbVerClasificacionesMujeres() {
+		if (tbVerClasificacionesMujeres == null) {
+			tbVerClasificacionesMujeres = new JTable();
+			tbVerClasificacionesMujeres
+					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Posición", "Nombre", "Tiempo" }));
+
+			tbVerClasificacionesMujeres.setDefaultEditor(Object.class, null);
+
+		}
+		return tbVerClasificacionesMujeres;
+	}
 	/**
 	 * Metodo cambiar
 	 */
@@ -1072,4 +1296,18 @@ public class MainWindow extends JFrame {
 		}
 		return btVistaAtletaAtras;
 	}
+	private JButton getBtVerClasificacionesOrganizacion() {
+		if (btVerClasificacionesOrganizacion == null) {
+			btVerClasificacionesOrganizacion = new JButton("Ver Clasificaciones");
+			btVerClasificacionesOrganizacion.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_VERCLASIFICACIONESORGANIZADOR);
+				}
+			});
+			btVerClasificacionesOrganizacion.setMnemonic('c');
+			btVerClasificacionesOrganizacion.setBounds(218, 206, 153, 42);
+		}
+		return btVerClasificacionesOrganizacion;
+	}
+	
 }

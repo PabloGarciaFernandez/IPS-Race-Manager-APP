@@ -21,6 +21,18 @@ public class InscripcionDto {
 	private AtletaDto atleta;
 	private CarreraDto carrera;
 	private String formaDePago;
+	private String tiempoCorriendo;
+
+	
+	
+	
+	public String getTiempoCorriendo() {
+		return tiempoCorriendo;
+	}
+
+	public void setTiempoCorriendo(String tiempoCorriendo) {
+		this.tiempoCorriendo = tiempoCorriendo;
+	}
 
 	/**
 	 * @return the fechaInscripcion
@@ -128,5 +140,7 @@ public class InscripcionDto {
 				+ idCarrera + ", dorsal=" + dorsal + ", estadoInscripcion=" + estadoInscripcion + ", atleta=" + atleta
 				+ ", carrera=" + carrera + ", formaDePago=" + formaDePago + "]";
 	}
+
+
 
 }
