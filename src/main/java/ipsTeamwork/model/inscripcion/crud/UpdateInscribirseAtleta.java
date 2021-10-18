@@ -29,4 +29,25 @@ public class UpdateInscribirseAtleta {
 			gdb.cerrarCon();
 		}
 	}
+
+	public static void execute2(InscripcionDto inscripcion, String formaDePago) {
+		GestorDB gdb = new GestorDB();
+		Connection con = gdb.getConnection();
+		try {
+			PreparedStatement pst = con.prepareStatement(SQLStrings.updateInscrpcionValues);
+
+			pst.setString(1, formaDePago);
+			pst.setString(2, inscripcion.getIdAtleta());
+			pst.setString(3, inscripcion.getIdCarrera());
+			pst.setString(4, inscripcion.getDorsal());
+
+			pst.executeUpdate();
+			pst.close();
+
+		} catch (Exception e) {
+
+		} finally {
+			gdb.cerrarCon();
+		}
+	}
 }

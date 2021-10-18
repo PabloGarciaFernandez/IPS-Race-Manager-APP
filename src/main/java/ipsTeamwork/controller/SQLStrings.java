@@ -10,7 +10,7 @@ public class SQLStrings {
 	// creates
 	public static String createAtleta = "CREATE TABLE atleta (idAtleta varchar2 NOT NULL, dni varchar2 not null, nombre varchar2 not null, edad integer not null, sexo varchar not null, discapacitado bit NOT NULL, email varchar2 not null, CONSTRAINT CHK_Atleta CHECK (edad >18 AND (sexo='M' OR sexo='F' OR sexo='NB')) , primary key (idAtleta), constraint unique_email UNIQUE (email))";
 
-	public static String createInscripcion = "CREATE TABLE inscripcion (idAtleta varchar2 NOT NULL, idCarrera varchar NOT NULL, dorsal varchar2, fechaInscripcion date not null, estadoInscripcion varchar2 not null, formaDePago varchar2 NOT NULL, tiempoCorriendo integer, CONSTRAINT CHK_Inscripcion CHECK ( (formaDePago='Transferencia' OR formaDePago='Tarjeta') AND (estadoInscripcion='Inscrito' OR estadoInscripcion='No inscrito' OR estadoInscripcion='Pendiente de pago')), primary key (idAtleta, idCarrera, dorsal), CONSTRAINT FK_idAtleta FOREIGN KEY (idAtleta) REFERENCES atleta(idAtleta), CONSTRAINT FK_idCarrera FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera) )";
+	public static String createInscripcion = "CREATE TABLE inscripcion (idAtleta varchar2 NOT NULL, idCarrera varchar NOT NULL, dorsal varchar2, fechaInscripcion date not null, estadoInscripcion varchar2 not null, formaDePago varchar2, tiempoCorriendo integer, CONSTRAINT CHK_Inscripcion CHECK ( (formaDePago='Transferencia' OR formaDePago='Tarjeta') AND (estadoInscripcion='Inscrito' OR estadoInscripcion='Pre-Inscrito' OR estadoInscripcion='Pendiente de Pago')), primary key (idAtleta, idCarrera, dorsal), CONSTRAINT FK_idAtleta FOREIGN KEY (idAtleta) REFERENCES atleta(idAtleta), CONSTRAINT FK_idCarrera FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera) )";
 
 	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2, nombre varchar2, fecha date, tipo varchar2, distancia number, cuota number, fechaFinInsc date, plazasDisp number, maxPlazas number not null, CONSTRAINT chk_tipo CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
 
@@ -34,6 +34,10 @@ public class SQLStrings {
 	public static String insertInscripcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
 
 	public static String updateInscrpcionValues = "UPDATE inscripcion SET estadoInscripcion = ? where idAtleta = ? and idCarrera = ? and dorsal = ?";
+
+	public static String updateInscrpcionValuesPago = "UPDATE inscripcion SET formaDePago = ? where idAtleta = ? and idCarrera = ? and dorsal = ?";
+
+	public static String updateCarrerasValues = "UPDATE carrera SET plazasDisp = ? where idCarrera = ?";
 
 	// selects
 
@@ -59,13 +63,10 @@ public class SQLStrings {
 
 	// Consultas para sacar las clasificaciones
 
-
-	
 	public static String clasificacionGeneralPrueba = "select i.idAtleta, i.idCarrera, i.tiempoCorriendo from inscripcion i where  i.tiempoCorriendo > 0 order by i.tiempoCorriendo";
 
 	public static String clasificacionGeneralPresentados = "select a.sexo, a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo > 0  order by i.tiempoCorriendo";
 
-	
 	public static String clasificacionGeneralNoFinaliza = "select a.sexo, a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo = 0 order by a.nombre";
 
 	public static String clasificacionGeneralNoPresentados = "select a.sexo, a.nombre from atleta a where a.idAtleta NOT IN (select idAtleta from inscripcion)  order by a.nombre";

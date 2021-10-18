@@ -38,6 +38,7 @@ import ipsTeamwork.model.atleta.crud.ReadAtletaByEmail;
 import ipsTeamwork.model.carrera.CarreraDto;
 import ipsTeamwork.model.carrera.crud.MirarLimiteCarrera;
 import ipsTeamwork.model.carrera.crud.SelectAllVistaAtleta;
+import ipsTeamwork.model.carrera.crud.UpdateCarrera;
 import ipsTeamwork.model.categoria.Categoria;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
@@ -443,16 +444,7 @@ public class MainWindow extends JFrame {
 		try {
 			Vector vector = tablaAtleta.getDataVector().elementAt(tablaCarrerasParaAtleta.getSelectedRow());
 			if (vector != null) {
-				carreraActual = new CarreraDto();
-				carreraActual.setNombre((String) vector.get(0));
-				Date date = new SimpleDateFormat("yyyy-MM-dd").parse((String) vector.get(1));
-				carreraActual.setFecha(date);
-				carreraActual.setTipo((String) vector.get(2));
-				carreraActual.setDistancia(Double.parseDouble((String) vector.get(3)));
-				carreraActual.setCuota(Float.parseFloat((String) vector.get(4)));
-				Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse((String) vector.get(5));
-				carreraActual.setFechaFin(date1);
-				carreraActual.setMaxPlazas(Integer.parseInt((String) vector.get(6)));
+				carreraActual = db.selectCarrerasNombre((String) vector.get(0));
 				return true;
 			}
 		} catch (Exception e) {
@@ -814,6 +806,17 @@ public class MainWindow extends JFrame {
 	private void inscribirAtleta() {
 		if (checkCarreraRow() && checkIfParticipable()) {
 			if (new FindAtletaInCarrera().execute(atletaActual.getIdAtleta(), carreraActual.getIdCarrera())) { // no va
+				String otro = "Nombre del corredor: " + atletaActual.getNombre()
+						+ "\nEstas apuntado a la carrera con nombre: " + carreraActual.getNombre()
+						+ "\nEn la categoria: " + atletaActual.getCategoria() + "\nCon fecha de inscripcion: "
+						+ new Date() + "\nTienes que pagar: " + carreraActual.getCuota();
+
+				System.out.println(carreraActual.getIdCarrera());
+				inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaActual, carreraActual,
+						UUID.randomUUID().toString().substring(0, 3), "Pre-Inscrito", new Date(), null);
+				new UpdateCarrera().execute(carreraActual);
+				JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, otro,
+						"Justificante carrera", JOptionPane.DEFAULT_OPTION);
 				showCard(PANEL_PAGARINSCRIPCION);
 				textIngresoEmail.setText("");
 			} else {
@@ -1221,21 +1224,19 @@ public class MainWindow extends JFrame {
 	 * 
 	 */
 	private void pagarTransferencia() {
+		UpdateInscribirseAtleta.execute2(inscripcion, "Transaccion");
+
 		String nombre = String.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 0));
 
 		CarreraDto carreras = db.selectCarrerasNombre(nombre);
 
-		String todo = "Nombre del corredor: " + atletaActual.getNombre() + "\nEstas apuntado a la carrera con nombre: "
-				+ nombre + "\nEn la categoria: " + atletaActual.getCategoria() + "\nCon fecha de inscripcion: "
-				+ LocalDate.now() + "\nLa carrera se efectuara el " + carreras.getFecha() + "\nDel tipo "
-				+ carreras.getTipo() + "\nCon una distancia real de " + carreras.getDistancia()
-				+ "km\nLa cual tiene un coste de " + carreras.getCuota()
-				+ "Debe pagar a esta cuenta bancaria: ES6000491500051234567892"
+		String todo = "La carrera se efectuara el " + carreras.getFecha() + "\nDel tipo " + carreras.getTipo()
+				+ "\nCon una distancia real de " + carreras.getDistancia() + "km\nLa cual tiene un coste de "
+				+ carreras.getCuota() + "Debe pagar a esta cuenta bancaria: ES6000491500051234567892"
 				+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
 
-		System.out.println(carreras.getIdCarrera());
-		inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaActual, carreras,
-				UUID.randomUUID().toString().substring(0, 3), "No inscrito", new Date(), "Transferencia");
+		UpdateInscribirseAtleta.execute(inscripcion, "Pendiente de Pago");
+		UpdateInscribirseAtleta.execute2(inscripcion, "Transaccion");
 
 		JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, todo,
 				"Este es tu justifcante de pago por Transacción", JOptionPane.DEFAULT_OPTION);
