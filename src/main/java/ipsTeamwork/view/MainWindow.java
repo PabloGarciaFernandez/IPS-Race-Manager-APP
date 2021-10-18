@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
 
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -60,6 +61,9 @@ public class MainWindow extends JFrame {
 
 	private static final String PANEL_PAGARINSCRIPCION = "panel_PagarInscripcion";
 	private static final String PANEL_LISTA_INSCRIPCIONES = "panel_lista_inscripciones_atleta";
+	
+	private static final String PANEL_PAGO_TARJETA = "panel_pago_tarjeta";
+
 
 	private JPanel contentPane;
 	private JPanel pnInicio;
@@ -146,6 +150,7 @@ public class MainWindow extends JFrame {
 	private InscripcionDto inscripcion = null;
 	private JButton btAtrasVerCarrerasOrganizador;
 	private JPanel pnPagarInscripcion;
+
 	private JPanel pnPrincipalPagarInscripcion;
 	private JButton btPagarInscripcionTarjeta;
 	private JButton btPagarInscripcionTransferencia;
@@ -154,6 +159,19 @@ public class MainWindow extends JFrame {
 	private JPanel pnVistaInscripcionesAtleta;
 	private JButton btVerClasificacionesOrganizacion;
 	private JButton btListaClasificacionesAtras;
+	
+
+	private JPanel pnPagoTarjeta;
+	private JPanel pnPagoTarjetaCenter;
+	private JLabel lbPagoTarjeta;
+	private JLabel lbPagoTarjetaNumero;
+	private JLabel lbPagoTarjetaCódigoCVC;
+	private JLabel lbPagoTarjetaFechaCaducidad;
+	private JTextField txPagoTarjetaNumero;
+	private JTextField txPagoTarjetaCódigoCVC;
+	private JTextField txPagoTarjetaFechaCaducidad;
+	private JButton btPagoTarjetaEnviar;
+	private JLabel lbPagarInscripcion;
 
 	/**
 	 * Create the frame.
@@ -185,6 +203,7 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnPagarInscripcion(), PANEL_PAGARINSCRIPCION);
 		contentPane.add(pnVistaInscripcionesAtleta, PANEL_LISTA_INSCRIPCIONES);
 		contentPane.add(getPnListaClasificacionesOrganizador(), PANEL_VERCLASIFICACIONESORGANIZADOR);
+		contentPane.add(getPnPagoTarjeta(), PANEL_PAGO_TARJETA);
 
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
@@ -220,7 +239,7 @@ public class MainWindow extends JFrame {
 					showCard(PANEL_INGRESO);
 				}
 			});
-			btnAtleta.setBounds(217, 247, 146, 23);
+			btnAtleta.setBounds(241, 345, 146, 23);
 		}
 		return btnAtleta;
 	}
@@ -234,16 +253,16 @@ public class MainWindow extends JFrame {
 					showCard(PANEL_ORGANIZADOR);
 				}
 			});
-			btnOrganiz.setBounds(217, 283, 146, 23);
+			btnOrganiz.setBounds(470, 345, 146, 23);
 		}
 		return btnOrganiz;
 	}
 
 	private JLabel getLbImagen() {
 		if (lbImagen == null) {
-			lbImagen = new JLabel("lbImagen");
+			lbImagen = new JLabel("");
 			lbImagen.setIcon(new ImageIcon(MainWindow.class.getResource("/ipsTeamwork/resources/icon.png")));
-			lbImagen.setBounds(111, 60, 361, 140);
+			lbImagen.setBounds(241, 42, 375, 276);
 		}
 		return lbImagen;
 	}
@@ -277,7 +296,7 @@ public class MainWindow extends JFrame {
 					showCard(PANEL_LISTA_CARRERAS);
 				}
 			});
-			btnListaCarreras.setBounds(197, 205, 192, 23);
+			btnListaCarreras.setBounds(210, 120, 435, 46);
 		}
 		return btnListaCarreras;
 	}
@@ -292,7 +311,7 @@ public class MainWindow extends JFrame {
 				}
 			});
 			btnMisCarreras.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnMisCarreras.setBounds(197, 239, 192, 23);
+			btnMisCarreras.setBounds(210, 247, 435, 46);
 		}
 		return btnMisCarreras;
 	}
@@ -484,6 +503,15 @@ public class MainWindow extends JFrame {
 		}
 		return pnRegistro;
 	}
+	
+	private JPanel getPnPagoTarjeta() {
+		if (pnPagoTarjeta == null) {
+			pnPagoTarjeta = new JPanel();
+			pnPagoTarjeta.setLayout(new BorderLayout(0, 0));
+			pnPagoTarjeta.add(getPnPagoTarjetaCenter(), BorderLayout.CENTER);
+		}
+		return pnPagoTarjeta;
+	}
 
 	private JPanel getPnRegistroCenter() {
 		if (pnRegistroCenter == null) {
@@ -508,6 +536,23 @@ public class MainWindow extends JFrame {
 			pnRegistroCenter.add(getComboRegistroSexo());
 		}
 		return pnRegistroCenter;
+	}
+	
+	private JPanel getPnPagoTarjetaCenter() {
+		if (pnPagoTarjetaCenter == null) {
+			pnPagoTarjetaCenter = new JPanel();
+			pnPagoTarjetaCenter.setLayout(null);
+			pnPagoTarjetaCenter.add(getLbPagoTarjeta());
+			pnPagoTarjetaCenter.add(getLbPagoTarjetaNumero());
+			pnPagoTarjetaCenter.add(getLbPagoTarjetaCódigoCVC());
+			pnPagoTarjetaCenter.add(getLbPagoTarjetaFechaCaducidad());
+			pnPagoTarjetaCenter.add(getTxPagoTarjetaNumero());
+			pnPagoTarjetaCenter.add(getTxPagoTarjetaCódigoCVC());
+			pnPagoTarjetaCenter.add(getTxPagoTarjetaFechaCaducidad());
+			pnPagoTarjetaCenter.add(getBtPagoTarjetaEnviar());
+			
+		}
+		return pnPagoTarjetaCenter;
 	}
 
 	private JTextField getTextRegistroEmail() {
@@ -624,6 +669,8 @@ public class MainWindow extends JFrame {
 		comboRegistroSexo.setSelectedIndex(-1);
 		chckbxRegistroDiscapacidad.setSelected(false);
 	}
+	
+
 
 	private boolean checkFieldsRegisters() {
 		if (isEmptyRegister()) {
@@ -631,6 +678,20 @@ public class MainWindow extends JFrame {
 			return false;
 		}
 		return true;
+	}
+	
+	private boolean comprobarDatosTarjeta() {
+		if (camposVacíos()) {
+			JOptionPane.showMessageDialog(null, "Error: Falta alguno de los datos.");
+			return false;
+		}
+		return true;
+	}
+
+	private boolean camposVacíos() {
+		return (txPagoTarjetaCódigoCVC.getText().isEmpty() || txPagoTarjetaCódigoCVC.getText().isBlank()
+				|| txPagoTarjetaFechaCaducidad.getText().isEmpty() || txPagoTarjetaFechaCaducidad.getText().isBlank()
+				|| txPagoTarjetaNumero.getText().isEmpty() || txPagoTarjetaNumero.getText().isBlank());
 	}
 
 	private boolean isEmptyRegister() { // modificar de cara a siguientes sprints.
@@ -749,17 +810,17 @@ public class MainWindow extends JFrame {
 			textIngresoEmail = new JTextField();
 			textIngresoEmail.setFont(new Font("Arial", Font.PLAIN, 14));
 			textIngresoEmail.setColumns(10);
-			textIngresoEmail.setBounds(102, 188, 379, 20);
+			textIngresoEmail.setBounds(150, 188, 597, 53);
 		}
 		return textIngresoEmail;
 	}
 
 	private JLabel getLblIngesoEmail() {
 		if (lblIngesoEmail == null) {
-			lblIngesoEmail = new JLabel("Email:");
+			lblIngesoEmail = new JLabel("Introduzca su correo electrónico:");
 			lblIngesoEmail.setLabelFor(getTextIngresoEmail());
 			lblIngesoEmail.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblIngesoEmail.setBounds(102, 162, 53, 20);
+			lblIngesoEmail.setBounds(150, 148, 597, 34);
 		}
 		return lblIngesoEmail;
 	}
@@ -768,7 +829,7 @@ public class MainWindow extends JFrame {
 		if (lblIngresoDeCuenta == null) {
 			lblIngresoDeCuenta = new JLabel("INGRESAR COMO ATLETA");
 			lblIngresoDeCuenta.setFont(new Font("Arial", Font.BOLD, 25));
-			lblIngresoDeCuenta.setBounds(37, 21, 355, 53);
+			lblIngresoDeCuenta.setBounds(241, 21, 355, 53);
 		}
 		return lblIngresoDeCuenta;
 	}
@@ -783,7 +844,7 @@ public class MainWindow extends JFrame {
 			});
 			btnIngresoCancelar.setForeground(Color.BLACK);
 			btnIngresoCancelar.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnIngresoCancelar.setBounds(10, 348, 95, 23);
+			btnIngresoCancelar.setBounds(30, 435, 136, 34);
 		}
 		return btnIngresoCancelar;
 	}
@@ -798,7 +859,7 @@ public class MainWindow extends JFrame {
 			});
 			btnIngresoSiguiente.setForeground(Color.BLACK);
 			btnIngresoSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnIngresoSiguiente.setBounds(452, 348, 121, 23);
+			btnIngresoSiguiente.setBounds(741, 435, 136, 34);
 		}
 		return btnIngresoSiguiente;
 	}
@@ -815,8 +876,8 @@ public class MainWindow extends JFrame {
 				inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaActual, carreraActual,
 						UUID.randomUUID().toString().substring(0, 3), "Pre-Inscrito", new Date(), null);
 				new UpdateCarrera().execute(carreraActual);
-				JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, otro,
-						"Justificante carrera", JOptionPane.DEFAULT_OPTION);
+				JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, otro, "Justificante carrera",
+						JOptionPane.DEFAULT_OPTION);
 				showCard(PANEL_PAGARINSCRIPCION);
 				textIngresoEmail.setText("");
 			} else {
@@ -861,7 +922,7 @@ public class MainWindow extends JFrame {
 					showCard(PANEL_INICIO);
 				}
 			});
-			btnOrganizadorCancelar.setBounds(10, 347, 95, 25);
+			btnOrganizadorCancelar.setBounds(30, 435, 136, 34);
 			btnOrganizadorCancelar.setForeground(Color.BLACK);
 			btnOrganizadorCancelar.setFont(new Font("Arial", Font.PLAIN, 14));
 		}
@@ -875,7 +936,7 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 				}
 			});
-			btnOrganizadorSiguiente.setBounds(452, 348, 121, 23);
+			btnOrganizadorSiguiente.setBounds(741, 435, 136, 34);
 			btnOrganizadorSiguiente.setForeground(Color.BLACK);
 			btnOrganizadorSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
 		}
@@ -952,13 +1013,14 @@ public class MainWindow extends JFrame {
 	private JButton getBtVerVarrerasOrganizacion() {
 		if (btVerVarrerasOrganizacion == null) {
 			btVerVarrerasOrganizacion = new JButton("Ver Carreras");
+			btVerVarrerasOrganizacion.setFont(new Font("Arial", Font.PLAIN, 14));
 			btVerVarrerasOrganizacion.setMnemonic('v');
 			btVerVarrerasOrganizacion.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					showCard(PANEL_VERCARRERASORGANIZADOR);
 				}
 			});
-			btVerVarrerasOrganizacion.setBounds(218, 129, 153, 42);
+			btVerVarrerasOrganizacion.setBounds(210, 120, 435, 46);
 		}
 		return btVerVarrerasOrganizacion;
 	}
@@ -1083,6 +1145,7 @@ public class MainWindow extends JFrame {
 	private JButton getBtVerAtletasInscritosPorXCarrera() {
 		if (tbVerAtletasInscritosPorXCarrera == null) {
 			tbVerAtletasInscritosPorXCarrera = new JButton("Ver atletas inscritos de esa carrera");
+			tbVerAtletasInscritosPorXCarrera.setFont(new Font("Arial", Font.PLAIN, 14));
 			tbVerAtletasInscritosPorXCarrera.setMnemonic('v');
 			tbVerAtletasInscritosPorXCarrera.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -1093,7 +1156,7 @@ public class MainWindow extends JFrame {
 
 					for (InscripcionDto inscripcionDto : atletas) {
 
-						String[] alluneedislove = { inscripcionDto.getAtleta().getDNI(),
+						String[] alluneedislove = { inscripcionDto.getAtleta().getDNI(), inscripcionDto.getAtleta().getNombre(),
 								Categoria.calculaCategoria(inscripcionDto.getAtleta().getEdad(),
 										inscripcionDto.getAtleta().getSexo()),
 								String.valueOf(inscripcionDto.getFechaInscripcion()),
@@ -1105,7 +1168,7 @@ public class MainWindow extends JFrame {
 
 				}
 			});
-			tbVerAtletasInscritosPorXCarrera.setBounds(161, 198, 233, 21);
+			tbVerAtletasInscritosPorXCarrera.setBounds(161, 198, 596, 38);
 		}
 		return tbVerAtletasInscritosPorXCarrera;
 	}
@@ -1113,7 +1176,7 @@ public class MainWindow extends JFrame {
 	private JScrollPane getScVerAtletasInscritosPorXCarrera() {
 		if (scVerAtletasInscritosPorXCarrera == null) {
 			scVerAtletasInscritosPorXCarrera = new JScrollPane();
-			scVerAtletasInscritosPorXCarrera.setBounds(161, 246, 596, 98);
+			scVerAtletasInscritosPorXCarrera.setBounds(161, 246, 596, 161);
 			scVerAtletasInscritosPorXCarrera.setViewportView(getTbAtletasInscritosEnXCarrera());
 		}
 		return scVerAtletasInscritosPorXCarrera;
@@ -1164,13 +1227,14 @@ public class MainWindow extends JFrame {
 	private JButton getBtAtrasVerCarrerasOrganizador() {
 		if (btAtrasVerCarrerasOrganizador == null) {
 			btAtrasVerCarrerasOrganizador = new JButton("Atras");
+			btAtrasVerCarrerasOrganizador.setFont(new Font("Arial", Font.PLAIN, 14));
 			btAtrasVerCarrerasOrganizador.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					showCard(PANEL_ORGANIZADOR);
 //					showCard(PANEL_PAGARINSCRIPCION);
 				}
 			});
-			btAtrasVerCarrerasOrganizador.setBounds(10, 323, 85, 21);
+			btAtrasVerCarrerasOrganizador.setBounds(30, 435, 136, 34);
 		}
 		return btAtrasVerCarrerasOrganizador;
 	}
@@ -1183,6 +1247,8 @@ public class MainWindow extends JFrame {
 		}
 		return pnPagarInscripcion;
 	}
+	
+
 
 	private JPanel getPnPrincipalPagarInscripcion() {
 		if (pnPrincipalPagarInscripcion == null) {
@@ -1191,6 +1257,7 @@ public class MainWindow extends JFrame {
 			pnPrincipalPagarInscripcion.add(getBtPagarInscripcionTarjeta());
 			pnPrincipalPagarInscripcion.add(getBtPagarInscripcionTransferencia());
 			pnPrincipalPagarInscripcion.add(getBtPagarinscripcionAtras());
+			pnPrincipalPagarInscripcion.add(getLbPagarInscripcion());
 		}
 		return pnPrincipalPagarInscripcion;
 	}
@@ -1198,7 +1265,14 @@ public class MainWindow extends JFrame {
 	private JButton getBtPagarInscripcionTarjeta() {
 		if (btPagarInscripcionTarjeta == null) {
 			btPagarInscripcionTarjeta = new JButton("Tarjeta");
-			btPagarInscripcionTarjeta.setBounds(62, 121, 134, 55);
+			btPagarInscripcionTarjeta.setFont(new Font("Arial", Font.PLAIN, 18));
+			btPagarInscripcionTarjeta.setBounds(201, 210, 134, 55);
+			btPagarInscripcionTarjeta.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					pagarTarjeta();
+				}
+
+			});
 		}
 		return btPagarInscripcionTarjeta;
 	}
@@ -1206,7 +1280,8 @@ public class MainWindow extends JFrame {
 	private JButton getBtPagarInscripcionTransferencia() {
 		if (btPagarInscripcionTransferencia == null) {
 			btPagarInscripcionTransferencia = new JButton("Transferencia");
-			btPagarInscripcionTransferencia.setBounds(367, 121, 143, 55);
+			btPagarInscripcionTransferencia.setFont(new Font("Arial", Font.PLAIN, 18));
+			btPagarInscripcionTransferencia.setBounds(573, 210, 143, 55);
 			btPagarInscripcionTransferencia.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					pagarTransferencia();
@@ -1268,15 +1343,30 @@ public class MainWindow extends JFrame {
 		showCard(PANEL_LISTA_CARRERAS);
 	}
 
+	private void pagarTarjeta() {
+
+		
+
+		
+		
+		showCard(PANEL_PAGO_TARJETA);
+
+		
+		
+		
+
+	}
+
 	private JButton getBtPagarinscripcionAtras() {
 		if (btPagarinscripcionAtras == null) {
 			btPagarinscripcionAtras = new JButton("Atras");
+			btPagarinscripcionAtras.setFont(new Font("Arial", Font.PLAIN, 14));
 			btPagarinscripcionAtras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					showCard(PANEL_INGRESO);
 				}
 			});
-			btPagarinscripcionAtras.setBounds(10, 348, 143, 23);
+			btPagarinscripcionAtras.setBounds(30, 435, 136, 34);
 		}
 		return btPagarinscripcionAtras;
 	}
@@ -1284,12 +1374,13 @@ public class MainWindow extends JFrame {
 	private JButton getBtVistaAtletaAtras() {
 		if (btVistaAtletaAtras == null) {
 			btVistaAtletaAtras = new JButton("Atras");
+			btVistaAtletaAtras.setFont(new Font("Arial", Font.PLAIN, 14));
 			btVistaAtletaAtras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					showCard(PANEL_INICIO);
 				}
 			});
-			btVistaAtletaAtras.setBounds(10, 348, 107, 23);
+			btVistaAtletaAtras.setBounds(30, 435, 136, 34);
 		}
 		return btVistaAtletaAtras;
 	}
@@ -1297,13 +1388,14 @@ public class MainWindow extends JFrame {
 	private JButton getBtVerClasificacionesOrganizacion() {
 		if (btVerClasificacionesOrganizacion == null) {
 			btVerClasificacionesOrganizacion = new JButton("Ver Clasificaciones");
+			btVerClasificacionesOrganizacion.setFont(new Font("Arial", Font.PLAIN, 14));
 			btVerClasificacionesOrganizacion.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					showCard(PANEL_VERCLASIFICACIONESORGANIZADOR);
 				}
 			});
 			btVerClasificacionesOrganizacion.setMnemonic('c');
-			btVerClasificacionesOrganizacion.setBounds(218, 206, 153, 42);
+			btVerClasificacionesOrganizacion.setBounds(210, 247, 435, 46);
 		}
 		return btVerClasificacionesOrganizacion;
 	}
@@ -1311,13 +1403,154 @@ public class MainWindow extends JFrame {
 	private JButton getBtListaClasificacionesAtras() {
 		if (btListaClasificacionesAtras == null) {
 			btListaClasificacionesAtras = new JButton("Atras");
+			btListaClasificacionesAtras.setFont(new Font("Arial", Font.PLAIN, 14));
 			btListaClasificacionesAtras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					showCard(PANEL_ORGANIZADOR);
 				}
 			});
-			btListaClasificacionesAtras.setBounds(376, 452, 119, 22);
+			btListaClasificacionesAtras.setBounds(30, 435, 136, 34);
 		}
 		return btListaClasificacionesAtras;
+	}
+	
+	private JLabel getLbPagoTarjeta() {
+		if (lbPagoTarjeta == null) {
+			lbPagoTarjeta = new JLabel("Introduzca los datos de su tarjeta para finalizar su inscripción en la carrera.");
+			lbPagoTarjeta.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			lbPagoTarjeta.setBounds(57, 60, 669, 61);
+		}
+		return lbPagoTarjeta;
+	}
+	private JLabel getLbPagoTarjetaNumero() {
+		if (lbPagoTarjetaNumero == null) {
+			lbPagoTarjetaNumero = new JLabel("Número de la tarjeta: ");
+			lbPagoTarjetaNumero.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lbPagoTarjetaNumero.setBounds(60, 157, 187, 35);
+		}
+		return lbPagoTarjetaNumero;
+	}
+	private JLabel getLbPagoTarjetaCódigoCVC() {
+		if (lbPagoTarjetaCódigoCVC == null) {
+			lbPagoTarjetaCódigoCVC = new JLabel("Código CVC: ");
+			lbPagoTarjetaCódigoCVC.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lbPagoTarjetaCódigoCVC.setBounds(60, 234, 187, 35);
+		}
+		return lbPagoTarjetaCódigoCVC;
+	}
+	private JLabel getLbPagoTarjetaFechaCaducidad() {
+		if (lbPagoTarjetaFechaCaducidad == null) {
+			lbPagoTarjetaFechaCaducidad = new JLabel("Fecha de caducidad: ");
+			lbPagoTarjetaFechaCaducidad.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lbPagoTarjetaFechaCaducidad.setBounds(60, 314, 187, 35);
+		}
+		return lbPagoTarjetaFechaCaducidad;
+	}
+	private JTextField getTxPagoTarjetaNumero() {
+		if (txPagoTarjetaNumero == null) {
+			txPagoTarjetaNumero = new JTextField();
+			txPagoTarjetaNumero.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			txPagoTarjetaNumero.setBounds(346, 157, 268, 35);
+			txPagoTarjetaNumero.setColumns(10);
+		}
+		return txPagoTarjetaNumero;
+	}
+	private JTextField getTxPagoTarjetaCódigoCVC() {
+		if (txPagoTarjetaCódigoCVC == null) {
+			txPagoTarjetaCódigoCVC = new JTextField();
+			txPagoTarjetaCódigoCVC.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			txPagoTarjetaCódigoCVC.setColumns(10);
+			txPagoTarjetaCódigoCVC.setBounds(346, 234, 268, 35);
+		}
+		return txPagoTarjetaCódigoCVC;
+	}
+	private JTextField getTxPagoTarjetaFechaCaducidad() {
+		if (txPagoTarjetaFechaCaducidad == null) {
+			txPagoTarjetaFechaCaducidad = new JTextField();
+			txPagoTarjetaFechaCaducidad.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			txPagoTarjetaFechaCaducidad.setColumns(10);
+			txPagoTarjetaFechaCaducidad.setBounds(346, 314, 268, 35);
+		}
+		return txPagoTarjetaFechaCaducidad;
+	}
+	private JButton getBtPagoTarjetaEnviar() {
+		if (btPagoTarjetaEnviar == null) {
+			btPagoTarjetaEnviar = new JButton("Enviar");
+			btPagoTarjetaEnviar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					accionPagoTarjetaEnviar();
+				}
+			});
+			btPagoTarjetaEnviar.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			btPagoTarjetaEnviar.setBounds(529, 400, 85, 35);
+		}
+		return btPagoTarjetaEnviar;
+	}
+	
+	protected void accionPagoTarjetaEnviar() {
+		if (comprobarDatosTarjeta()) {
+			
+			
+			UpdateInscribirseAtleta.execute2(inscripcion, "Tarjeta");
+
+			String nombre = String.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 0));
+
+			CarreraDto carreras = db.selectCarrerasNombre(nombre);
+
+			String todo = "Atleta : " + atletaActual.getNombre() + "\nCarrera : " + carreraActual.getNombre() + "\nPrecio : " + carreraActual.getCuota() + "\nFecha pago : " + inscripcion.getFechaInscripcion();
+			
+			vaciarPanelPagoTarjeta();
+			JOptionPane.showMessageDialog(null, "Ha sido inscrito con éxito en la carrera.");
+			
+
+			UpdateInscribirseAtleta.execute(inscripcion, "Inscrito");
+			UpdateInscribirseAtleta.execute2(inscripcion, "Tarjeta");
+
+			
+			
+			
+			
+			
+			JOptionPane.showConfirmDialog(this, todo,
+					"Este es tu justificante de pago.", JOptionPane.DEFAULT_OPTION);
+
+			System.out.println(inscripcion.toString());
+
+			new InscribirseAtleta().execute(inscripcion);
+
+			db.selectInscripcion();
+
+
+
+	
+			
+				UpdateInscribirseAtleta.execute(inscripcion, "Inscrito");
+
+				JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia,
+						"Muchas gracias por realizar el pago de la cuota. Disfrute de la carrera "
+								+ inscripcion.getAtleta().getNombre(),
+						"Gracias :)", JOptionPane.DEFAULT_OPTION);
+
+			
+			
+			showCard(PANEL_INICIO);
+		}
+		
+	}
+
+	private void vaciarPanelPagoTarjeta() {
+		txPagoTarjetaCódigoCVC.setText("");
+		txPagoTarjetaFechaCaducidad.setText("");
+		txPagoTarjetaNumero.setText("");
+	}
+	private JLabel getLbPagarInscripcion() {
+		if (lbPagarInscripcion == null) {
+			lbPagarInscripcion = new JLabel("Eliga su método de pago:");
+			lbPagarInscripcion.setHorizontalAlignment(SwingConstants.CENTER);
+			lbPagarInscripcion.setFont(new Font("Arial", Font.PLAIN, 20));
+			lbPagarInscripcion.setBounds(163, 113, 584, 55);
+		}
+		return lbPagarInscripcion;
 	}
 }
