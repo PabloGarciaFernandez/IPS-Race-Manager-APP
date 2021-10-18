@@ -6,11 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -18,7 +17,6 @@ import java.util.UUID;
 import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.atleta.crud.ListarAtletasArray;
 import ipsTeamwork.model.carrera.CarreraDto;
-import ipsTeamwork.model.carrera.crud.ListCarreras;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.util.DateUtil;
 import ipsTeamwork.util.DtoBuilder;
@@ -36,8 +34,6 @@ public class GestorDB {
 	private PreparedStatement pst = null;
 
 	private ResultSet rs = null;
-
-	private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/MM/yyyy");
 
 	/**
 	 * Método que establece una conexion con la base de datos.
@@ -375,7 +371,7 @@ public class GestorDB {
 				inscripcion.setAtleta(new AtletaDto());
 				
 				inscripcion.getAtleta().setNombre(rs.getString(1));
-				inscripcion.setTiempoCorriendo(Integer.toString(rs.getInt(3)));
+				inscripcion.setTiempoCorriendo(Integer.toString(rs.getInt(2)));
 
 				inscripciones.add(inscripcion);
 			}
@@ -431,7 +427,7 @@ public class GestorDB {
 				inscripcion.setAtleta(new AtletaDto());
 				
 				inscripcion.getAtleta().setNombre(rs.getString(1));
-				inscripcion.setTiempoCorriendo(Integer.toString(rs.getInt(3)));
+				inscripcion.setTiempoCorriendo(Integer.toString(rs.getInt(2)));
 
 				inscripciones.add(inscripcion);
 			}
@@ -595,9 +591,9 @@ public class GestorDB {
 	 *         este metodo solamente llama a los demas poblarXX() de cada tabla
 	 */
 	public void poblarTablas() {
-		poblarCarreras(25);
-		poblarAtletas(25);
-		poblarInscripciones(25);
+		poblarCarreras(1);
+		poblarAtletas(1);
+		//poblarInscripciones(0);
 	}
 
 	private void poblarInscripciones(int num) {
@@ -607,12 +603,16 @@ public class GestorDB {
 		List<AtletaDto> atletas = new ListarAtletasArray().execute();
 		List<CarreraDto> carreras = listarCarreras();
 		
+		for (AtletaDto atl : atletas) {
+			System.out.println("id: " + atl.getIdAtleta());
+		}
+		
 		try {
 
-			for (int j = 0; j < num; j++) {
+			for (int j = 0; j < carreras.size(); j++) {
 				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertInscripcionValues);
 				
-				pst.setString(1, atletas.get(j).getIdAtleta());
+				pst.setString(1, atletas.get(r.nextInt(Math.max(atletas.size()/3, 1))).getIdAtleta());
 				pst.setString(2, carreras.get(j).getIdCarrera());
 				pst.setString(3, Integer.toString(j));
 				pst.setDate(4, new java.sql.Date(new Date().getTime()));
@@ -620,6 +620,7 @@ public class GestorDB {
 				pst.setString(6, (r.nextBoolean() ? "Transferencia" : "Tarjeta"));
 				pst.setInt(7, r.nextInt(300));
 
+				System.out.println("[  ] Insertada inscripcion " + j);
 				pst.executeUpdate();
 				pst.close();
 
@@ -637,7 +638,6 @@ public class GestorDB {
 		Random r = new Random();
 		try {
 			for (int j = 0; j < i; j++) {
-				System.out.println("metiendo carrera " + j);
 				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertCarreraValues);
 
 				java.sql.Date fechaFinInsc = new java.sql.Date(
@@ -662,6 +662,8 @@ public class GestorDB {
 
 				pst.executeUpdate();
 				pst.close();
+				
+				System.out.println("[  ] Insertada carrera " + j);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -687,11 +689,13 @@ public class GestorDB {
 				pst.setInt(4, (r.nextInt(30) + 20));
 				pst.setString(5, (r.nextBoolean() ? "M" : "F"));
 				pst.setBoolean(6, r.nextBoolean());
-				pst.setString(7, "unicoEmail"); // pst.setString(7, "email" + UUID.randomUUID().toString().substring(0,
+				pst.setString(7, "email" + UUID.randomUUID().toString().substring(0, 4)); // pst.setString(7, "email" + UUID.randomUUID().toString().substring(0,
 												// 4));
 
 				pst.executeUpdate();
 				pst.close();
+				
+				System.out.println("[  ] Insertado atleta " + j);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

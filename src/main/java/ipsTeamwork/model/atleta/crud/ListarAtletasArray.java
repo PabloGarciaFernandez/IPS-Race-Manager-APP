@@ -23,9 +23,7 @@ public class ListarAtletasArray {
 						
 			ResultSet rs = st.executeQuery();
 			
-			rs.next();
 			atleta = DtoBuilder.toAtletaDtoList(rs);
-					
 			
 			rs.close();
 			st.close();

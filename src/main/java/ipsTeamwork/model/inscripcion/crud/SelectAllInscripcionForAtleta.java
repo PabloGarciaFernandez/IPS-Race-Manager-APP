@@ -19,6 +19,8 @@ public class SelectAllInscripcionForAtleta {
 	}
 	
 	public List<InscripcionDto> execute() {
+		System.out.println("cargando inscripciones para el atleta " + id);
+		
 		List<InscripcionDto> ret = null;
 		
 		GestorDB gdb = new GestorDB();
@@ -31,6 +33,7 @@ public class SelectAllInscripcionForAtleta {
 			
 			ret = DtoBuilder.toInscripcionDtoList(rs);
 			
+			
 			rs.close();
 			pst.close();
 			
@@ -40,7 +43,7 @@ public class SelectAllInscripcionForAtleta {
 			gdb.cerrarCon();
 		}
 		
-		
+		System.out.println("el array devuelto tiene " + ret.size() + " elementos.");
 		
 		return ret;
 	}

@@ -13,7 +13,7 @@ import ipsTeamwork.util.DtoBuilder;
 public class SelectAllVistaAtleta {
 	
 	private String query = "SELECT * FROM CARRERA c WHERE c.fechaFinInsc >= ? ORDER BY c.fechaFinInsc";
-	// ? -> '2021-12-31'
+
 	
 	public List<CarreraDto> execute() {
 		List<CarreraDto> carr = null;

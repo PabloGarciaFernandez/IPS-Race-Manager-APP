@@ -120,7 +120,7 @@ public class PanelListarInscripciones extends JPanel {
 		List<InscripcionDto> insc = new SelectAllInscripcionForAtleta(atleta.getIdAtleta()).execute();
 		System.out.println("\n\n\nCargando inscripciones en tabla:\n");
 		for (InscripcionDto dto : insc) {
-			String[] inscRow = { dto.getCarrera().getNombre(), dto.getEstadoInscripcion(), dto.getFechaInscripcion().toString()};
+			String[] inscRow = { "TODO: COGER NOMBRE CON CARRERA ID", dto.getEstadoInscripcion(), dto.getFechaInscripcion().toString()};
 
 			System.out.println(inscRow);
 			dtm.addRow(inscRow);

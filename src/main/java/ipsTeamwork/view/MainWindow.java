@@ -327,7 +327,6 @@ public class MainWindow extends JFrame {
 			// "Nombre", "Fecha", "Tipo", "Distancia", "Cuota", "Fecha l\u00EDm. insc.",
 			// "Plazas disponibles"
 			tablaAtleta.addRow(carrerasTabla);
-			System.out.println("añadida linea a tabla: " + carrerasTabla);
 		}
 	}
 

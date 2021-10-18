@@ -85,14 +85,28 @@ public class DtoBuilder {
 	public static List<AtletaDto> toAtletaDtoList(ResultSet rs) {
 		List<AtletaDto> ret = new ArrayList<AtletaDto>();
 		AtletaDto dto = null;
+
 		try {
 			while (rs.next()) {
-				dto = toAtletaDto(rs);
-				ret.add(dto);
+				try {
+					dto = new AtletaDto();
+					dto.setSexo(rs.getString("sexo"));
+					dto.setNombre(rs.getString("nombre"));
+					dto.setIdAtleta(rs.getString("idAtleta"));
+					dto.setEmail(rs.getString("email"));
+					dto.setEdad(rs.getInt("edad"));
+					dto.setDNI(rs.getString("dni"));
+					dto.setDiscapacitado(rs.getBoolean("discapacitado"));
+					
+					ret.add(dto);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
 		return ret;
 	}
 	
