@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.model.atleta.AtletaDto;
+import ipsTeamwork.model.carrera.crud.GetNombreById;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.SelectAllInscripcionForAtleta;
 
@@ -117,10 +118,14 @@ public class PanelListarInscripciones extends JPanel {
 	}
 	
 	public void cargarInscripcionesEnTabla() {
+		if (dtm.getRowCount() > 0) {
+			reset(dtm);
+		}
+		
 		List<InscripcionDto> insc = new SelectAllInscripcionForAtleta(atleta.getIdAtleta()).execute();
 		System.out.println("\n\n\nCargando inscripciones en tabla:\n");
 		for (InscripcionDto dto : insc) {
-			String[] inscRow = { "TODO: COGER NOMBRE CON CARRERA ID", dto.getEstadoInscripcion(), dto.getFechaInscripcion().toString()};
+			String[] inscRow = { new GetNombreById(dto.getIdCarrera()).execute(), dto.getEstadoInscripcion(), dto.getFechaInscripcion().toString()};
 
 			System.out.println(inscRow);
 			dtm.addRow(inscRow);
@@ -135,5 +140,9 @@ public class PanelListarInscripciones extends JPanel {
 	public void atras() {
 		parent.showCard(MainWindow.PANEL_ATLETA);
 		//this.setVisible(false);
+	}
+	
+	private void reset(DefaultTableModel francisco) {
+		francisco.setRowCount(0);
 	}
 }
