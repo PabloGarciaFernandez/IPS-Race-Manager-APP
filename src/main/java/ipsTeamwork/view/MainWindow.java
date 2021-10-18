@@ -61,9 +61,8 @@ public class MainWindow extends JFrame {
 
 	private static final String PANEL_PAGARINSCRIPCION = "panel_PagarInscripcion";
 	private static final String PANEL_LISTA_INSCRIPCIONES = "panel_lista_inscripciones_atleta";
-	
-	private static final String PANEL_PAGO_TARJETA = "panel_pago_tarjeta";
 
+	private static final String PANEL_PAGO_TARJETA = "panel_pago_tarjeta";
 
 	private JPanel contentPane;
 	private JPanel pnInicio;
@@ -131,7 +130,7 @@ public class MainWindow extends JFrame {
 	private JTable tbVerClasificaciones;
 	private JTable tbVerClasificacionesHombres;
 	private JTable tbVerClasificacionesMujeres;
-	private JButton tbVerAtletasInscritosPorXCarrera;
+	private JButton btVerAtletasInscritosPorXCarrera;
 	private JScrollPane scVerAtletasInscritosPorXCarrera;
 	private JTable tbAtletasInscritosEnXCarrera;
 	private DefaultTableModel tb;
@@ -159,7 +158,6 @@ public class MainWindow extends JFrame {
 	private JPanel pnVistaInscripcionesAtleta;
 	private JButton btVerClasificacionesOrganizacion;
 	private JButton btListaClasificacionesAtras;
-	
 
 	private JPanel pnPagoTarjeta;
 	private JPanel pnPagoTarjetaCenter;
@@ -306,6 +304,11 @@ public class MainWindow extends JFrame {
 			btnMisCarreras = new JButton("Mis carreras");
 			btnMisCarreras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+
+//					DefaultTableModel tbVerAtletasMisCarreras = (DefaultTableModel) tb.getModel();
+//
+//					reset(tbVerAtletasMisCarreras);
+
 					showCard(PANEL_LISTA_INSCRIPCIONES);
 					((PanelListarInscripciones) pnVistaInscripcionesAtleta).cargarInscripcionesEnTabla();
 				}
@@ -503,7 +506,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnRegistro;
 	}
-	
+
 	private JPanel getPnPagoTarjeta() {
 		if (pnPagoTarjeta == null) {
 			pnPagoTarjeta = new JPanel();
@@ -537,7 +540,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnRegistroCenter;
 	}
-	
+
 	private JPanel getPnPagoTarjetaCenter() {
 		if (pnPagoTarjetaCenter == null) {
 			pnPagoTarjetaCenter = new JPanel();
@@ -550,7 +553,7 @@ public class MainWindow extends JFrame {
 			pnPagoTarjetaCenter.add(getTxPagoTarjetaCódigoCVC());
 			pnPagoTarjetaCenter.add(getTxPagoTarjetaFechaCaducidad());
 			pnPagoTarjetaCenter.add(getBtPagoTarjetaEnviar());
-			
+
 		}
 		return pnPagoTarjetaCenter;
 	}
@@ -669,8 +672,6 @@ public class MainWindow extends JFrame {
 		comboRegistroSexo.setSelectedIndex(-1);
 		chckbxRegistroDiscapacidad.setSelected(false);
 	}
-	
-
 
 	private boolean checkFieldsRegisters() {
 		if (isEmptyRegister()) {
@@ -679,7 +680,7 @@ public class MainWindow extends JFrame {
 		}
 		return true;
 	}
-	
+
 	private boolean comprobarDatosTarjeta() {
 		if (camposVacíos()) {
 			JOptionPane.showMessageDialog(null, "Error: Falta alguno de los datos.");
@@ -1143,34 +1144,57 @@ public class MainWindow extends JFrame {
 	 * Metodo cambiar
 	 */
 	private JButton getBtVerAtletasInscritosPorXCarrera() {
-		if (tbVerAtletasInscritosPorXCarrera == null) {
-			tbVerAtletasInscritosPorXCarrera = new JButton("Ver atletas inscritos de esa carrera");
-			tbVerAtletasInscritosPorXCarrera.setFont(new Font("Arial", Font.PLAIN, 14));
-			tbVerAtletasInscritosPorXCarrera.setMnemonic('v');
-			tbVerAtletasInscritosPorXCarrera.addActionListener(new ActionListener() {
+		if (btVerAtletasInscritosPorXCarrera == null) {
+			btVerAtletasInscritosPorXCarrera = new JButton("Ver atletas inscritos de esa carrera");
+			btVerAtletasInscritosPorXCarrera.setFont(new Font("Arial", Font.PLAIN, 14));
+			btVerAtletasInscritosPorXCarrera.setMnemonic('v');
+			btVerAtletasInscritosPorXCarrera.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
-					String codigo = (String) tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0);
+					DefaultTableModel tbVerAtletasInscritosPorXCarreraDefault = (DefaultTableModel) tbAtletasInscritosEnXCarrera
+							.getModel();
 
-					ArrayList<InscripcionDto> atletas = db.estadoInscripcion(codigo);
-
-					for (InscripcionDto inscripcionDto : atletas) {
-
-						String[] alluneedislove = { inscripcionDto.getAtleta().getDNI(), inscripcionDto.getAtleta().getNombre(),
-								Categoria.calculaCategoria(inscripcionDto.getAtleta().getEdad(),
-										inscripcionDto.getAtleta().getSexo()),
-								String.valueOf(inscripcionDto.getFechaInscripcion()),
-								inscripcionDto.getEstadoInscripcion() };
-
-						tablaAtletasInscritosX.addRow(alluneedislove);
-
-					}
+					reset(tbVerAtletasInscritosPorXCarreraDefault);
+					mirarParticipantes();
 
 				}
+
 			});
-			tbVerAtletasInscritosPorXCarrera.setBounds(161, 198, 596, 38);
+			btVerAtletasInscritosPorXCarrera.setBounds(161, 198, 596, 38);
 		}
-		return tbVerAtletasInscritosPorXCarrera;
+		return btVerAtletasInscritosPorXCarrera;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo que añade los atletas inscritos a un Jtable
+	 * 
+	 */
+	private void mirarParticipantes() {
+		String codigo = (String) tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0);
+
+		ArrayList<InscripcionDto> atletas = db.estadoInscripcion(codigo);
+
+		for (InscripcionDto inscripcionDto : atletas) {
+
+			String[] alluneedislove = { inscripcionDto.getAtleta().getDNI(), inscripcionDto.getAtleta().getNombre(),
+					Categoria.calculaCategoria(inscripcionDto.getAtleta().getEdad(),
+							inscripcionDto.getAtleta().getSexo()),
+					String.valueOf(inscripcionDto.getFechaInscripcion()), inscripcionDto.getEstadoInscripcion() };
+
+			tablaAtletasInscritosX.addRow(alluneedislove);
+
+		}
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo que reseta una JTable
+	 */
+	void reset(DefaultTableModel Juanin) {
+		Juanin.setRowCount(0);
 	}
 
 	private JScrollPane getScVerAtletasInscritosPorXCarrera() {
@@ -1247,8 +1271,6 @@ public class MainWindow extends JFrame {
 		}
 		return pnPagarInscripcion;
 	}
-	
-
 
 	private JPanel getPnPrincipalPagarInscripcion() {
 		if (pnPrincipalPagarInscripcion == null) {
@@ -1307,7 +1329,7 @@ public class MainWindow extends JFrame {
 
 		String todo = "La carrera se efectuara el " + carreras.getFecha() + "\nDel tipo " + carreras.getTipo()
 				+ "\nCon una distancia real de " + carreras.getDistancia() + "km\nLa cual tiene un coste de "
-				+ carreras.getCuota() + "Debe pagar a esta cuenta bancaria: ES6000491500051234567892"
+				+ carreras.getCuota() + "\nDebe pagar a esta cuenta bancaria: ES6000491500051234567892"
 				+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
 
 		UpdateInscribirseAtleta.execute(inscripcion, "Pendiente de Pago");
@@ -1345,15 +1367,7 @@ public class MainWindow extends JFrame {
 
 	private void pagarTarjeta() {
 
-		
-
-		
-		
 		showCard(PANEL_PAGO_TARJETA);
-
-		
-		
-		
 
 	}
 
@@ -1413,15 +1427,17 @@ public class MainWindow extends JFrame {
 		}
 		return btListaClasificacionesAtras;
 	}
-	
+
 	private JLabel getLbPagoTarjeta() {
 		if (lbPagoTarjeta == null) {
-			lbPagoTarjeta = new JLabel("Introduzca los datos de su tarjeta para finalizar su inscripción en la carrera.");
+			lbPagoTarjeta = new JLabel(
+					"Introduzca los datos de su tarjeta para finalizar su inscripción en la carrera.");
 			lbPagoTarjeta.setFont(new Font("Tahoma", Font.PLAIN, 18));
 			lbPagoTarjeta.setBounds(57, 60, 669, 61);
 		}
 		return lbPagoTarjeta;
 	}
+
 	private JLabel getLbPagoTarjetaNumero() {
 		if (lbPagoTarjetaNumero == null) {
 			lbPagoTarjetaNumero = new JLabel("Número de la tarjeta: ");
@@ -1430,6 +1446,7 @@ public class MainWindow extends JFrame {
 		}
 		return lbPagoTarjetaNumero;
 	}
+
 	private JLabel getLbPagoTarjetaCódigoCVC() {
 		if (lbPagoTarjetaCódigoCVC == null) {
 			lbPagoTarjetaCódigoCVC = new JLabel("Código CVC: ");
@@ -1438,6 +1455,7 @@ public class MainWindow extends JFrame {
 		}
 		return lbPagoTarjetaCódigoCVC;
 	}
+
 	private JLabel getLbPagoTarjetaFechaCaducidad() {
 		if (lbPagoTarjetaFechaCaducidad == null) {
 			lbPagoTarjetaFechaCaducidad = new JLabel("Fecha de caducidad: ");
@@ -1446,6 +1464,7 @@ public class MainWindow extends JFrame {
 		}
 		return lbPagoTarjetaFechaCaducidad;
 	}
+
 	private JTextField getTxPagoTarjetaNumero() {
 		if (txPagoTarjetaNumero == null) {
 			txPagoTarjetaNumero = new JTextField();
@@ -1455,6 +1474,7 @@ public class MainWindow extends JFrame {
 		}
 		return txPagoTarjetaNumero;
 	}
+
 	private JTextField getTxPagoTarjetaCódigoCVC() {
 		if (txPagoTarjetaCódigoCVC == null) {
 			txPagoTarjetaCódigoCVC = new JTextField();
@@ -1464,6 +1484,7 @@ public class MainWindow extends JFrame {
 		}
 		return txPagoTarjetaCódigoCVC;
 	}
+
 	private JTextField getTxPagoTarjetaFechaCaducidad() {
 		if (txPagoTarjetaFechaCaducidad == null) {
 			txPagoTarjetaFechaCaducidad = new JTextField();
@@ -1473,12 +1494,13 @@ public class MainWindow extends JFrame {
 		}
 		return txPagoTarjetaFechaCaducidad;
 	}
+
 	private JButton getBtPagoTarjetaEnviar() {
 		if (btPagoTarjetaEnviar == null) {
 			btPagoTarjetaEnviar = new JButton("Enviar");
 			btPagoTarjetaEnviar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					
+
 					accionPagoTarjetaEnviar();
 				}
 			});
@@ -1487,33 +1509,26 @@ public class MainWindow extends JFrame {
 		}
 		return btPagoTarjetaEnviar;
 	}
-	
+
 	protected void accionPagoTarjetaEnviar() {
 		if (comprobarDatosTarjeta()) {
-			
-			
+
 			UpdateInscribirseAtleta.execute2(inscripcion, "Tarjeta");
 
 			String nombre = String.valueOf(tablaAtleta.getValueAt(getTablaCarrerasParaAtleta().getSelectedRow(), 0));
 
 			CarreraDto carreras = db.selectCarrerasNombre(nombre);
 
-			String todo = "Atleta : " + atletaActual.getNombre() + "\nCarrera : " + carreraActual.getNombre() + "\nPrecio : " + carreraActual.getCuota() + "\nFecha pago : " + inscripcion.getFechaInscripcion();
-			
+			String todo = "Atleta : " + atletaActual.getNombre() + "\nCarrera : " + carreraActual.getNombre()
+					+ "\nPrecio : " + carreraActual.getCuota() + "\nFecha pago : " + inscripcion.getFechaInscripcion();
+
 			vaciarPanelPagoTarjeta();
 			JOptionPane.showMessageDialog(null, "Ha sido inscrito con éxito en la carrera.");
-			
 
 			UpdateInscribirseAtleta.execute(inscripcion, "Inscrito");
 			UpdateInscribirseAtleta.execute2(inscripcion, "Tarjeta");
 
-			
-			
-			
-			
-			
-			JOptionPane.showConfirmDialog(this, todo,
-					"Este es tu justificante de pago.", JOptionPane.DEFAULT_OPTION);
+			JOptionPane.showConfirmDialog(this, todo, "Este es tu justificante de pago.", JOptionPane.DEFAULT_OPTION);
 
 			System.out.println(inscripcion.toString());
 
@@ -1521,22 +1536,16 @@ public class MainWindow extends JFrame {
 
 			db.selectInscripcion();
 
+			UpdateInscribirseAtleta.execute(inscripcion, "Inscrito");
 
+			JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia,
+					"Muchas gracias por realizar el pago de la cuota. Disfrute de la carrera "
+							+ inscripcion.getAtleta().getNombre(),
+					"Gracias :)", JOptionPane.DEFAULT_OPTION);
 
-	
-			
-				UpdateInscribirseAtleta.execute(inscripcion, "Inscrito");
-
-				JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia,
-						"Muchas gracias por realizar el pago de la cuota. Disfrute de la carrera "
-								+ inscripcion.getAtleta().getNombre(),
-						"Gracias :)", JOptionPane.DEFAULT_OPTION);
-
-			
-			
 			showCard(PANEL_INICIO);
 		}
-		
+
 	}
 
 	private void vaciarPanelPagoTarjeta() {
@@ -1544,6 +1553,7 @@ public class MainWindow extends JFrame {
 		txPagoTarjetaFechaCaducidad.setText("");
 		txPagoTarjetaNumero.setText("");
 	}
+
 	private JLabel getLbPagarInscripcion() {
 		if (lbPagarInscripcion == null) {
 			lbPagarInscripcion = new JLabel("Eliga su método de pago:");
