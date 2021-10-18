@@ -1,8 +1,8 @@
 package ipsTeamwork.model.inscripcion.crud;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.util.Date;
 
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.controller.SQLStrings;
@@ -21,12 +21,12 @@ public class InscribirseAtleta {
 			pst.setDate(4, new java.sql.Date(inscripcion.getFechaInscripcion().getTime()));
 			pst.setString(5, inscripcion.getEstadoInscripcion());
 			pst.setString(6, inscripcion.getFormaDePago());
-			pst.setString(7, null);
+			pst.setString(7, inscripcion.getTiempoCorriendo());
 			pst.executeUpdate();
 			pst.close();
 
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		} finally {
 			gdb.cerrarCon();
 		}

@@ -26,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -42,7 +43,6 @@ import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
 import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtleta;
 import ipsTeamwork.util.DtoBuilder;
-import javax.swing.SwingConstants;
 
 public class MainWindow extends JFrame {
 
@@ -59,7 +59,6 @@ public class MainWindow extends JFrame {
 
 	private static final String PANEL_PAGARINSCRIPCION = "panel_PagarInscripcion";
 	private static final String PANEL_LISTA_INSCRIPCIONES = "panel_lista_inscripciones_atleta";
-	
 
 	private JPanel contentPane;
 	private JPanel pnInicio;
@@ -105,24 +104,24 @@ public class MainWindow extends JFrame {
 	private JButton btnOrganizadorCancelar;
 	private JButton btnOrganizadorSiguiente;
 	private JPanel pnListaCarrerasOrganizador;
-	
+
 	private JPanel pnListaClasificacionesOrganizador;
 	private JPanel pnListaClasificacionesOrganizadorHombres;
 	private JPanel pnListaClasificacionesOrganizadorMujeres;
 
 	private JPanel pnPrincipalVerCarrerasOrganizador;
-	
+
 	private JPanel pnPrincipalVerClasificacionesOrganizador;
 	private JButton btVerVarrerasOrganizacion;
 	private JScrollPane scVerCarreras;
-	
+
 	private JLabel lbClasificacionGeneral;
 	private JScrollPane scVerClasificacionesHombres;
 	private JScrollPane scVerClasificacionesMujeres;
 	private JLabel lbClasificacionGeneralHombres;
 	private JLabel lbClasificacionGeneralMujeres;
 	private JScrollPane scVerClasificaciones;
-	
+
 	private JTable tbVerCarreras;
 	private JTable tbVerClasificaciones;
 	private JTable tbVerClasificacionesHombres;
@@ -133,7 +132,7 @@ public class MainWindow extends JFrame {
 	private DefaultTableModel tb;
 	private DefaultTableModel tablaAtleta;
 	private DefaultTableModel tablaAtletasInscritosX;
-	
+
 	private DefaultTableModel tablaClasificaciones;
 	private DefaultTableModel tablaClasificacionesHombres;
 	private DefaultTableModel tablaClasificacionesMujeres;
@@ -153,7 +152,7 @@ public class MainWindow extends JFrame {
 	private JButton btVistaAtletaAtras;
 	private JPanel pnVistaInscripcionesAtleta;
 	private JButton btVerClasificacionesOrganizacion;
-	
+	private JButton btListaClasificacionesAtras;
 
 	/**
 	 * Create the frame.
@@ -170,7 +169,7 @@ public class MainWindow extends JFrame {
 		setResizable(false);
 		setTitle("Carreras");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 921, 495);
+		setBounds(100, 100, 922, 538);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -186,13 +185,10 @@ public class MainWindow extends JFrame {
 		contentPane.add(pnVistaInscripcionesAtleta, PANEL_LISTA_INSCRIPCIONES);
 		contentPane.add(getPnListaClasificacionesOrganizador(), PANEL_VERCLASIFICACIONESORGANIZADOR);
 
-		
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
 		cargarTablaClasificacionesOrganizador();
 	}
-
-	
 
 	public AtletaDto getAtletaActual() {
 		return atletaActual;
@@ -342,8 +338,6 @@ public class MainWindow extends JFrame {
 			tb.addRow(carrerasTabla);
 		}
 	}
-	
-	
 
 	public void cargarTablaClasificacionesOrganizador() {
 		GestorDB db = new GestorDB();
@@ -351,45 +345,41 @@ public class MainWindow extends JFrame {
 		ArrayList<InscripcionDto> inscripciones = db.getArrayClasificaciones();
 
 		int posicion = 1;
-		
+
 		for (InscripcionDto inscripcionDto : inscripciones) {
 
-			String[] clasificacionesTabla = { Integer.toString(posicion)+"º", inscripcionDto.getAtleta().getSexo(), inscripcionDto.getAtleta().getNombre(),
-					inscripcionDto.getTiempoCorriendo() };
+			String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getAtleta().getSexo(),
+					inscripcionDto.getAtleta().getNombre(), inscripcionDto.getTiempoCorriendo() };
 			tablaClasificaciones.addRow(clasificacionesTabla);
 			posicion++;
 		}
-		
-		
+
 		ArrayList<InscripcionDto> inscripcionesHombres = db.getArrayClasificacionesHombres();
 
 		posicion = 1;
-		
+
 		for (InscripcionDto inscripcionDto : inscripcionesHombres) {
 
-			String[] clasificacionesTabla = { Integer.toString(posicion)+"º", inscripcionDto.getAtleta().getNombre(), 
+			String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getAtleta().getNombre(),
 					inscripcionDto.getTiempoCorriendo() };
 			tablaClasificacionesHombres.addRow(clasificacionesTabla);
 			posicion++;
 		}
-		
-		
+
 		ArrayList<InscripcionDto> inscripcionesMujeres = db.getArrayClasificacionesMujeres();
 
 		posicion = 1;
-		
+
 		for (InscripcionDto inscripcionDto : inscripcionesMujeres) {
 
-			String[] clasificacionesTabla = { Integer.toString(posicion)+"º", inscripcionDto.getAtleta().getNombre(), 
+			String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getAtleta().getNombre(),
 					inscripcionDto.getTiempoCorriendo() };
 			tablaClasificacionesMujeres.addRow(clasificacionesTabla);
 			posicion++;
 		}
-		
-		
+
 	}
-	
-	
+
 	private JPanel getPnListaNorth() {
 		if (pnListaNorth == null) {
 			pnListaNorth = new JPanel();
@@ -897,7 +887,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnListaCarrerasOrganizador;
 	}
-	
+
 	private JPanel getPnListaClasificacionesOrganizador() {
 		if (pnListaClasificacionesOrganizador == null) {
 			pnListaClasificacionesOrganizador = new JPanel();
@@ -906,27 +896,27 @@ public class MainWindow extends JFrame {
 		}
 		return pnListaClasificacionesOrganizador;
 	}
-	
+
 	private JPanel getPnListaClasificacionesOrganizadorHombres() {
 		if (pnListaClasificacionesOrganizadorHombres == null) {
 			pnListaClasificacionesOrganizadorHombres = new JPanel();
 			pnListaClasificacionesOrganizadorHombres.setLayout(new BorderLayout(0, 0));
-			pnListaClasificacionesOrganizadorHombres.add(getPnPrincipalVerClasificacionesOrganizador(), BorderLayout.CENTER);
+			pnListaClasificacionesOrganizadorHombres.add(getPnPrincipalVerClasificacionesOrganizador(),
+					BorderLayout.CENTER);
 		}
 		return pnListaClasificacionesOrganizadorHombres;
 	}
 
-	
 	private JPanel getPnListaClasificacionesOrganizadorMujeres() {
 		if (pnListaClasificacionesOrganizadorMujeres == null) {
 			pnListaClasificacionesOrganizadorMujeres = new JPanel();
 			pnListaClasificacionesOrganizadorMujeres.setLayout(new BorderLayout(0, 0));
-			pnListaClasificacionesOrganizadorMujeres.add(getPnPrincipalVerClasificacionesOrganizador(), BorderLayout.CENTER);
+			pnListaClasificacionesOrganizadorMujeres.add(getPnPrincipalVerClasificacionesOrganizador(),
+					BorderLayout.CENTER);
 		}
 		return pnListaClasificacionesOrganizadorMujeres;
 	}
 
-	
 	private Component getPnPrincipalVerClasificacionesOrganizador() {
 		if (pnPrincipalVerClasificacionesOrganizador == null) {
 			pnPrincipalVerClasificacionesOrganizador = new JPanel();
@@ -937,13 +927,12 @@ public class MainWindow extends JFrame {
 			pnPrincipalVerClasificacionesOrganizador.add(getScVerClasificacionesMujeres());
 			pnPrincipalVerClasificacionesOrganizador.add(getLbClasificacionGeneralHombres());
 			pnPrincipalVerClasificacionesOrganizador.add(getLbClasificacionGeneralMujeres());
-			
-			//pnPrincipalVerClasificacionesOrganizador.add(getBtAtrasVerCarrerasOrganizador());
+			pnPrincipalVerClasificacionesOrganizador.add(getBtListaClasificacionesAtras());
+
+			// pnPrincipalVerClasificacionesOrganizador.add(getBtAtrasVerCarrerasOrganizador());
 		}
 		return pnPrincipalVerClasificacionesOrganizador;
 	}
-
-
 
 	private JPanel getPnPrincipalVerCarrerasOrganizador() {
 		if (pnPrincipalVerCarrerasOrganizador == null) {
@@ -974,12 +963,12 @@ public class MainWindow extends JFrame {
 	private JScrollPane getScVerCarreras() {
 		if (scVerCarreras == null) {
 			scVerCarreras = new JScrollPane();
-			scVerCarreras.setBounds(161, 27, 233, 149);
+			scVerCarreras.setBounds(161, 27, 596, 161);
 			scVerCarreras.setViewportView(getTbVerCarreras());
 		}
 		return scVerCarreras;
 	}
-	
+
 	private JScrollPane getScVerClasificaciones() {
 		if (scVerClasificaciones == null) {
 			scVerClasificaciones = new JScrollPane();
@@ -988,7 +977,7 @@ public class MainWindow extends JFrame {
 		}
 		return scVerClasificaciones;
 	}
-	
+
 	private JLabel getLbClasificacionGeneral() {
 		if (lbClasificacionGeneral == null) {
 			lbClasificacionGeneral = new JLabel("Clasificación General");
@@ -998,6 +987,7 @@ public class MainWindow extends JFrame {
 		}
 		return lbClasificacionGeneral;
 	}
+
 	private JScrollPane getScVerClasificacionesHombres() {
 		if (scVerClasificacionesHombres == null) {
 			scVerClasificacionesHombres = new JScrollPane();
@@ -1006,6 +996,7 @@ public class MainWindow extends JFrame {
 		}
 		return scVerClasificacionesHombres;
 	}
+
 	private JScrollPane getScVerClasificacionesMujeres() {
 		if (scVerClasificacionesMujeres == null) {
 			scVerClasificacionesMujeres = new JScrollPane();
@@ -1014,6 +1005,7 @@ public class MainWindow extends JFrame {
 		}
 		return scVerClasificacionesMujeres;
 	}
+
 	private JLabel getLbClasificacionGeneralHombres() {
 		if (lbClasificacionGeneralHombres == null) {
 			lbClasificacionGeneralHombres = new JLabel("Clasificación General Hombres");
@@ -1023,6 +1015,7 @@ public class MainWindow extends JFrame {
 		}
 		return lbClasificacionGeneralHombres;
 	}
+
 	private JLabel getLbClasificacionGeneralMujeres() {
 		if (lbClasificacionGeneralMujeres == null) {
 			lbClasificacionGeneralMujeres = new JLabel("Clasificación General Mujeres");
@@ -1032,7 +1025,6 @@ public class MainWindow extends JFrame {
 		}
 		return lbClasificacionGeneralMujeres;
 	}
-	
 
 	public JTable getTbVerCarreras() {
 		if (tbVerCarreras == null) {
@@ -1045,12 +1037,12 @@ public class MainWindow extends JFrame {
 		}
 		return tbVerCarreras;
 	}
-	
+
 	public JTable getTbVerClasificaciones() {
 		if (tbVerClasificaciones == null) {
 			tbVerClasificaciones = new JTable();
-			tbVerClasificaciones
-					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Posición", "Género", "Nombre", "Tiempo" }));
+			tbVerClasificaciones.setModel(new DefaultTableModel(new Object[][] {},
+					new String[] { "Posición", "Género", "Nombre", "Tiempo" }));
 
 			tbVerClasificaciones.setDefaultEditor(Object.class, null);
 
@@ -1058,30 +1050,30 @@ public class MainWindow extends JFrame {
 		return tbVerClasificaciones;
 	}
 
-	
 	public JTable getTbVerClasificacionesHombres() {
 		if (tbVerClasificacionesHombres == null) {
 			tbVerClasificacionesHombres = new JTable();
-			tbVerClasificacionesHombres
-					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Posición", "Nombre", "Tiempo" }));
+			tbVerClasificacionesHombres.setModel(
+					new DefaultTableModel(new Object[][] {}, new String[] { "Posición", "Nombre", "Tiempo" }));
 
 			tbVerClasificacionesHombres.setDefaultEditor(Object.class, null);
 
 		}
 		return tbVerClasificacionesHombres;
 	}
-	
+
 	public JTable getTbVerClasificacionesMujeres() {
 		if (tbVerClasificacionesMujeres == null) {
 			tbVerClasificacionesMujeres = new JTable();
-			tbVerClasificacionesMujeres
-					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Posición", "Nombre", "Tiempo" }));
+			tbVerClasificacionesMujeres.setModel(
+					new DefaultTableModel(new Object[][] {}, new String[] { "Posición", "Nombre", "Tiempo" }));
 
 			tbVerClasificacionesMujeres.setDefaultEditor(Object.class, null);
 
 		}
 		return tbVerClasificacionesMujeres;
 	}
+
 	/**
 	 * Metodo cambiar
 	 */
@@ -1118,7 +1110,7 @@ public class MainWindow extends JFrame {
 	private JScrollPane getScVerAtletasInscritosPorXCarrera() {
 		if (scVerAtletasInscritosPorXCarrera == null) {
 			scVerAtletasInscritosPorXCarrera = new JScrollPane();
-			scVerAtletasInscritosPorXCarrera.setBounds(161, 246, 238, 98);
+			scVerAtletasInscritosPorXCarrera.setBounds(161, 246, 596, 98);
 			scVerAtletasInscritosPorXCarrera.setViewportView(getTbAtletasInscritosEnXCarrera());
 		}
 		return scVerAtletasInscritosPorXCarrera;
@@ -1241,13 +1233,18 @@ public class MainWindow extends JFrame {
 				+ "Debe pagar a esta cuenta bancaria: ES6000491500051234567892"
 				+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
 
+		System.out.println(carreras.getIdCarrera());
 		inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaActual, carreras,
-				UUID.randomUUID().toString().substring(0, 3), "Pre-inscrito", new Date(), "Tranferencia");
+				UUID.randomUUID().toString().substring(0, 3), "No inscrito", new Date(), "Transferencia");
 
 		JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, todo,
 				"Este es tu justifcante de pago por Transacción", JOptionPane.DEFAULT_OPTION);
 
+		System.out.println(inscripcion.toString());
+
 		new InscribirseAtleta().execute(inscripcion);
+
+		db.selectInscripcion();
 
 		int pagaste;
 
@@ -1295,6 +1292,7 @@ public class MainWindow extends JFrame {
 		}
 		return btVistaAtletaAtras;
 	}
+
 	private JButton getBtVerClasificacionesOrganizacion() {
 		if (btVerClasificacionesOrganizacion == null) {
 			btVerClasificacionesOrganizacion = new JButton("Ver Clasificaciones");
@@ -1308,5 +1306,17 @@ public class MainWindow extends JFrame {
 		}
 		return btVerClasificacionesOrganizacion;
 	}
-	
+
+	private JButton getBtListaClasificacionesAtras() {
+		if (btListaClasificacionesAtras == null) {
+			btListaClasificacionesAtras = new JButton("Atras");
+			btListaClasificacionesAtras.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_ORGANIZADOR);
+				}
+			});
+			btListaClasificacionesAtras.setBounds(376, 452, 119, 22);
+		}
+		return btListaClasificacionesAtras;
+	}
 }

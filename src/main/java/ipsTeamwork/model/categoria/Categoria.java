@@ -12,6 +12,7 @@ import javax.management.RuntimeErrorException;
 public class Categoria {
 
 	public static String calculaCategoria(int edad, String sexo) {
+
 		if (edad >= 18 && edad <= 20) {
 			return "Benjamin - Entre 18 y 20 / " + sexo;
 		} else if (edad > 20 && edad <= 30) {

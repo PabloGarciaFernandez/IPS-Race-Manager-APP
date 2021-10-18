@@ -39,8 +39,9 @@ public class DtoBuilder {
 		dto.setIdCarrera(carrera.getIdCarrera());
 		dto.setDorsal(dorsal);
 		dto.setEstadoInscripcion(estadoInscripcion);
-		dto.setFechaInscripcion(date);
+		dto.setFechaInscripcion(new java.sql.Date(date.getTime()));
 		dto.setFormaDePago(formaDePago);
+		dto.setTiempoCorriendo("0");
 
 		return dto;
 	}
@@ -97,7 +98,7 @@ public class DtoBuilder {
 					dto.setEdad(rs.getInt("edad"));
 					dto.setDNI(rs.getString("dni"));
 					dto.setDiscapacitado(rs.getBoolean("discapacitado"));
-					
+
 					ret.add(dto);
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -109,11 +110,11 @@ public class DtoBuilder {
 
 		return ret;
 	}
-	
+
 	public static List<CarreraDto> toCarreraDtoList(ResultSet rs) {
 		List<CarreraDto> ret = new ArrayList<CarreraDto>();
 		CarreraDto dto = null;
-		
+
 		try {
 			while (rs.next()) {
 				dto = new CarreraDto();
@@ -131,7 +132,7 @@ public class DtoBuilder {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return ret;
 	}
 }
