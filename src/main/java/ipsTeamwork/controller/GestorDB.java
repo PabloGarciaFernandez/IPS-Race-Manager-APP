@@ -647,7 +647,7 @@ public class GestorDB {
 						new Calendar.Builder().setDate(2023, 12, 31).build().getTime()).getTime());
 
 				pst.setString(1, UUID.randomUUID().toString());
-				pst.setString(2, UUID.randomUUID().toString().substring(0, 5));
+				pst.setString(2, "nombre" + UUID.randomUUID().toString().substring(0, 5));
 
 				pst.setDate(3, fechaCarrera); // fecha origen
 
