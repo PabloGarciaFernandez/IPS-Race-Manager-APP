@@ -1332,7 +1332,7 @@ public class MainWindow extends JFrame {
 				+ carreras.getCuota() + "\nDebe pagar a esta cuenta bancaria: ES6000491500051234567892"
 				+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
 
-		UpdateInscribirseAtleta.execute(inscripcion, "Pendiente de Pago");
+
 		UpdateInscribirseAtleta.execute2(inscripcion, "Transaccion");
 
 		JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, todo,
@@ -1361,6 +1361,7 @@ public class MainWindow extends JFrame {
 			JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia,
 					"Tiene 48 horas para realizar el pago despues de ese tiempo perdera la plaza y tendra que volver a inscribirse en esta carrera",
 					"Moroso", JOptionPane.DEFAULT_OPTION);
+			UpdateInscribirseAtleta.execute(inscripcion, "Pendiente de Pago");
 		}
 		showCard(PANEL_LISTA_CARRERAS);
 	}
