@@ -1332,7 +1332,6 @@ public class MainWindow extends JFrame {
 				+ carreras.getCuota() + "\nDebe pagar a esta cuenta bancaria: ES6000491500051234567892"
 				+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
 
-
 		UpdateInscribirseAtleta.execute2(inscripcion, "Transaccion");
 
 		JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, todo,
