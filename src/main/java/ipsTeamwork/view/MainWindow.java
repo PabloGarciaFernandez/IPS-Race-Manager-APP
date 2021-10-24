@@ -205,7 +205,6 @@ public class MainWindow extends JFrame {
 
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
-		cargarTablaClasificacionesOrganizador();
 	}
 
 	public AtletaDto getAtletaActual() {
@@ -361,10 +360,31 @@ public class MainWindow extends JFrame {
 			tb.addRow(carrerasTabla);
 		}
 	}
+	
+	public String stringFromNumberToDate(String numero) {
+		
+		if(numero.equals("NF") || numero.equals("NP")) {
+			return numero;
+		}
+		
+		int numeroInt = Integer.parseInt(numero);
+		
+		int horas = numeroInt/60;
+		int minutos = numeroInt - horas*60;
+		
+
+		
+		return horas+":" + minutos + "h";
+		
+	}
+	
+	
 
 	public void cargarTablaClasificacionesOrganizador() {
 		GestorDB db = new GestorDB();
 
+		
+		
 		ArrayList<InscripcionDto> inscripciones = db.getArrayClasificaciones();
 
 		int posicion = 1;
@@ -372,7 +392,7 @@ public class MainWindow extends JFrame {
 		for (InscripcionDto inscripcionDto : inscripciones) {
 
 			String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getAtleta().getSexo(),
-					inscripcionDto.getAtleta().getNombre(), inscripcionDto.getTiempoCorriendo() };
+					inscripcionDto.getAtleta().getNombre(), stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
 			tablaClasificaciones.addRow(clasificacionesTabla);
 			posicion++;
 		}
@@ -384,7 +404,7 @@ public class MainWindow extends JFrame {
 		for (InscripcionDto inscripcionDto : inscripcionesHombres) {
 
 			String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getAtleta().getNombre(),
-					inscripcionDto.getTiempoCorriendo() };
+					stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
 			tablaClasificacionesHombres.addRow(clasificacionesTabla);
 			posicion++;
 		}
@@ -396,7 +416,7 @@ public class MainWindow extends JFrame {
 		for (InscripcionDto inscripcionDto : inscripcionesMujeres) {
 
 			String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getAtleta().getNombre(),
-					inscripcionDto.getTiempoCorriendo() };
+					stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
 			tablaClasificacionesMujeres.addRow(clasificacionesTabla);
 			posicion++;
 		}
@@ -1405,6 +1425,7 @@ public class MainWindow extends JFrame {
 			btVerClasificacionesOrganizacion.setFont(new Font("Arial", Font.PLAIN, 14));
 			btVerClasificacionesOrganizacion.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					cargarTablaClasificacionesOrganizador();
 					showCard(PANEL_VERCLASIFICACIONESORGANIZADOR);
 				}
 			});

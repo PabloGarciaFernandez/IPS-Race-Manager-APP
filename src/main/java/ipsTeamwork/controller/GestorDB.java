@@ -591,9 +591,9 @@ public class GestorDB {
 	 *         este metodo solamente llama a los demas poblarXX() de cada tabla
 	 */
 	public void poblarTablas() {
-		poblarCarreras(10);
-		poblarAtletas(1);
-		// poblarInscripciones(0);
+		poblarCarreras(20);
+		poblarAtletas(20);
+		poblarInscripciones(20);
 	}
 
 	private void poblarInscripciones(int num) {
@@ -609,6 +609,7 @@ public class GestorDB {
 
 		try {
 
+			int valor = 1;
 			for (int j = 0; j < carreras.size(); j++) {
 				PreparedStatement pst = conn.prepareStatement(SQLStrings.insertInscripcionValues);
 
@@ -616,11 +617,18 @@ public class GestorDB {
 				pst.setString(2, carreras.get(j).getIdCarrera());
 				pst.setString(3, Integer.toString(j));
 				pst.setDate(4, new java.sql.Date(new Date().getTime()));
-				pst.setString(5, "Pendiente de pago");
+				pst.setString(5, "Pre-Inscrito");
 				pst.setString(6, (r.nextBoolean() ? "Transferencia" : "Tarjeta"));
-				pst.setInt(7, r.nextInt(300));
+				int tiempo = r.nextInt(300);
+				if(valor == 1) {
+					tiempo = 0;
+				}
+				valor++;
+				
+						System.out.println("tiempo"+tiempo);
+				pst.setString(7, Integer.toString(tiempo));
 
-				System.out.println("[  ] Insertada inscripcion " + j);
+				//System.out.println("[  ] Insertada inscripcion " + j);
 				pst.executeUpdate();
 				pst.close();
 
