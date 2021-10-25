@@ -2,7 +2,6 @@ package ipsTeamwork.model.inscripcion.crud;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.Date;
 
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.controller.SQLStrings;

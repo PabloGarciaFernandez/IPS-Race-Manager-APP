@@ -702,14 +702,14 @@ public class MainWindow extends JFrame {
 	}
 
 	private boolean comprobarDatosTarjeta() {
-		if (camposVacíos()) {
+		if (camposVacios()) {
 			JOptionPane.showMessageDialog(null, "Error: Falta alguno de los datos.");
 			return false;
 		}
 		return true;
 	}
 
-	private boolean camposVacíos() {
+	private boolean camposVacios() {
 		return (txPagoTarjetaCódigoCVC.getText().isEmpty() || txPagoTarjetaCódigoCVC.getText().isBlank()
 				|| txPagoTarjetaFechaCaducidad.getText().isEmpty() || txPagoTarjetaFechaCaducidad.getText().isBlank()
 				|| txPagoTarjetaNumero.getText().isEmpty() || txPagoTarjetaNumero.getText().isBlank());
@@ -1554,7 +1554,7 @@ public class MainWindow extends JFrame {
 			System.out.println(inscripcion.toString());
 
 			new InscribirseAtleta().execute(inscripcion);
-
+			
 			db.selectInscripcion();
 
 			UpdateInscribirseAtleta.execute(inscripcion, "Inscrito");

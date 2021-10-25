@@ -33,10 +33,6 @@ public class SQLStrings {
 	public static String insertAtletaValues = "insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado, email) values (?, ?, ?, ?, ?, ?, ?)";
 	public static String insertInscripcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
 
-	public static String updateInscrpcionValues = "UPDATE inscripcion SET estadoInscripcion = ? where idAtleta = ? and idCarrera = ? and dorsal = ?";
-
-	public static String updateInscrpcionValuesPago = "UPDATE inscripcion SET formaDePago = ? where idAtleta = ? and idCarrera = ? and dorsal = ?";
-
 	public static String updateCarrerasValues = "UPDATE carrera SET plazasDisp = ? where idCarrera = ?";
 
 	// selects
@@ -55,9 +51,9 @@ public class SQLStrings {
 
 	// Consulta para el metodo estadoInscripcion
 
-	protected static String estadoInscipcion = "select * from inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' order by fechaInscripcion, estadoInscripcion";
+	protected static String estadoInscripcion = "select * from inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' order by fechaInscripcion, estadoInscripcion";
 
-	protected static String estadoInscipcionAtleta = "select * from atleta where idAtleta = ?";
+	protected static String estadoInscripcionAtleta = "select * from atleta where idAtleta = ?";
 
 	public static String atletaParticipanteDeCarrera = "select count(*) from inscripcion i where i.idAtleta = ? and i.idCarrera = ?";
 

@@ -543,8 +543,8 @@ public class GestorDB {
 
 		try {
 
-			PreparedStatement pst2 = conn.prepareStatement(SQLStrings.estadoInscipcionAtleta);
-			pst = conn.prepareStatement(SQLStrings.estadoInscipcion);
+			PreparedStatement pst2 = conn.prepareStatement(SQLStrings.estadoInscripcionAtleta);
+			pst = conn.prepareStatement(SQLStrings.estadoInscripcion);
 
 			pst.setString(1, idCarrera);
 
