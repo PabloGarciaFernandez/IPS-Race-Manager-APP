@@ -8,14 +8,12 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
 
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -351,40 +349,35 @@ public class MainWindow extends JFrame {
 	public void cargarTablaCarrerasOrganizador() {
 		GestorDB db = new GestorDB();
 
-		ArrayList<CarreraDto> carreras = db.getArrayCarreras();
+		List<CarreraDto> carreras = db.listarCarreras();
 
 		for (CarreraDto carreraDto : carreras) {
 
-			String[] carrerasTabla = { carreraDto.getIdCarrera(), carreraDto.getTipo(),
-					String.valueOf(carreraDto.getPlazasDisp()) };
+			String[] carrerasTabla = { carreraDto.getNombre(), carreraDto.getFecha().toString(), carreraDto.getTipo(),
+					String.valueOf(carreraDto.getDistancia()), String.valueOf(carreraDto.getCuota()),
+					carreraDto.getFechaFin().toString(), String.valueOf(carreraDto.getPlazasDisp()) };
 			tb.addRow(carrerasTabla);
 		}
 	}
-	
+
 	public String stringFromNumberToDate(String numero) {
-		
-		if(numero.equals("NF") || numero.equals("NP")) {
+
+		if (numero.equals("NF") || numero.equals("NP")) {
 			return numero;
 		}
-		
-		int numeroInt = Integer.parseInt(numero);
-		
-		int horas = numeroInt/60;
-		int minutos = numeroInt - horas*60;
-		
 
-		
-		return horas+":" + minutos + "h";
-		
+		int numeroInt = Integer.parseInt(numero);
+
+		int horas = numeroInt / 60;
+		int minutos = numeroInt - horas * 60;
+
+		return horas + ":" + minutos + "h";
+
 	}
-	
-	
 
 	public void cargarTablaClasificacionesOrganizador() {
 		GestorDB db = new GestorDB();
 
-		
-		
 		ArrayList<InscripcionDto> inscripciones = db.getArrayClasificaciones();
 
 		int posicion = 1;
@@ -392,7 +385,8 @@ public class MainWindow extends JFrame {
 		for (InscripcionDto inscripcionDto : inscripciones) {
 
 			String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getAtleta().getSexo(),
-					inscripcionDto.getAtleta().getNombre(), stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
+					inscripcionDto.getAtleta().getNombre(),
+					stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
 			tablaClasificaciones.addRow(clasificacionesTabla);
 			posicion++;
 		}
@@ -1115,8 +1109,8 @@ public class MainWindow extends JFrame {
 	public JTable getTbVerCarreras() {
 		if (tbVerCarreras == null) {
 			tbVerCarreras = new JTable();
-			tbVerCarreras
-					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "ID", "Tipo", "Max plazas" }));
+			tbVerCarreras.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Nombre", "Fecha", "Tipo",
+					"Distancia", "Cuota", "Fecha lim. insc.", "Plazas disponibles" }));
 
 			tbVerCarreras.setDefaultEditor(Object.class, null);
 
@@ -1161,7 +1155,9 @@ public class MainWindow extends JFrame {
 	}
 
 	/**
-	 * Metodo cambiar
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo Rellena la tabla de carreras PoW Organizador
 	 */
 	private JButton getBtVerAtletasInscritosPorXCarrera() {
 		if (btVerAtletasInscritosPorXCarrera == null) {
@@ -1192,9 +1188,12 @@ public class MainWindow extends JFrame {
 	 * 
 	 */
 	private void mirarParticipantes() {
-		String codigo = (String) tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0);
 
-		ArrayList<InscripcionDto> atletas = db.estadoInscripcion(codigo);
+		String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
+
+		CarreraDto carreras = db.selectCarrerasNombre(nombre);
+
+		ArrayList<InscripcionDto> atletas = db.estadoInscripcion(carreras.getIdCarrera());
 
 		for (InscripcionDto inscripcionDto : atletas) {
 
@@ -1347,9 +1346,12 @@ public class MainWindow extends JFrame {
 
 		CarreraDto carreras = db.selectCarrerasNombre(nombre);
 
-		String todo = "La carrera se efectuara el " + carreras.getFecha() + "\nDel tipo " + carreras.getTipo()
-				+ "\nCon una distancia real de " + carreras.getDistancia() + "km\nLa cual tiene un coste de "
-				+ carreras.getCuota() + "\nDebe pagar a esta cuenta bancaria: ES6000491500051234567892"
+		String todo = "Nombre del corredor: " + atletaActual.getNombre() + "\nEstas apuntado a la carrera con nombre: "
+				+ carreraActual.getNombre() + "\nEn la categoria: " + atletaActual.getCategoria()
+				+ "\nCon fecha de inscripcion: " + new Date() + "\nLa carrera se efectuara el " + carreras.getFecha()
+				+ "\nDel tipo " + carreras.getTipo() + "\nCon una distancia real de " + carreras.getDistancia()
+				+ "km\nLa cual tiene un coste de " + carreras.getCuota()
+				+ "\nDebe pagar a esta cuenta bancaria: ES6000491500051234567892"
 				+ ".\nDispone de 48 horas para efectuar el pago. Muchas gracias :)";
 
 		UpdateInscribirseAtleta.execute2(inscripcion, "Transaccion");
@@ -1374,7 +1376,6 @@ public class MainWindow extends JFrame {
 					"Muchas gracias por realizar el pago de la cuota. Disfrute de la carrera "
 							+ inscripcion.getAtleta().getNombre(),
 					"Gracias :)", JOptionPane.DEFAULT_OPTION);
-
 		}
 		if (JOptionPane.NO_OPTION == pagaste) {
 			JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia,
@@ -1554,7 +1555,7 @@ public class MainWindow extends JFrame {
 			System.out.println(inscripcion.toString());
 
 			new InscribirseAtleta().execute(inscripcion);
-			
+
 			db.selectInscripcion();
 
 			UpdateInscribirseAtleta.execute(inscripcion, "Inscrito");

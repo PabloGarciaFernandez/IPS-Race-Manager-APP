@@ -9,20 +9,20 @@ import ipsTeamwork.model.carrera.CarreraDto;
 
 public class UpdateCarrera {
 
-	public static void execute(CarreraDto carrera) {
+	public void execute(CarreraDto carrera) {
 		GestorDB gdb = new GestorDB();
 		Connection con = gdb.getConnection();
 		try {
 			PreparedStatement pst = con.prepareStatement(SQLStrings.updateCarrerasValues);
 
-			pst.setInt(1, carrera.getPlazasDisp()-1);
+			pst.setInt(1, 10);
 			pst.setString(2, carrera.getIdCarrera());
 
 			pst.executeUpdate();
 			pst.close();
 
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		} finally {
 			gdb.cerrarCon();
 		}

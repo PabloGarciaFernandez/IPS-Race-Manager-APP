@@ -43,8 +43,10 @@ public class GestorDB {
 			Class.forName("org.sqlite.JDBC");
 			conn = DriverManager.getConnection("jdbc:sqlite:database.db");
 		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 			System.out.println("Error en la conexión de la base de datos: " + e.getMessage());
 		} catch (SQLException e) {
+			e.printStackTrace();
 			System.out.println("Error en la conexión de la base de datos: " + e.getMessage());
 		}
 	}
@@ -65,6 +67,7 @@ public class GestorDB {
 				conn.close();
 
 		} catch (SQLException e) {
+			e.printStackTrace();
 			System.out.println("Error al cerrar la base de datos: " + e.getMessage());
 		}
 	}
@@ -85,6 +88,7 @@ public class GestorDB {
 			pst.execute();
 
 		} catch (SQLException e) {
+			e.printStackTrace();
 			System.out.println("Error al crear tabla en la base de datos: " + e.getMessage());
 		} finally {
 			cerrar();
@@ -108,7 +112,7 @@ public class GestorDB {
 			pst.execute();
 
 		} catch (SQLException e) {
-			System.out.println("Error al borrar tabla en la base de datos: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -124,7 +128,7 @@ public class GestorDB {
 			pst = conn.prepareStatement(SQLStrings.insertBolt);
 			pst.execute();
 		} catch (SQLException e) {
-			System.out.println("Error en la base de datos: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -136,7 +140,7 @@ public class GestorDB {
 			pst = conn.prepareStatement(SQLStrings.insertUsain);
 			pst.execute();
 		} catch (SQLException e) {
-			System.out.println("Error en la base de datos: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -148,7 +152,7 @@ public class GestorDB {
 			pst = conn.prepareStatement(SQLStrings.insertNewYork);
 			pst.execute();
 		} catch (SQLException e) {
-			System.out.println("Error en la base de datos: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -166,7 +170,7 @@ public class GestorDB {
 			pst.setString(5, i1.getFormaDePago());
 			pst.execute();
 		} catch (SQLException e) {
-			System.out.println("Error en la base de datos: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -178,7 +182,7 @@ public class GestorDB {
 			pst = conn.prepareStatement(SQLStrings.insertInscripcion1);
 			pst.execute();
 		} catch (SQLException e) {
-			System.out.println("Error en la base de datos: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -190,7 +194,7 @@ public class GestorDB {
 			pst = conn.prepareStatement("delete from atleta where idAtleta = '69' ");
 			pst.execute();
 		} catch (SQLException e) {
-			System.out.println("Error en la base de datos: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -577,7 +581,6 @@ public class GestorDB {
 			}
 			pst2.close();
 		} catch (SQLException e) {
-			System.out.println("Error en la base de datos: " + e.getMessage());
 			e.printStackTrace();
 		} finally {
 			cerrar();
@@ -620,15 +623,15 @@ public class GestorDB {
 				pst.setString(5, "Pre-Inscrito");
 				pst.setString(6, (r.nextBoolean() ? "Transferencia" : "Tarjeta"));
 				int tiempo = r.nextInt(300);
-				if(valor == 1) {
+				if (valor == 1) {
 					tiempo = 0;
 				}
 				valor++;
-				
-						System.out.println("tiempo"+tiempo);
+
+				System.out.println("tiempo" + tiempo);
 				pst.setString(7, Integer.toString(tiempo));
 
-				//System.out.println("[  ] Insertada inscripcion " + j);
+				// System.out.println("[ ] Insertada inscripcion " + j);
 				pst.executeUpdate();
 				pst.close();
 
@@ -815,7 +818,6 @@ public class GestorDB {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-
 		}
 
 		return ret;

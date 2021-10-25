@@ -16,15 +16,15 @@ public class SQLStrings {
 
 	// inserts
 
-	public static String insertBolt = "Insert into atleta values('69','11122234A','Bolt',35,'F',0); ";
+	public static String insertBolt = "Insert into atleta values('69','11122234A','Bolt',35,'F',0, 'manolo@mnaolo'); ";
 
 	public static String insertUsain = "Insert into atleta values('96','11122233A','Usain',25,'M',1); ";
 
-	public static String insertNewYork = "Insert into carrera values('5','Asfalto',25); ";
+	public static String insertNewYork = "Insert into carrera values('5','New York',?,'Asfalto',25,30,?,30,35); ";
 
 	public static String insertInscripcion1 = "Insert into inscripcion values('96','5','009','2021-05-01','Inscrito', 'Tarjeta', 10); ";
 
-	public static String insertInscripcion = "Insert into inscripcion values('69','3','008','2021-08-01','Inscrito', 'Transferencia', 320); ";
+	public static String insertInscripcion = "Insert into inscripcion values('69','5','008','2021-08-01','Inscrito', 'Transferencia', 320); ";
 
 	public static String insterInscripcion2 = "Insert into inscripcion values('96','a0931d2e-cf27-4965-b395-a086aa0228a5','015','2021-05-01','Inscrito', 'Tarjeta'); ";
 
