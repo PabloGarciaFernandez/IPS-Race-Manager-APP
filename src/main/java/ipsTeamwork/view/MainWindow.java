@@ -335,7 +335,7 @@ public class MainWindow extends JFrame {
 
 	public void cargarTablaCarrerasAtleta() {
 		List<CarreraDto> carreras = new SelectAllVistaAtleta().execute();
-
+		
 		for (CarreraDto dto : carreras) {
 			String[] carrerasTabla = { dto.getNombre(), dto.getFecha().toString(), dto.getTipo(),
 					String.valueOf(dto.getDistancia()), String.valueOf(dto.getCuota()), dto.getFechaFin().toString(),
@@ -454,7 +454,7 @@ public class MainWindow extends JFrame {
 		if (checkValidDate()) {
 			res = true;
 		}
-		if (new MirarLimiteCarrera().execute(carreraActual.getIdCarrera(), carreraActual.getMaxPlazas())) {
+		if (new MirarLimiteCarrera().execute(carreraActual.getIdCarrera())) {
 			res = true;
 		} else {
 			JOptionPane.showMessageDialog(null, "Error: La carrera actualmente no tiene mas plazas.");
@@ -881,7 +881,7 @@ public class MainWindow extends JFrame {
 
 	private void inscribirAtleta() {
 		if (checkCarreraRow() && checkIfParticipable()) {
-			if (new FindAtletaInCarrera().execute(atletaActual.getIdAtleta(), carreraActual.getIdCarrera())) { // no va
+			if (new FindAtletaInCarrera().execute(atletaActual.getIdAtleta(), carreraActual.getIdCarrera())) {
 				String otro = "Nombre del corredor: " + atletaActual.getNombre()
 						+ "\nEstas apuntado a la carrera con nombre: " + carreraActual.getNombre()
 						+ "\nEn la categoria: " + atletaActual.getCategoria() + "\nCon fecha de inscripcion: "
@@ -890,7 +890,10 @@ public class MainWindow extends JFrame {
 				System.out.println(carreraActual.getIdCarrera());
 				inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaActual, carreraActual,
 						UUID.randomUUID().toString().substring(0, 3), "Pre-Inscrito", new Date(), null);
+				
+				carreraActual.setPlazasDisp(carreraActual.getPlazasDisp()-1);
 				new UpdateCarrera().execute(carreraActual);
+				
 				JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, otro, "Justificante carrera",
 						JOptionPane.DEFAULT_OPTION);
 				showCard(PANEL_PAGARINSCRIPCION);
@@ -973,6 +976,7 @@ public class MainWindow extends JFrame {
 			pnListaClasificacionesOrganizador.setLayout(new BorderLayout(0, 0));
 			pnListaClasificacionesOrganizador.add(getPnPrincipalVerClasificacionesOrganizador(), BorderLayout.CENTER);
 		}
+		
 		return pnListaClasificacionesOrganizador;
 	}
 
@@ -1384,6 +1388,9 @@ public class MainWindow extends JFrame {
 			UpdateInscribirseAtleta.execute(inscripcion, "Pendiente de Pago");
 		}
 		showCard(PANEL_LISTA_CARRERAS);
+		
+		reset(tablaAtleta);
+		cargarTablaCarrerasAtleta();
 	}
 
 	private void pagarTarjeta() {
@@ -1426,6 +1433,9 @@ public class MainWindow extends JFrame {
 			btVerClasificacionesOrganizacion.setFont(new Font("Arial", Font.PLAIN, 14));
 			btVerClasificacionesOrganizacion.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					reset(tablaClasificaciones);
+					reset(tablaClasificacionesHombres);
+					reset(tablaClasificacionesMujeres);
 					cargarTablaClasificacionesOrganizador();
 					showCard(PANEL_VERCLASIFICACIONESORGANIZADOR);
 				}
@@ -1524,11 +1534,14 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 
 					accionPagoTarjetaEnviar();
+					reset(tablaAtleta);
+					cargarTablaCarrerasAtleta();
 				}
 			});
 			btPagoTarjetaEnviar.setFont(new Font("Tahoma", Font.PLAIN, 15));
 			btPagoTarjetaEnviar.setBounds(529, 400, 85, 35);
 		}
+		
 		return btPagoTarjetaEnviar;
 	}
 

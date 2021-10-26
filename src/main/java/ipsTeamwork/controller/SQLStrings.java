@@ -33,8 +33,7 @@ public class SQLStrings {
 	public static String insertAtletaValues = "insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado, email) values (?, ?, ?, ?, ?, ?, ?)";
 	public static String insertInscripcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
 
-	public static String updateCarrerasValues = "UPDATE carrera SET plazasDisp = ? where idCarrera = ?";
-
+	
 	// selects
 
 	public static String selectAllAtleta = "select * from atleta";

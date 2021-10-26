@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -620,7 +619,7 @@ public class GestorDB {
 				pst.setString(2, carreras.get(j).getIdCarrera());
 				pst.setString(3, Integer.toString(j));
 				pst.setDate(4, new java.sql.Date(new Date().getTime()));
-				pst.setString(5, "Pre-Inscrito");
+				pst.setString(5, (r.nextBoolean() ? "Pre-Inscrito" : "Inscrito"));
 				pst.setString(6, (r.nextBoolean() ? "Transferencia" : "Tarjeta"));
 				int tiempo = r.nextInt(300);
 				if (valor == 1) {
@@ -668,8 +667,9 @@ public class GestorDB {
 
 				pst.setDate(7, fechaFinInsc); // fecha fin insc
 
-				pst.setInt(8, r.nextInt(100));
-				pst.setInt(9, r.nextInt(100) + 15);
+				int plazas0 = r.nextInt(6);
+				pst.setInt(8, plazas0);
+				pst.setInt(9, plazas0);
 
 				pst.executeUpdate();
 				pst.close();
