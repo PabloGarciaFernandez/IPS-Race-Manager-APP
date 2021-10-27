@@ -305,7 +305,6 @@ public class MainWindow extends JFrame {
 //					DefaultTableModel tbVerAtletasMisCarreras = (DefaultTableModel) tb.getModel();
 //
 //					reset(tbVerAtletasMisCarreras);
-
 					showCard(PANEL_LISTA_INSCRIPCIONES);
 					((PanelListarInscripciones) pnVistaInscripcionesAtleta).cargarInscripcionesEnTabla();
 				}
