@@ -662,7 +662,7 @@ public class MainWindow extends JFrame {
 
 							String cate = Categoria.calculaCategoria(atletaActual.getEdad(), atletaActual.getSexo());
 							atletaActual.setCategoria(cate);
-							showCard(PANEL_ATLETA);
+							showCard(PANEL_PAGARINSCRIPCION);
 							cleanRegistro();
 							JOptionPane.showMessageDialog(null, "Registro satisfactorio , bienvenido.");
 						}
@@ -671,7 +671,7 @@ public class MainWindow extends JFrame {
 			});
 			btnRegistroSiguiente.setForeground(Color.BLACK);
 			btnRegistroSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnRegistroSiguiente.setBounds(452, 348, 121, 23);
+			btnRegistroSiguiente.setBounds(742, 438, 132, 35);
 		}
 		return btnRegistroSiguiente;
 	}
@@ -720,19 +720,19 @@ public class MainWindow extends JFrame {
 			btnRegistroCancelar = new JButton("Cancelar");
 			btnRegistroCancelar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_INICIO);
+					showCard(PANEL_INGRESO);
 				}
 			});
 			btnRegistroCancelar.setForeground(Color.BLACK);
 			btnRegistroCancelar.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnRegistroCancelar.setBounds(10, 348, 95, 23);
+			btnRegistroCancelar.setBounds(32, 437, 134, 36);
 		}
 		return btnRegistroCancelar;
 	}
 
 	private JLabel getLblRegistro() {
 		if (lblRegistro == null) {
-			lblRegistro = new JLabel("REGISTRO DE CUENTA");
+			lblRegistro = new JLabel("REGISTRO DE ATLETA");
 			lblRegistro.setFont(new Font("Arial", Font.BOLD, 25));
 			lblRegistro.setBounds(37, 21, 691, 53);
 		}
