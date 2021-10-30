@@ -59,8 +59,9 @@ public class MainWindow extends JFrame {
 
 	private static final String PANEL_PAGARINSCRIPCION = "panel_PagarInscripcion";
 	private static final String PANEL_LISTA_INSCRIPCIONES = "panel_lista_inscripciones_atleta";
-
+	private static final String PANEL_CONFIGURAR_PLAZOS = "panel_configuracion_plazos";
 	private static final String PANEL_PAGO_TARJETA = "panel_pago_tarjeta";
+	private static final String PANEL_GENERAL_DORSALES= "panel_generar_dorsales";
 
 	private JPanel contentPane;
 	private JPanel pnInicio;
@@ -168,6 +169,31 @@ public class MainWindow extends JFrame {
 	private JTextField txPagoTarjetaFechaCaducidad;
 	private JButton btPagoTarjetaEnviar;
 	private JLabel lbPagarInscripcion;
+	private JPanel pnConfiguracionPlazos;
+	private JPanel pnPrincipalConfiguracionPlazos;
+	private JLabel lbConfiguracionPlazos;
+	private JButton btAtrasConfiguracionPlazos;
+	private JButton btSiguienteConfiguracionPlazos;
+	private JButton btADDConfiguracionPlazos;
+	private JLabel lbCuotaConfiguracionPlazos;
+	private JTextField txCuotaConfiguracionPlazos;
+	private JLabel lbFechaInicioConfiguracionPlazos;
+	private JTextField txFechaInicioConfiguracionPlazos;
+	private JLabel lblFechaFinConfiguracionPlazos;
+	private JTextField txFechaFinConfiguracionPlazos;
+	private JScrollPane scConfiguracionPlazos;
+	private JTable tbConfiguracionPlazos;
+	private JButton btConfiCosas;
+	private JPanel pnGeneralDorsales;
+	private JPanel pnGenerarDorsalesPrincipal;
+	private JLabel lbGenerarDorsales;
+	private JScrollPane scGeneralDorsales;
+	private JTable tbGeneralDorsales;
+	private JButton btAtrasGeneralDorsales;
+	private JButton btSiguienteGeneralDorsales;
+	private JButton btGeneralDorsales;
+	private JLabel lbVIPSGeneralDorsales;
+	private JTextField txVipsGeneralDorsales;
 
 	/**
 	 * Create the frame.
@@ -200,7 +226,8 @@ public class MainWindow extends JFrame {
 		contentPane.add(pnVistaInscripcionesAtleta, PANEL_LISTA_INSCRIPCIONES);
 		contentPane.add(getPnListaClasificacionesOrganizador(), PANEL_VERCLASIFICACIONESORGANIZADOR);
 		contentPane.add(getPnPagoTarjeta(), PANEL_PAGO_TARJETA);
-
+		contentPane.add(getPnConfiguracionPlazos(), PANEL_CONFIGURAR_PLAZOS);
+		contentPane.add(getPnGeneralDorsales(), PANEL_GENERAL_DORSALES);
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
 	}
@@ -928,6 +955,7 @@ public class MainWindow extends JFrame {
 			pnOrganizadorCentro.add(getBtnOrganizadorSiguiente());
 			pnOrganizadorCentro.add(getBtVerVarrerasOrganizacion());
 			pnOrganizadorCentro.add(getBtVerClasificacionesOrganizacion());
+			pnOrganizadorCentro.add(getBtConfiCosas());
 		}
 		return pnOrganizadorCentro;
 	}
@@ -1441,7 +1469,7 @@ public class MainWindow extends JFrame {
 				}
 			});
 			btVerClasificacionesOrganizacion.setMnemonic('c');
-			btVerClasificacionesOrganizacion.setBounds(210, 247, 435, 46);
+			btVerClasificacionesOrganizacion.setBounds(210, 211, 435, 46);
 		}
 		return btVerClasificacionesOrganizacion;
 	}
@@ -1597,5 +1625,249 @@ public class MainWindow extends JFrame {
 			lbPagarInscripcion.setBounds(163, 113, 584, 55);
 		}
 		return lbPagarInscripcion;
+	}
+	private JPanel getPnConfiguracionPlazos() {
+		if (pnConfiguracionPlazos == null) {
+			pnConfiguracionPlazos = new JPanel();
+			pnConfiguracionPlazos.setLayout(new BorderLayout(0, 0));
+			pnConfiguracionPlazos.add(getPnPrincipalConfiguracionPlazos(), BorderLayout.CENTER);
+		}
+		return pnConfiguracionPlazos;
+	}
+	private JPanel getPnPrincipalConfiguracionPlazos() {
+		if (pnPrincipalConfiguracionPlazos == null) {
+			pnPrincipalConfiguracionPlazos = new JPanel();
+			pnPrincipalConfiguracionPlazos.setLayout(null);
+			pnPrincipalConfiguracionPlazos.add(getLbConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getBtAtrasConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getBtSiguienteConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getBtADDConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getLbCuotaConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getTxCuotaConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getLbFechaInicioConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getTxFechaInicioConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getLblFechaFinConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getTxFechaFinConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getScConfiguracionPlazos());
+		}
+		return pnPrincipalConfiguracionPlazos;
+	}
+	private JLabel getLbConfiguracionPlazos() {
+		if (lbConfiguracionPlazos == null) {
+			lbConfiguracionPlazos = new JLabel("Configuración de los Plazos de Inscripción");
+			lbConfiguracionPlazos.setFont(new Font("Arial", Font.BOLD, 25));
+			lbConfiguracionPlazos.setBounds(135, 56, 527, 58);
+		}
+		return lbConfiguracionPlazos;
+	}
+	private JButton getBtAtrasConfiguracionPlazos() {
+		if (btAtrasConfiguracionPlazos == null) {
+			btAtrasConfiguracionPlazos = new JButton("Atras");
+			btAtrasConfiguracionPlazos.setFont(new Font("Arial", Font.BOLD, 20));
+			btAtrasConfiguracionPlazos.setMnemonic('a');
+			btAtrasConfiguracionPlazos.setBounds(45, 401, 153, 45);
+		}
+		return btAtrasConfiguracionPlazos;
+	}
+	private JButton getBtSiguienteConfiguracionPlazos() {
+		if (btSiguienteConfiguracionPlazos == null) {
+			btSiguienteConfiguracionPlazos = new JButton("Siguiente");
+			btSiguienteConfiguracionPlazos.setFont(new Font("Arial", Font.BOLD, 20));
+			btSiguienteConfiguracionPlazos.setMnemonic('s');
+			btSiguienteConfiguracionPlazos.setBounds(682, 401, 153, 45);
+		}
+		return btSiguienteConfiguracionPlazos;
+	}
+	private JButton getBtADDConfiguracionPlazos() {
+		if (btADDConfiguracionPlazos == null) {
+			btADDConfiguracionPlazos = new JButton("Add");
+			btADDConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			btADDConfiguracionPlazos.setMnemonic('d');
+			btADDConfiguracionPlazos.setBounds(373, 405, 126, 37);
+		}
+		return btADDConfiguracionPlazos;
+	}
+	private JLabel getLbCuotaConfiguracionPlazos() {
+		if (lbCuotaConfiguracionPlazos == null) {
+			lbCuotaConfiguracionPlazos = new JLabel("Cuota");
+			lbCuotaConfiguracionPlazos.setDisplayedMnemonic('c');
+			lbCuotaConfiguracionPlazos.setLabelFor(getTxCuotaConfiguracionPlazos());
+			lbCuotaConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			lbCuotaConfiguracionPlazos.setBounds(537, 302, 83, 37);
+		}
+		return lbCuotaConfiguracionPlazos;
+	}
+	private JTextField getTxCuotaConfiguracionPlazos() {
+		if (txCuotaConfiguracionPlazos == null) {
+			txCuotaConfiguracionPlazos = new JTextField();
+			txCuotaConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			txCuotaConfiguracionPlazos.setBounds(630, 302, 96, 37);
+			txCuotaConfiguracionPlazos.setColumns(10);
+		}
+		return txCuotaConfiguracionPlazos;
+	}
+	private JLabel getLbFechaInicioConfiguracionPlazos() {
+		if (lbFechaInicioConfiguracionPlazos == null) {
+			lbFechaInicioConfiguracionPlazos = new JLabel("Fecha Inicio");
+			lbFechaInicioConfiguracionPlazos.setLabelFor(getTxFechaInicioConfiguracionPlazos());
+			lbFechaInicioConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			lbFechaInicioConfiguracionPlazos.setDisplayedMnemonic('i');
+			lbFechaInicioConfiguracionPlazos.setBounds(42, 302, 109, 37);
+		}
+		return lbFechaInicioConfiguracionPlazos;
+	}
+	private JTextField getTxFechaInicioConfiguracionPlazos() {
+		if (txFechaInicioConfiguracionPlazos == null) {
+			txFechaInicioConfiguracionPlazos = new JTextField();
+			txFechaInicioConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			txFechaInicioConfiguracionPlazos.setColumns(10);
+			txFechaInicioConfiguracionPlazos.setBounds(161, 302, 96, 37);
+		}
+		return txFechaInicioConfiguracionPlazos;
+	}
+	private JLabel getLblFechaFinConfiguracionPlazos() {
+		if (lblFechaFinConfiguracionPlazos == null) {
+			lblFechaFinConfiguracionPlazos = new JLabel("Fecha Fin");
+			lblFechaFinConfiguracionPlazos.setLabelFor(getTxFechaFinConfiguracionPlazos());
+			lblFechaFinConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			lblFechaFinConfiguracionPlazos.setDisplayedMnemonic('f');
+			lblFechaFinConfiguracionPlazos.setBounds(289, 302, 109, 37);
+		}
+		return lblFechaFinConfiguracionPlazos;
+	}
+	private JTextField getTxFechaFinConfiguracionPlazos() {
+		if (txFechaFinConfiguracionPlazos == null) {
+			txFechaFinConfiguracionPlazos = new JTextField();
+			txFechaFinConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			txFechaFinConfiguracionPlazos.setColumns(10);
+			txFechaFinConfiguracionPlazos.setBounds(403, 302, 96, 37);
+		}
+		return txFechaFinConfiguracionPlazos;
+	}
+	private JScrollPane getScConfiguracionPlazos() {
+		if (scConfiguracionPlazos == null) {
+			scConfiguracionPlazos = new JScrollPane();
+			scConfiguracionPlazos.setBounds(145, 107, 516, 170);
+			scConfiguracionPlazos.setViewportView(getTbConfiguracionPlazos());
+		}
+		return scConfiguracionPlazos;
+	}
+	private JTable getTbConfiguracionPlazos() {
+		if (tbConfiguracionPlazos == null) {
+			tbConfiguracionPlazos = new JTable();
+			tbConfiguracionPlazos.setModel(
+					new DefaultTableModel(new Object[][] {}, new String[] { "Fecha Inicio", "Fecha Fin", "Cuota" }));
+
+			tbConfiguracionPlazos.setDefaultEditor(Object.class, null);
+		}
+		return tbConfiguracionPlazos;
+	}
+	private JButton getBtConfiCosas() {
+		if (btConfiCosas == null) {
+			btConfiCosas = new JButton("Configurar Cosas");
+			btConfiCosas.setMnemonic('f');
+			btConfiCosas.setFont(new Font("Arial", Font.PLAIN, 14));
+			btConfiCosas.setBounds(210, 295, 435, 46);
+			btConfiCosas.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_GENERAL_DORSALES);
+				}
+			});
+		}
+		return btConfiCosas;
+	}
+	private JPanel getPnGeneralDorsales() {
+		if (pnGeneralDorsales == null) {
+			pnGeneralDorsales = new JPanel();
+			pnGeneralDorsales.setLayout(new BorderLayout(0, 0));
+			pnGeneralDorsales.add(getPnGenerarDorsalesPrincipal(), BorderLayout.CENTER);
+		}
+		return pnGeneralDorsales;
+	}
+	private JPanel getPnGenerarDorsalesPrincipal() {
+		if (pnGenerarDorsalesPrincipal == null) {
+			pnGenerarDorsalesPrincipal = new JPanel();
+			pnGenerarDorsalesPrincipal.setLayout(null);
+			pnGenerarDorsalesPrincipal.add(getLbGenerarDorsales());
+			pnGenerarDorsalesPrincipal.add(getScGeneralDorsales());
+			pnGenerarDorsalesPrincipal.add(getBtAtrasGeneralDorsales());
+			pnGenerarDorsalesPrincipal.add(getBtSiguienteGeneralDorsales());
+			pnGenerarDorsalesPrincipal.add(getBtGeneralDorsales());
+			pnGenerarDorsalesPrincipal.add(getLbVIPSGeneralDorsales());
+			pnGenerarDorsalesPrincipal.add(getTxVipsGeneralDorsales());
+		}
+		return pnGenerarDorsalesPrincipal;
+	}
+	private JLabel getLbGenerarDorsales() {
+		if (lbGenerarDorsales == null) {
+			lbGenerarDorsales = new JLabel("Generar Dorsales");
+			lbGenerarDorsales.setFont(new Font("Arial", Font.BOLD, 25));
+			lbGenerarDorsales.setBounds(325, 62, 213, 40);
+		}
+		return lbGenerarDorsales;
+	}
+	private JScrollPane getScGeneralDorsales() {
+		if (scGeneralDorsales == null) {
+			scGeneralDorsales = new JScrollPane();
+			scGeneralDorsales.setBounds(164, 137, 539, 188);
+			scGeneralDorsales.setViewportView(getTbGeneralDorsales());
+		}
+		return scGeneralDorsales;
+	}
+	private JTable getTbGeneralDorsales() {
+		if (tbGeneralDorsales == null) {
+			tbGeneralDorsales = new JTable();
+			tbGeneralDorsales.setModel(
+					new DefaultTableModel(new Object[][] {}, new String[] { "Dorsal", "DNI", "Nombre" }));
+
+			tbGeneralDorsales.setDefaultEditor(Object.class, null);
+		}
+		return tbGeneralDorsales;
+	}
+	private JButton getBtAtrasGeneralDorsales() {
+		if (btAtrasGeneralDorsales == null) {
+			btAtrasGeneralDorsales = new JButton("Atras");
+			btAtrasGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
+			btAtrasGeneralDorsales.setMnemonic('a');
+			btAtrasGeneralDorsales.setBounds(10, 419, 163, 40);
+		}
+		return btAtrasGeneralDorsales;
+	}
+	private JButton getBtSiguienteGeneralDorsales() {
+		if (btSiguienteGeneralDorsales == null) {
+			btSiguienteGeneralDorsales = new JButton("Siguiente");
+			btSiguienteGeneralDorsales.setMnemonic('s');
+			btSiguienteGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
+			btSiguienteGeneralDorsales.setBounds(691, 419, 163, 40);
+		}
+		return btSiguienteGeneralDorsales;
+	}
+	private JButton getBtGeneralDorsales() {
+		if (btGeneralDorsales == null) {
+			btGeneralDorsales = new JButton("General Dorsales");
+			btGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
+			btGeneralDorsales.setMnemonic('g');
+			btGeneralDorsales.setBounds(325, 424, 213, 30);
+		}
+		return btGeneralDorsales;
+	}
+	private JLabel getLbVIPSGeneralDorsales() {
+		if (lbVIPSGeneralDorsales == null) {
+			lbVIPSGeneralDorsales = new JLabel("¿Cuantos Vips quieres reservar?");
+			lbVIPSGeneralDorsales.setDisplayedMnemonic('V');
+			lbVIPSGeneralDorsales.setLabelFor(getTxVipsGeneralDorsales());
+			lbVIPSGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
+			lbVIPSGeneralDorsales.setBounds(36, 366, 294, 19);
+		}
+		return lbVIPSGeneralDorsales;
+	}
+	private JTextField getTxVipsGeneralDorsales() {
+		if (txVipsGeneralDorsales == null) {
+			txVipsGeneralDorsales = new JTextField();
+			txVipsGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
+			txVipsGeneralDorsales.setBounds(340, 366, 43, 22);
+			txVipsGeneralDorsales.setColumns(10);
+		}
+		return txVipsGeneralDorsales;
 	}
 }
