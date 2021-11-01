@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,7 +62,7 @@ public class MainWindow extends JFrame {
 	private static final String PANEL_LISTA_INSCRIPCIONES = "panel_lista_inscripciones_atleta";
 	private static final String PANEL_CONFIGURAR_PLAZOS = "panel_configuracion_plazos";
 	private static final String PANEL_PAGO_TARJETA = "panel_pago_tarjeta";
-	private static final String PANEL_GENERAL_DORSALES= "panel_generar_dorsales";
+	private static final String PANEL_GENERAL_DORSALES = "panel_generar_dorsales";
 
 	private JPanel contentPane;
 	private JPanel pnInicio;
@@ -135,6 +136,7 @@ public class MainWindow extends JFrame {
 	private DefaultTableModel tb;
 	private DefaultTableModel tablaAtleta;
 	private DefaultTableModel tablaAtletasInscritosX;
+	private DefaultTableModel tablaPlazosInscripciones;
 
 	private DefaultTableModel tablaClasificaciones;
 	private DefaultTableModel tablaClasificacionesHombres;
@@ -195,6 +197,12 @@ public class MainWindow extends JFrame {
 	private JLabel lbVIPSGeneralDorsales;
 	private JTextField txVipsGeneralDorsales;
 
+	private String fechaIni;
+
+	private String fechaFin;
+
+	private String cuota;
+
 	/**
 	 * Create the frame.
 	 */
@@ -206,6 +214,7 @@ public class MainWindow extends JFrame {
 		tablaClasificacionesMujeres = (DefaultTableModel) getTbVerClasificacionesMujeres().getModel();
 		tablaAtleta = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
 		tablaAtletasInscritosX = (DefaultTableModel) getTbAtletasInscritosEnXCarrera().getModel();
+		tablaPlazosInscripciones = (DefaultTableModel) getTbConfiguracionPlazos().getModel();
 		pnVistaInscripcionesAtleta = new PanelListarInscripciones(this, atletaActual);
 		setResizable(false);
 		setTitle("Carreras");
@@ -228,6 +237,7 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnPagoTarjeta(), PANEL_PAGO_TARJETA);
 		contentPane.add(getPnConfiguracionPlazos(), PANEL_CONFIGURAR_PLAZOS);
 		contentPane.add(getPnGeneralDorsales(), PANEL_GENERAL_DORSALES);
+		getTxFechaInicioConfiguracionPlazos().setText("");
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
 	}
@@ -362,7 +372,7 @@ public class MainWindow extends JFrame {
 
 	public void cargarTablaCarrerasAtleta() {
 		List<CarreraDto> carreras = new SelectAllVistaAtleta().execute();
-		
+
 		for (CarreraDto dto : carreras) {
 			String[] carrerasTabla = { dto.getNombre(), dto.getFecha().toString(), dto.getTipo(),
 					String.valueOf(dto.getDistancia()), String.valueOf(dto.getCuota()), dto.getFechaFin().toString(),
@@ -917,10 +927,10 @@ public class MainWindow extends JFrame {
 				System.out.println(carreraActual.getIdCarrera());
 				inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaActual, carreraActual,
 						UUID.randomUUID().toString().substring(0, 3), "Pre-Inscrito", new Date(), null);
-				
-				carreraActual.setPlazasDisp(carreraActual.getPlazasDisp()-1);
+
+				carreraActual.setPlazasDisp(carreraActual.getPlazasDisp() - 1);
 				new UpdateCarrera().execute(carreraActual);
-				
+
 				JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, otro, "Justificante carrera",
 						JOptionPane.DEFAULT_OPTION);
 				showCard(PANEL_PAGARINSCRIPCION);
@@ -1004,7 +1014,7 @@ public class MainWindow extends JFrame {
 			pnListaClasificacionesOrganizador.setLayout(new BorderLayout(0, 0));
 			pnListaClasificacionesOrganizador.add(getPnPrincipalVerClasificacionesOrganizador(), BorderLayout.CENTER);
 		}
-		
+
 		return pnListaClasificacionesOrganizador;
 	}
 
@@ -1416,7 +1426,7 @@ public class MainWindow extends JFrame {
 			UpdateInscribirseAtleta.execute(inscripcion, "Pendiente de Pago");
 		}
 		showCard(PANEL_LISTA_CARRERAS);
-		
+
 		reset(tablaAtleta);
 		cargarTablaCarrerasAtleta();
 	}
@@ -1569,7 +1579,7 @@ public class MainWindow extends JFrame {
 			btPagoTarjetaEnviar.setFont(new Font("Tahoma", Font.PLAIN, 15));
 			btPagoTarjetaEnviar.setBounds(529, 400, 85, 35);
 		}
-		
+
 		return btPagoTarjetaEnviar;
 	}
 
@@ -1626,6 +1636,7 @@ public class MainWindow extends JFrame {
 		}
 		return lbPagarInscripcion;
 	}
+
 	private JPanel getPnConfiguracionPlazos() {
 		if (pnConfiguracionPlazos == null) {
 			pnConfiguracionPlazos = new JPanel();
@@ -1634,6 +1645,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnConfiguracionPlazos;
 	}
+
 	private JPanel getPnPrincipalConfiguracionPlazos() {
 		if (pnPrincipalConfiguracionPlazos == null) {
 			pnPrincipalConfiguracionPlazos = new JPanel();
@@ -1652,6 +1664,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnPrincipalConfiguracionPlazos;
 	}
+
 	private JLabel getLbConfiguracionPlazos() {
 		if (lbConfiguracionPlazos == null) {
 			lbConfiguracionPlazos = new JLabel("Configuración de los Plazos de Inscripción");
@@ -1660,6 +1673,7 @@ public class MainWindow extends JFrame {
 		}
 		return lbConfiguracionPlazos;
 	}
+
 	private JButton getBtAtrasConfiguracionPlazos() {
 		if (btAtrasConfiguracionPlazos == null) {
 			btAtrasConfiguracionPlazos = new JButton("Atras");
@@ -1669,6 +1683,7 @@ public class MainWindow extends JFrame {
 		}
 		return btAtrasConfiguracionPlazos;
 	}
+
 	private JButton getBtSiguienteConfiguracionPlazos() {
 		if (btSiguienteConfiguracionPlazos == null) {
 			btSiguienteConfiguracionPlazos = new JButton("Siguiente");
@@ -1678,15 +1693,70 @@ public class MainWindow extends JFrame {
 		}
 		return btSiguienteConfiguracionPlazos;
 	}
+
 	private JButton getBtADDConfiguracionPlazos() {
 		if (btADDConfiguracionPlazos == null) {
 			btADDConfiguracionPlazos = new JButton("Add");
+			btADDConfiguracionPlazos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					try {
+						addPlazo();
+					} catch (ParseException e1) {
+						e1.printStackTrace();
+					}
+
+				}
+			});
 			btADDConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
 			btADDConfiguracionPlazos.setMnemonic('d');
 			btADDConfiguracionPlazos.setBounds(373, 405, 126, 37);
 		}
 		return btADDConfiguracionPlazos;
 	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Añade un nuevo plazo de inscripcion a una carrera
+	 * @throws ParseException
+	 * 
+	 */
+	private void addPlazo() throws ParseException {
+		fechaIni = getTxFechaInicioConfiguracionPlazos().getText();
+		fechaFin = getTxFechaFinConfiguracionPlazos().getText();
+		cuota = getTxCuotaConfiguracionPlazos().getText();
+
+		if (tablaPlazosInscripciones.getRowCount() > 3) {
+			JOptionPane.showConfirmDialog(btADDConfiguracionPlazos, "Ya no puedes añadir mas plazos", "Error",
+					JOptionPane.DEFAULT_OPTION);
+		} else if (fechaIni.matches("\\d{4}-\\d{2}-\\d{2}") && fechaFin.matches("\\d{4}-\\d{2}-\\d{2}")
+				&& cuota.matches("[+-]?\\d*(\\.\\d+)?")) {
+
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			Date parsedIni = format.parse(fechaIni);
+			Date parsedFin = format.parse(fechaFin);
+			java.sql.Date fechaIniDate = new java.sql.Date(parsedIni.getTime());
+			java.sql.Date fechaFinDate = new java.sql.Date(parsedFin.getTime());
+			if (fechaIniDate.before(fechaFinDate)) {
+
+				tablaPlazosInscripciones.addRow(new String[] { fechaIni, fechaFin, cuota });
+
+				getTxFechaInicioConfiguracionPlazos().setText(fechaFin);
+				getTxFechaInicioConfiguracionPlazos().setEditable(false);
+			} else {
+				JOptionPane.showConfirmDialog(btADDConfiguracionPlazos,
+						"La fecha Final tiene que ser posterior a la fecha Inicio", "Error",
+						JOptionPane.DEFAULT_OPTION);
+			}
+
+		} else {
+			JOptionPane.showConfirmDialog(btADDConfiguracionPlazos,
+					"Has insertado mal los datos en los campos, revisa que las fechas estan en formato ISO y la cuota es solo numeros",
+					"Error", JOptionPane.DEFAULT_OPTION);
+		}
+	}
+
 	private JLabel getLbCuotaConfiguracionPlazos() {
 		if (lbCuotaConfiguracionPlazos == null) {
 			lbCuotaConfiguracionPlazos = new JLabel("Cuota");
@@ -1697,6 +1767,7 @@ public class MainWindow extends JFrame {
 		}
 		return lbCuotaConfiguracionPlazos;
 	}
+
 	private JTextField getTxCuotaConfiguracionPlazos() {
 		if (txCuotaConfiguracionPlazos == null) {
 			txCuotaConfiguracionPlazos = new JTextField();
@@ -1706,6 +1777,7 @@ public class MainWindow extends JFrame {
 		}
 		return txCuotaConfiguracionPlazos;
 	}
+
 	private JLabel getLbFechaInicioConfiguracionPlazos() {
 		if (lbFechaInicioConfiguracionPlazos == null) {
 			lbFechaInicioConfiguracionPlazos = new JLabel("Fecha Inicio");
@@ -1716,15 +1788,18 @@ public class MainWindow extends JFrame {
 		}
 		return lbFechaInicioConfiguracionPlazos;
 	}
+
 	private JTextField getTxFechaInicioConfiguracionPlazos() {
 		if (txFechaInicioConfiguracionPlazos == null) {
 			txFechaInicioConfiguracionPlazos = new JTextField();
+			txFechaInicioConfiguracionPlazos.setText("       ");
 			txFechaInicioConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
 			txFechaInicioConfiguracionPlazos.setColumns(10);
 			txFechaInicioConfiguracionPlazos.setBounds(161, 302, 96, 37);
 		}
 		return txFechaInicioConfiguracionPlazos;
 	}
+
 	private JLabel getLblFechaFinConfiguracionPlazos() {
 		if (lblFechaFinConfiguracionPlazos == null) {
 			lblFechaFinConfiguracionPlazos = new JLabel("Fecha Fin");
@@ -1735,6 +1810,7 @@ public class MainWindow extends JFrame {
 		}
 		return lblFechaFinConfiguracionPlazos;
 	}
+
 	private JTextField getTxFechaFinConfiguracionPlazos() {
 		if (txFechaFinConfiguracionPlazos == null) {
 			txFechaFinConfiguracionPlazos = new JTextField();
@@ -1744,6 +1820,7 @@ public class MainWindow extends JFrame {
 		}
 		return txFechaFinConfiguracionPlazos;
 	}
+
 	private JScrollPane getScConfiguracionPlazos() {
 		if (scConfiguracionPlazos == null) {
 			scConfiguracionPlazos = new JScrollPane();
@@ -1752,6 +1829,7 @@ public class MainWindow extends JFrame {
 		}
 		return scConfiguracionPlazos;
 	}
+
 	private JTable getTbConfiguracionPlazos() {
 		if (tbConfiguracionPlazos == null) {
 			tbConfiguracionPlazos = new JTable();
@@ -1762,6 +1840,7 @@ public class MainWindow extends JFrame {
 		}
 		return tbConfiguracionPlazos;
 	}
+
 	private JButton getBtConfiCosas() {
 		if (btConfiCosas == null) {
 			btConfiCosas = new JButton("Configurar Cosas");
@@ -1770,12 +1849,13 @@ public class MainWindow extends JFrame {
 			btConfiCosas.setBounds(210, 295, 435, 46);
 			btConfiCosas.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_GENERAL_DORSALES);
+					showCard(PANEL_CONFIGURAR_PLAZOS);
 				}
 			});
 		}
 		return btConfiCosas;
 	}
+
 	private JPanel getPnGeneralDorsales() {
 		if (pnGeneralDorsales == null) {
 			pnGeneralDorsales = new JPanel();
@@ -1784,6 +1864,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnGeneralDorsales;
 	}
+
 	private JPanel getPnGenerarDorsalesPrincipal() {
 		if (pnGenerarDorsalesPrincipal == null) {
 			pnGenerarDorsalesPrincipal = new JPanel();
@@ -1798,6 +1879,7 @@ public class MainWindow extends JFrame {
 		}
 		return pnGenerarDorsalesPrincipal;
 	}
+
 	private JLabel getLbGenerarDorsales() {
 		if (lbGenerarDorsales == null) {
 			lbGenerarDorsales = new JLabel("Generar Dorsales");
@@ -1806,6 +1888,7 @@ public class MainWindow extends JFrame {
 		}
 		return lbGenerarDorsales;
 	}
+
 	private JScrollPane getScGeneralDorsales() {
 		if (scGeneralDorsales == null) {
 			scGeneralDorsales = new JScrollPane();
@@ -1814,16 +1897,18 @@ public class MainWindow extends JFrame {
 		}
 		return scGeneralDorsales;
 	}
+
 	private JTable getTbGeneralDorsales() {
 		if (tbGeneralDorsales == null) {
 			tbGeneralDorsales = new JTable();
-			tbGeneralDorsales.setModel(
-					new DefaultTableModel(new Object[][] {}, new String[] { "Dorsal", "DNI", "Nombre" }));
+			tbGeneralDorsales
+					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Dorsal", "DNI", "Nombre" }));
 
 			tbGeneralDorsales.setDefaultEditor(Object.class, null);
 		}
 		return tbGeneralDorsales;
 	}
+
 	private JButton getBtAtrasGeneralDorsales() {
 		if (btAtrasGeneralDorsales == null) {
 			btAtrasGeneralDorsales = new JButton("Atras");
@@ -1833,6 +1918,7 @@ public class MainWindow extends JFrame {
 		}
 		return btAtrasGeneralDorsales;
 	}
+
 	private JButton getBtSiguienteGeneralDorsales() {
 		if (btSiguienteGeneralDorsales == null) {
 			btSiguienteGeneralDorsales = new JButton("Siguiente");
@@ -1842,6 +1928,7 @@ public class MainWindow extends JFrame {
 		}
 		return btSiguienteGeneralDorsales;
 	}
+
 	private JButton getBtGeneralDorsales() {
 		if (btGeneralDorsales == null) {
 			btGeneralDorsales = new JButton("General Dorsales");
@@ -1851,6 +1938,7 @@ public class MainWindow extends JFrame {
 		}
 		return btGeneralDorsales;
 	}
+
 	private JLabel getLbVIPSGeneralDorsales() {
 		if (lbVIPSGeneralDorsales == null) {
 			lbVIPSGeneralDorsales = new JLabel("¿Cuantos Vips quieres reservar?");
@@ -1861,6 +1949,7 @@ public class MainWindow extends JFrame {
 		}
 		return lbVIPSGeneralDorsales;
 	}
+
 	private JTextField getTxVipsGeneralDorsales() {
 		if (txVipsGeneralDorsales == null) {
 			txVipsGeneralDorsales = new JTextField();

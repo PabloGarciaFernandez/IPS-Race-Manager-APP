@@ -23,9 +23,6 @@ public class InscripcionDto {
 	private String formaDePago;
 	private String tiempoCorriendo;
 
-	
-	
-	
 	public String getTiempoCorriendo() {
 		return tiempoCorriendo;
 	}
@@ -140,7 +137,5 @@ public class InscripcionDto {
 				+ idCarrera + ", dorsal=" + dorsal + ", estadoInscripcion=" + estadoInscripcion + ", atleta=" + atleta
 				+ ", carrera=" + carrera + ", formaDePago=" + formaDePago + "]";
 	}
-
-
 
 }
