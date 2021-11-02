@@ -6,7 +6,7 @@ import javax.swing.UIManager;
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.view.MainWindow;
 
-public class Main {
+public class Main { //rama 15298
 
 	public static void main(String[] args) {
 		try {
