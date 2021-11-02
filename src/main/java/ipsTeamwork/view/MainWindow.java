@@ -7,9 +7,12 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
@@ -18,6 +21,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -42,7 +46,9 @@ import ipsTeamwork.model.categoria.Categoria;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
 import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtleta;
+import ipsTeamwork.model.pago.Pago;
 import ipsTeamwork.util.DtoBuilder;
+import ipsTeamwork.util.Parser;
 
 public class MainWindow extends JFrame {
 
@@ -168,6 +174,7 @@ public class MainWindow extends JFrame {
 	private JTextField txPagoTarjetaFechaCaducidad;
 	private JButton btPagoTarjetaEnviar;
 	private JLabel lbPagarInscripcion;
+	private JButton btnGenerarDorsalesVistaOrganizador;
 
 	/**
 	 * Create the frame.
@@ -1025,8 +1032,79 @@ public class MainWindow extends JFrame {
 			pnPrincipalVerCarrerasOrganizador.add(getBtVerAtletasInscritosPorXCarrera());
 			pnPrincipalVerCarrerasOrganizador.add(getScVerAtletasInscritosPorXCarrera());
 			pnPrincipalVerCarrerasOrganizador.add(getBtAtrasVerCarrerasOrganizador());
+			
+			JButton btnCargarTransacciones = new JButton("Cargar pagos");
+			btnCargarTransacciones.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					cargarPagos();
+				}
+			});
+			btnCargarTransacciones.setBounds(767, 130, 97, 23);
+			pnPrincipalVerCarrerasOrganizador.add(btnCargarTransacciones);
+			pnPrincipalVerCarrerasOrganizador.add(getBtnGenerarDorsalesVistaOrganizador());
 		}
 		return pnPrincipalVerCarrerasOrganizador;
+	}
+	
+	private void cargarPagos() {
+		String nombre = "";
+		List<Pago> pagos = null;
+		
+		try {
+			nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
+		} catch (IndexOutOfBoundsException e) {
+			System.err.println("No hay ninguna carrera seleccionada.");
+			return;
+		}
+		
+		CarreraDto carrera = db.selectCarrerasNombre(nombre);
+
+		File file = null;
+		
+		JFileChooser jfk = new JFileChooser();
+		int retVal = jfk.showOpenDialog(this);
+		
+		if (retVal == JFileChooser.APPROVE_OPTION) {
+			file = jfk.getSelectedFile();
+		} else {
+			JOptionPane.showMessageDialog(this, "No se seleccionó ningún archivo.");
+			return;
+		}
+		
+		try {
+			 pagos = Parser.parsePaymentFile(file, false);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		for (Iterator<Pago> iterator = pagos.iterator(); iterator.hasNext();) {
+			Pago pago = iterator.next();
+			pago.setIdCarrera(carrera.getIdCarrera());
+			pago.autoInsert();
+		}
+		
+		new GestorDB().selectPagos();
+		
+		
+		
+		computarInscripcionesConPagos();
+	}
+
+	private void computarInscripcionesConPagos() {
+		System.err.println(
+				  "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+				+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+				+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+				+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+				+ "AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAA\n"
+				+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+				+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+				+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+				+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+				+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+				+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+				+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+				+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 	}
 
 	private JButton getBtVerVarrerasOrganizacion() {
@@ -1597,5 +1675,20 @@ public class MainWindow extends JFrame {
 			lbPagarInscripcion.setBounds(163, 113, 584, 55);
 		}
 		return lbPagarInscripcion;
+	}
+	private JButton getBtnGenerarDorsalesVistaOrganizador() {
+		if (btnGenerarDorsalesVistaOrganizador == null) {
+			btnGenerarDorsalesVistaOrganizador = new JButton("Generar dorsales");
+			btnGenerarDorsalesVistaOrganizador.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+			btnGenerarDorsalesVistaOrganizador.setBounds(767, 164, 97, 23);
+		}
+		return btnGenerarDorsalesVistaOrganizador;
+	}
+	
+	private void generarDorsales() {
+		
 	}
 }

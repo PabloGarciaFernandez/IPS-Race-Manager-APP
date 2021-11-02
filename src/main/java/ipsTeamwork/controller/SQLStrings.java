@@ -14,8 +14,9 @@ public class SQLStrings {
 
 	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2, nombre varchar2, fecha date, tipo varchar2, distancia number, cuota number, fechaFinInsc date, plazasDisp number, maxPlazas number not null, CONSTRAINT chk_tipo CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
 
+	public static String createPago = "create table pago (idPago varchar2, idCarrera varchar2, dniAtleta varchar2, fecha date, importe number, primary key (idPago))";
+	
 	// inserts
-
 	public static String insertBolt = "Insert into atleta values('69','11122234A','Bolt',35,'F',0, 'manolo@mnaolo'); ";
 
 	public static String insertUsain = "Insert into atleta values('96','11122233A','Usain',25,'M',1); ";
@@ -31,14 +32,15 @@ public class SQLStrings {
 	public static String insertCarreraValues = "insert into carrera(idCarrera, nombre, fecha, tipo, distancia, cuota, fechaFinInsc, plazasDisp, maxPlazas) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	public static String insertAtletaValues = "insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado, email) values (?, ?, ?, ?, ?, ?, ?)";
+	
 	public static String insertInscripcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
 
-	
 	// selects
-
 	public static String selectAllAtleta = "select * from atleta";
 
 	public static String selectAllCarrera = "select * from carrera";
+	
+	public static String selectAllPago = "select * from pago";
 
 	public static String selectCarreraByNombre = "select * from carrera where nombre = ?";
 
@@ -49,7 +51,6 @@ public class SQLStrings {
 	public static String estaLlenaLaLista = "select count(*) from inscripcion i where i.idcarrera = ?";
 
 	// Consulta para el metodo estadoInscripcion
-
 	protected static String estadoInscripcion = "select * from inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' order by fechaInscripcion, estadoInscripcion";
 
 	protected static String estadoInscripcionAtleta = "select * from atleta where idAtleta = ?";

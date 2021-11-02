@@ -85,6 +85,8 @@ public class GestorDB {
 			pst.execute();
 			pst = conn.prepareStatement(SQLStrings.createInscripcion);
 			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.createPago);
+			pst.execute();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -108,6 +110,9 @@ public class GestorDB {
 			pst.execute();
 
 			pst = conn.prepareStatement("drop table inscripcion");
+			pst.execute();
+			
+			pst = conn.prepareStatement("drop table pago");
 			pst.execute();
 
 		} catch (SQLException e) {
@@ -241,6 +246,21 @@ public class GestorDB {
 			cerrar();
 		}
 	}
+	
+	public void selectPagos() {
+		conectar();
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.selectAllPago);
+			ResultSet rs = ps.executeQuery();
+
+			printResultSet(rs);
+
+		} catch (SQLException e) {
+			System.out.println("Error de script de DB: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+	}
 
 	/**
 	 * @author Sergio Arroni
@@ -265,7 +285,8 @@ public class GestorDB {
 		} finally {
 			cerrar();
 		}
-		return carreras.get(0);
+		if (carreras.size() < 1) return null;
+		else return carreras.get(0);
 	}
 
 	/**
