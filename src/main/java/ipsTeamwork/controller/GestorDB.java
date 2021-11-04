@@ -261,6 +261,7 @@ public class GestorDB {
 			carreras = DtoBuilder.toCarreraDtoList(rs);
 
 		} catch (SQLException e) {
+			e.printStackTrace();
 			System.out.println("Error de script de DB: " + e.getMessage());
 		} finally {
 			cerrar();
@@ -293,11 +294,44 @@ public class GestorDB {
 			}
 
 		} catch (SQLException e) {
+			e.printStackTrace();
 			System.out.println("Error de script de DB: " + e.getMessage());
 		} finally {
 			cerrar();
 		}
 		return carreras;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Saca el numero de atletas inscritos en x carrera
+	 * 
+	 * @return
+	 */
+	public int numInscritosxCarrera(String id) {
+		conectar();
+
+		int cont = 0;
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.numAtletasInscritosXCarrera);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+
+				CarreraDto carrera = new CarreraDto();
+
+				carrera.setIdCarrera(rs.getString("idCarrera"));
+
+//				carreras.add(carrera);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Error de script de DB: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+		return cont;
 	}
 
 	public ArrayList<InscripcionDto> getArrayClasificaciones() {

@@ -11,7 +11,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -147,6 +149,7 @@ public class MainWindow extends JFrame {
 	private JTable tablaCarrerasParaAtleta;
 	private AtletaDto atletaActual = null; // Atleta que esta usando la app ya sea registrado o logeado.
 	private CarreraDto carreraActual = null;
+	private CarreraDto carreraNueva = null;
 	private InscripcionDto inscripcion = null;
 	private JButton btAtrasVerCarrerasOrganizador;
 	private JPanel pnPagarInscripcion;
@@ -202,6 +205,19 @@ public class MainWindow extends JFrame {
 	private String fechaFin;
 
 	private String cuota;
+	private JTextField txDatosCarreraConfiguracionPlazos;
+
+	private boolean primera;
+	private JTextField txdatosCarreraGeneralDorsales;
+	private JButton btnGenerarDorsalesVistaOrganizador;
+
+	private Map<String, String> diccionarioPlazos = new HashMap<String, String>();
+
+	private String nombreCarreraActual;
+
+	private String nombreCarreraNueva;
+
+	private String fechaCarreraNueva;
 
 	/**
 	 * Create the frame.
@@ -216,6 +232,8 @@ public class MainWindow extends JFrame {
 		tablaAtletasInscritosX = (DefaultTableModel) getTbAtletasInscritosEnXCarrera().getModel();
 		tablaPlazosInscripciones = (DefaultTableModel) getTbConfiguracionPlazos().getModel();
 		pnVistaInscripcionesAtleta = new PanelListarInscripciones(this, atletaActual);
+		// booleano para la historia 15297 :)
+		primera = true;
 		setResizable(false);
 		setTitle("Carreras");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -237,6 +255,7 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnPagoTarjeta(), PANEL_PAGO_TARJETA);
 		contentPane.add(getPnConfiguracionPlazos(), PANEL_CONFIGURAR_PLAZOS);
 		contentPane.add(getPnGeneralDorsales(), PANEL_GENERAL_DORSALES);
+		// Hardcode del texto, que aparecia siempre con un tab
 		getTxFechaInicioConfiguracionPlazos().setText("");
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
@@ -1063,6 +1082,7 @@ public class MainWindow extends JFrame {
 			pnPrincipalVerCarrerasOrganizador.add(getBtVerAtletasInscritosPorXCarrera());
 			pnPrincipalVerCarrerasOrganizador.add(getScVerAtletasInscritosPorXCarrera());
 			pnPrincipalVerCarrerasOrganizador.add(getBtAtrasVerCarrerasOrganizador());
+			pnPrincipalVerCarrerasOrganizador.add(getBtnGenerarDorsalesVistaOrganizador());
 		}
 		return pnPrincipalVerCarrerasOrganizador;
 	}
@@ -1661,6 +1681,7 @@ public class MainWindow extends JFrame {
 			pnPrincipalConfiguracionPlazos.add(getLblFechaFinConfiguracionPlazos());
 			pnPrincipalConfiguracionPlazos.add(getTxFechaFinConfiguracionPlazos());
 			pnPrincipalConfiguracionPlazos.add(getScConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getTxDatosCarreraConfiguracionPlazos());
 		}
 		return pnPrincipalConfiguracionPlazos;
 	}
@@ -1738,9 +1759,20 @@ public class MainWindow extends JFrame {
 			Date parsedFin = format.parse(fechaFin);
 			java.sql.Date fechaIniDate = new java.sql.Date(parsedIni.getTime());
 			java.sql.Date fechaFinDate = new java.sql.Date(parsedFin.getTime());
-			if (fechaIniDate.before(fechaFinDate)) {
+			if (fechaIniDate.before(fechaFinDate) && fechaFinDate.before(carreraNueva.getFecha())) {
 
 				tablaPlazosInscripciones.addRow(new String[] { fechaIni, fechaFin, cuota });
+
+				if (primera) {
+					carreraNueva.setFechaInicioIns(fechaIniDate);
+					carreraNueva.setFechaFin(fechaFinDate);
+					carreraNueva.setCuota(Integer.parseInt(cuota));
+					primera = false;
+				}
+
+				String toDo = fechaIni + "," + fechaFin + "," + cuota;
+
+				diccionarioPlazos.put(carreraNueva.getNombre(), toDo);
 
 				getTxFechaInicioConfiguracionPlazos().setText(fechaFin);
 				getTxFechaInicioConfiguracionPlazos().setEditable(false);
@@ -1876,6 +1908,7 @@ public class MainWindow extends JFrame {
 			pnGenerarDorsalesPrincipal.add(getBtGeneralDorsales());
 			pnGenerarDorsalesPrincipal.add(getLbVIPSGeneralDorsales());
 			pnGenerarDorsalesPrincipal.add(getTxVipsGeneralDorsales());
+			pnGenerarDorsalesPrincipal.add(getTxdatosCarreraGeneralDorsales());
 		}
 		return pnGenerarDorsalesPrincipal;
 	}
@@ -1958,5 +1991,50 @@ public class MainWindow extends JFrame {
 			txVipsGeneralDorsales.setColumns(10);
 		}
 		return txVipsGeneralDorsales;
+	}
+
+	private JTextField getTxDatosCarreraConfiguracionPlazos() {
+
+		if (txDatosCarreraConfiguracionPlazos == null) {
+			txDatosCarreraConfiguracionPlazos = new JTextField();
+			txDatosCarreraConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 15));
+			txDatosCarreraConfiguracionPlazos.setEditable(false);
+			txDatosCarreraConfiguracionPlazos.setBounds(45, 10, 793, 31);
+			txDatosCarreraConfiguracionPlazos.setColumns(10);
+			txDatosCarreraConfiguracionPlazos.setText("Configurando los plazos de inscripcion de la carrera: "
+					+ nombreCarreraNueva + ", con fecha de inicio de la carrera: " + fechaCarreraNueva);
+		}
+		return txDatosCarreraConfiguracionPlazos;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private JTextField getTxdatosCarreraGeneralDorsales() {
+
+		if (txdatosCarreraGeneralDorsales == null) {
+			txdatosCarreraGeneralDorsales = new JTextField();
+			txdatosCarreraGeneralDorsales.setEditable(false);
+			txdatosCarreraGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 13));
+			txdatosCarreraGeneralDorsales.setBounds(10, 10, 847, 30);
+			txdatosCarreraGeneralDorsales.setColumns(10);
+			txdatosCarreraGeneralDorsales
+					.setText("Carrera con nombre: " + nombreCarreraActual + ",  con num de inscritos: 4");
+		}
+		return txdatosCarreraGeneralDorsales;
+	}
+
+	private JButton getBtnGenerarDorsalesVistaOrganizador() {
+		if (btnGenerarDorsalesVistaOrganizador == null) {
+			btnGenerarDorsalesVistaOrganizador = new JButton("Generar dorsales");
+			btnGenerarDorsalesVistaOrganizador.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+				}
+			});
+			btnGenerarDorsalesVistaOrganizador.setBounds(767, 155, 121, 34);
+		}
+		return btnGenerarDorsalesVistaOrganizador;
 	}
 }
