@@ -272,66 +272,64 @@ public class GestorDB {
 	/**
 	 * @author Sergio Arroni
 	 * 
-	 *         Metodo que devuelve todas las carreras
-	 */
-	public ArrayList<CarreraDto> getArrayCarreras() {
-		conectar();
-
-		ArrayList<CarreraDto> carreras = new ArrayList<CarreraDto>();
-		try {
-			PreparedStatement ps = conn.prepareStatement(SQLStrings.selectAllCarrera);
-			ResultSet rs = ps.executeQuery();
-
-			while (rs.next()) {
-
-				CarreraDto carrera = new CarreraDto();
-
-				carrera.setIdCarrera(rs.getString("idCarrera"));
-				carrera.setTipo(rs.getString("tipo"));
-				carrera.setPlazasDisp(rs.getInt("maxPlazas"));
-
-				carreras.add(carrera);
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("Error de script de DB: " + e.getMessage());
-		} finally {
-			cerrar();
-		}
-		return carreras;
-	}
-
-	/**
-	 * @author Sergio Arroni
-	 * 
 	 *         Saca el numero de atletas inscritos en x carrera
 	 * 
 	 * @return
 	 */
-	public int numInscritosxCarrera(String id) {
+	public int numInscritosxCarrera(String nombre) {
 		conectar();
 
 		int cont = 0;
 		try {
 			PreparedStatement ps = conn.prepareStatement(SQLStrings.numAtletasInscritosXCarrera);
+
+			ps.setString(1, nombre);
+
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-
-				CarreraDto carrera = new CarreraDto();
-
-				carrera.setIdCarrera(rs.getString("idCarrera"));
-
-//				carreras.add(carrera);
+				cont = rs.getInt("cont");
 			}
 
 		} catch (SQLException e) {
-			System.out.println("Error de script de DB: " + e.getMessage());
+			e.printStackTrace();
+
 		} finally {
 			cerrar();
 		}
 		return cont;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Saca una lista de Atletas inscritos en X carrera por fecha de
+	 *         inscripcion
+	 * 
+	 * @return
+	 */
+	public List<AtletaDto> listaAtletasOrdenadorPorFechaIns(String id) {
+		conectar();
+
+		List<AtletaDto> atletas = new ArrayList<AtletaDto>();
+
+		int cont = 0;
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.listaAtletasInscritosEnXCarrera);
+
+			ps.setString(1, id);
+
+			ResultSet rs = ps.executeQuery();
+
+			atletas = DtoBuilder.toAtletaDtoList(rs);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		} finally {
+			cerrar();
+		}
+		return atletas;
 	}
 
 	public ArrayList<InscripcionDto> getArrayClasificaciones() {
@@ -595,15 +593,11 @@ public class GestorDB {
 				rs2 = pst2.executeQuery();
 
 				while (rs2.next()) {
-					System.out.println("-----------------");
 					nuevoAtleta.setDNI(rs2.getString("dni"));
-					System.out.println("Manolo Wacho-----------" + rs2.getString("dni"));
 					nuevoAtleta.setEdad(rs2.getInt("edad"));
 					nuevoAtleta.setSexo(rs2.getString("sexo"));
 					nuevoAtleta.setNombre(rs2.getString("nombre"));
 				}
-
-				System.out.println("Manolo-----------" + nuevoAtleta.getDNI());
 
 				inscripcion.setAtleta(nuevoAtleta);
 				// Esto es para que me lea bien la fecha

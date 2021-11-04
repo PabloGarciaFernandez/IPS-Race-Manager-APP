@@ -31,6 +31,7 @@ public class SQLStrings {
 	public static String insertCarreraValues = "insert into carrera(idCarrera, nombre, fecha, tipo, distancia, cuota, fechaFinInsc, plazasDisp, maxPlazas) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	public static String insertAtletaValues = "insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado, email) values (?, ?, ?, ?, ?, ?, ?)";
+
 	public static String insertInscripcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
 
 	// selects
@@ -55,9 +56,17 @@ public class SQLStrings {
 
 	public static String atletaParticipanteDeCarrera = "select count(*) from inscripcion i where i.idAtleta = ? and i.idCarrera = ?";
 
+	// Update Inscripciones
+
+	public static String updateDorsales = "Update inscripcion set dorsal = ? where idCarrera = ? and idAtleta = ?";
+
 	// count atletas inscritos
 
-	protected static String numAtletasInscritosXCarrera = "select count(*) from inscripcion where idCarrera = ? and estadoInscrito = 'Inscrito'";
+	protected static String numAtletasInscritosXCarrera = "select count(*) as cont from inscripcion where idCarrera = ? and estadoInscripcion = 'Inscrito'";
+
+	// count atletas inscritos
+
+	protected static String listaAtletasInscritosEnXCarrera = "select a.* from inscripcion i, atleta a where idCarrera = ? and a.idAtleta = i.idAtleta and estadoInscripcion = 'Inscrito' order by fechaInscripcion";
 
 	// Consultas para sacar las clasificaciones
 

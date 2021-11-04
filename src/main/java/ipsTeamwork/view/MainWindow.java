@@ -45,6 +45,7 @@ import ipsTeamwork.model.categoria.Categoria;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
 import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtleta;
+import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtletaDorsal;
 import ipsTeamwork.util.DtoBuilder;
 
 public class MainWindow extends JFrame {
@@ -57,7 +58,7 @@ public class MainWindow extends JFrame {
 	private static final String PANEL_LISTA_CARRERAS = "panel_lista_carreras_atleta";
 	private static final String PANEL_REGISTRO = "panel_registro";
 	private static final String PANEL_INGRESO = "panel_ingreso";
-	private static final String PANEL_VERCARRERASORGANIZADOR = "panel_lista_carreras_organizador";
+	private static final String PANEL_VER_CARRERAS_ORGANIZADOR = "panel_lista_carreras_organizador";
 	private static final String PANEL_VERCLASIFICACIONESORGANIZADOR = "panel_lista_clasificaciones_organizador";
 
 	private static final String PANEL_PAGARINSCRIPCION = "panel_PagarInscripcion";
@@ -139,6 +140,7 @@ public class MainWindow extends JFrame {
 	private DefaultTableModel tablaAtleta;
 	private DefaultTableModel tablaAtletasInscritosX;
 	private DefaultTableModel tablaPlazosInscripciones;
+	private DefaultTableModel tablaGenerarDorsales;
 
 	private DefaultTableModel tablaClasificaciones;
 	private DefaultTableModel tablaClasificacionesHombres;
@@ -213,11 +215,11 @@ public class MainWindow extends JFrame {
 
 	private Map<String, String> diccionarioPlazos = new HashMap<String, String>();
 
-	private String nombreCarreraActual;
-
 	private String nombreCarreraNueva;
 
 	private String fechaCarreraNueva;
+
+	private int numeroGenteInscritaEnLaCarreraActual;
 
 	/**
 	 * Create the frame.
@@ -226,6 +228,7 @@ public class MainWindow extends JFrame {
 		db = new GestorDB();
 		tb = (DefaultTableModel) getTbVerCarreras().getModel();
 		tablaClasificaciones = (DefaultTableModel) getTbVerClasificaciones().getModel();
+		tablaGenerarDorsales = (DefaultTableModel) getTbGeneralDorsales().getModel();
 		tablaClasificacionesHombres = (DefaultTableModel) getTbVerClasificacionesHombres().getModel();
 		tablaClasificacionesMujeres = (DefaultTableModel) getTbVerClasificacionesMujeres().getModel();
 		tablaAtleta = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
@@ -248,7 +251,7 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnListaCarrerasAtleta(), PANEL_LISTA_CARRERAS);
 		contentPane.add(getPnRegistro(), PANEL_REGISTRO);
 		contentPane.add(getPnIngreso(), PANEL_INGRESO);
-		contentPane.add(getPnListaCarrerasOrganizador(), PANEL_VERCARRERASORGANIZADOR);
+		contentPane.add(getPnListaCarrerasOrganizador(), PANEL_VER_CARRERAS_ORGANIZADOR);
 		contentPane.add(getPnPagarInscripcion(), PANEL_PAGARINSCRIPCION);
 		contentPane.add(pnVistaInscripcionesAtleta, PANEL_LISTA_INSCRIPCIONES);
 		contentPane.add(getPnListaClasificacionesOrganizador(), PANEL_VERCLASIFICACIONESORGANIZADOR);
@@ -1094,7 +1097,7 @@ public class MainWindow extends JFrame {
 			btVerVarrerasOrganizacion.setMnemonic('v');
 			btVerVarrerasOrganizacion.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_VERCARRERASORGANIZADOR);
+					showCard(PANEL_VER_CARRERAS_ORGANIZADOR);
 				}
 			});
 			btVerVarrerasOrganizacion.setBounds(210, 120, 435, 46);
@@ -1698,6 +1701,11 @@ public class MainWindow extends JFrame {
 	private JButton getBtAtrasConfiguracionPlazos() {
 		if (btAtrasConfiguracionPlazos == null) {
 			btAtrasConfiguracionPlazos = new JButton("Atras");
+			btAtrasConfiguracionPlazos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_ORGANIZADOR);
+				}
+			});
 			btAtrasConfiguracionPlazos.setFont(new Font("Arial", Font.BOLD, 20));
 			btAtrasConfiguracionPlazos.setMnemonic('a');
 			btAtrasConfiguracionPlazos.setBounds(45, 401, 153, 45);
@@ -1945,6 +1953,11 @@ public class MainWindow extends JFrame {
 	private JButton getBtAtrasGeneralDorsales() {
 		if (btAtrasGeneralDorsales == null) {
 			btAtrasGeneralDorsales = new JButton("Atras");
+			btAtrasGeneralDorsales.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_VER_CARRERAS_ORGANIZADOR);
+				}
+			});
 			btAtrasGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
 			btAtrasGeneralDorsales.setMnemonic('a');
 			btAtrasGeneralDorsales.setBounds(10, 419, 163, 40);
@@ -1965,11 +1978,68 @@ public class MainWindow extends JFrame {
 	private JButton getBtGeneralDorsales() {
 		if (btGeneralDorsales == null) {
 			btGeneralDorsales = new JButton("General Dorsales");
+			btGeneralDorsales.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					if (CheckVips()) {
+						GenerarDorsales();
+					}
+
+				}
+
+			});
 			btGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
 			btGeneralDorsales.setMnemonic('g');
 			btGeneralDorsales.setBounds(325, 424, 213, 30);
 		}
 		return btGeneralDorsales;
+	}
+
+	protected boolean CheckVips() {
+
+		if (txVipsGeneralDorsales.getText().equals("")) {
+			return true;
+		}
+
+		if (Integer.parseInt(txVipsGeneralDorsales.getText()) > numeroGenteInscritaEnLaCarreraActual) {
+			JOptionPane.showConfirmDialog(btGeneralDorsales, "No puedes generar más Vips que corredos haya inscritos",
+					"Error", JOptionPane.DEFAULT_OPTION);
+			return false;
+		}
+		return true;
+
+	}
+
+	private void GenerarDorsales() {
+
+		reset(tablaGenerarDorsales);
+
+		int vips;
+		if (txVipsGeneralDorsales.getText().equals("")) {
+			vips = 0;
+		} else {
+			vips = Integer.parseInt(txVipsGeneralDorsales.getText());
+		}
+
+		String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
+
+		CarreraDto aux = db.selectCarrerasNombre(nombre);
+
+		String id = aux.getIdCarrera();
+
+		List<AtletaDto> atletas = db.listaAtletasOrdenadorPorFechaIns(id);
+
+		for (int i = 0; i < numeroGenteInscritaEnLaCarreraActual; i++) {
+
+			String dorsal = String.valueOf(i + vips);
+
+			String[] pizza = { dorsal, atletas.get(i).getDNI(), atletas.get(i).getNombre() };
+
+			UpdateInscribirseAtletaDorsal.execute(id, atletas.get(i).getIdAtleta(), dorsal);
+
+			tablaGenerarDorsales.addRow(pizza);
+
+		}
 	}
 
 	private JLabel getLbVIPSGeneralDorsales() {
@@ -2001,10 +2071,24 @@ public class MainWindow extends JFrame {
 			txDatosCarreraConfiguracionPlazos.setEditable(false);
 			txDatosCarreraConfiguracionPlazos.setBounds(45, 10, 793, 31);
 			txDatosCarreraConfiguracionPlazos.setColumns(10);
-			txDatosCarreraConfiguracionPlazos.setText("Configurando los plazos de inscripcion de la carrera: "
-					+ nombreCarreraNueva + ", con fecha de inicio de la carrera: " + fechaCarreraNueva);
+
+			printLabelPlazos();
+
 		}
 		return txDatosCarreraConfiguracionPlazos;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo que imprime la label del panel de Plazos con info de la
+	 *         carrera. Esa info esta guardada en dos String los cuales hay que
+	 *         modificar en algun momento o siempre valdran null
+	 * 
+	 */
+	private void printLabelPlazos() {
+		txDatosCarreraConfiguracionPlazos.setText("Configurando los plazos de inscripcion de la carrera: "
+				+ nombreCarreraNueva + ", con fecha de inicio de la carrera: " + fechaCarreraNueva);
 	}
 
 	/**
@@ -2019,10 +2103,28 @@ public class MainWindow extends JFrame {
 			txdatosCarreraGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 13));
 			txdatosCarreraGeneralDorsales.setBounds(10, 10, 847, 30);
 			txdatosCarreraGeneralDorsales.setColumns(10);
-			txdatosCarreraGeneralDorsales
-					.setText("Carrera con nombre: " + nombreCarreraActual + ",  con num de inscritos: 4");
+
 		}
 		return txdatosCarreraGeneralDorsales;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo que imprime la etiqueta de los dorsales con info de la carrera
+	 */
+	private void printLabelDorsales() {
+
+		String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
+
+		CarreraDto aux = db.selectCarrerasNombre(nombre);
+
+		String id = aux.getIdCarrera();
+
+		numeroGenteInscritaEnLaCarreraActual = db.numInscritosxCarrera(id);
+
+		txdatosCarreraGeneralDorsales.setText(
+				"Carrera con nombre: " + nombre + ",  con num de inscritos: " + numeroGenteInscritaEnLaCarreraActual);
 	}
 
 	private JButton getBtnGenerarDorsalesVistaOrganizador() {
@@ -2030,7 +2132,9 @@ public class MainWindow extends JFrame {
 			btnGenerarDorsalesVistaOrganizador = new JButton("Generar dorsales");
 			btnGenerarDorsalesVistaOrganizador.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_GENERAL_DORSALES);
 
+					printLabelDorsales();
 				}
 			});
 			btnGenerarDorsalesVistaOrganizador.setBounds(767, 155, 121, 34);
