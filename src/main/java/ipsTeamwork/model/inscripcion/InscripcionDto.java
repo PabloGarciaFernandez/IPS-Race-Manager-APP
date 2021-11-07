@@ -22,6 +22,12 @@ public class InscripcionDto {
 	private CarreraDto carrera;
 	private String formaDePago;
 	private String tiempoCorriendo;
+	
+	private String tiempoInicio;
+	private String tiempoFin;
+	private String categoria;
+
+	
 
 	
 	
@@ -139,6 +145,14 @@ public class InscripcionDto {
 		return "Inscripcion [fechaInscripcion=" + fechaInscripcion + ", idAtleta=" + idAtleta + ", idCarrera="
 				+ idCarrera + ", dorsal=" + dorsal + ", estadoInscripcion=" + estadoInscripcion + ", atleta=" + atleta
 				+ ", carrera=" + carrera + ", formaDePago=" + formaDePago + "]";
+	}
+
+	public String getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(String categoria) {
+		this.categoria = categoria;
 	}
 
 

@@ -5,6 +5,8 @@ package ipsTeamwork.model.categoria;
 
 import javax.management.RuntimeErrorException;
 
+import ipsTeamwork.model.atleta.AtletaDto;
+
 /**
  * @author Sergio Arroni
  *
@@ -28,6 +30,8 @@ public class Categoria {
 		} else if (edad > 70) {
 			return "Veteranos - Desde 71 / " + sexo;
 		}
+		
+		//select from categoria where 
 		throw new RuntimeErrorException(new Error(), "Algo malo paso con la categoria");
 	}
 

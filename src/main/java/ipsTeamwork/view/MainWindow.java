@@ -9,8 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -43,6 +46,7 @@ import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
 import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtleta;
 import ipsTeamwork.util.DtoBuilder;
+import ipsTeamwork.util.FileUtil;
 
 public class MainWindow extends JFrame {
 
@@ -61,6 +65,8 @@ public class MainWindow extends JFrame {
 	private static final String PANEL_LISTA_INSCRIPCIONES = "panel_lista_inscripciones_atleta";
 
 	private static final String PANEL_PAGO_TARJETA = "panel_pago_tarjeta";
+	
+	
 
 	private JPanel contentPane;
 	private JPanel pnInicio;
@@ -108,8 +114,6 @@ public class MainWindow extends JFrame {
 	private JPanel pnListaCarrerasOrganizador;
 
 	private JPanel pnListaClasificacionesOrganizador;
-	private JPanel pnListaClasificacionesOrganizadorHombres;
-	private JPanel pnListaClasificacionesOrganizadorMujeres;
 
 	private JPanel pnPrincipalVerCarrerasOrganizador;
 
@@ -118,16 +122,10 @@ public class MainWindow extends JFrame {
 	private JScrollPane scVerCarreras;
 
 	private JLabel lbClasificacionGeneral;
-	private JScrollPane scVerClasificacionesHombres;
-	private JScrollPane scVerClasificacionesMujeres;
-	private JLabel lbClasificacionGeneralHombres;
-	private JLabel lbClasificacionGeneralMujeres;
 	private JScrollPane scVerClasificaciones;
 
 	private JTable tbVerCarreras;
 	private JTable tbVerClasificaciones;
-	private JTable tbVerClasificacionesHombres;
-	private JTable tbVerClasificacionesMujeres;
 	private JButton btVerAtletasInscritosPorXCarrera;
 	private JScrollPane scVerAtletasInscritosPorXCarrera;
 	private JTable tbAtletasInscritosEnXCarrera;
@@ -136,8 +134,7 @@ public class MainWindow extends JFrame {
 	private DefaultTableModel tablaAtletasInscritosX;
 
 	private DefaultTableModel tablaClasificaciones;
-	private DefaultTableModel tablaClasificacionesHombres;
-	private DefaultTableModel tablaClasificacionesMujeres;
+
 
 	private GestorDB db;
 	private JScrollPane scrollPaneListaCarrerasAtleta;
@@ -154,7 +151,6 @@ public class MainWindow extends JFrame {
 	private JButton btPagarinscripcionAtras;
 	private JButton btVistaAtletaAtras;
 	private JPanel pnVistaInscripcionesAtleta;
-	private JButton btVerClasificacionesOrganizacion;
 	private JButton btListaClasificacionesAtras;
 
 	private JPanel pnPagoTarjeta;
@@ -168,6 +164,13 @@ public class MainWindow extends JFrame {
 	private JTextField txPagoTarjetaFechaCaducidad;
 	private JButton btPagoTarjetaEnviar;
 	private JLabel lbPagarInscripcion;
+	private JButton btImportarTiemposCarrera;
+
+	
+	private FileUtil fileUtil = new FileUtil();
+	private JButton btVerClasificacionesOrganizacion;
+	
+	
 
 	/**
 	 * Create the frame.
@@ -176,8 +179,6 @@ public class MainWindow extends JFrame {
 		db = new GestorDB();
 		tb = (DefaultTableModel) getTbVerCarreras().getModel();
 		tablaClasificaciones = (DefaultTableModel) getTbVerClasificaciones().getModel();
-		tablaClasificacionesHombres = (DefaultTableModel) getTbVerClasificacionesHombres().getModel();
-		tablaClasificacionesMujeres = (DefaultTableModel) getTbVerClasificacionesMujeres().getModel();
 		tablaAtleta = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
 		tablaAtletasInscritosX = (DefaultTableModel) getTbAtletasInscritosEnXCarrera().getModel();
 		pnVistaInscripcionesAtleta = new PanelListarInscripciones(this, atletaActual);
@@ -375,47 +376,12 @@ public class MainWindow extends JFrame {
 
 	}
 
-	public void cargarTablaClasificacionesOrganizador() {
-		GestorDB db = new GestorDB();
+	
 
-		ArrayList<InscripcionDto> inscripciones = db.getArrayClasificaciones();
+		
 
-		int posicion = 1;
 
-		for (InscripcionDto inscripcionDto : inscripciones) {
-
-			String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getAtleta().getSexo(),
-					inscripcionDto.getAtleta().getNombre(),
-					stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
-			tablaClasificaciones.addRow(clasificacionesTabla);
-			posicion++;
-		}
-
-		ArrayList<InscripcionDto> inscripcionesHombres = db.getArrayClasificacionesHombres();
-
-		posicion = 1;
-
-		for (InscripcionDto inscripcionDto : inscripcionesHombres) {
-
-			String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getAtleta().getNombre(),
-					stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
-			tablaClasificacionesHombres.addRow(clasificacionesTabla);
-			posicion++;
-		}
-
-		ArrayList<InscripcionDto> inscripcionesMujeres = db.getArrayClasificacionesMujeres();
-
-		posicion = 1;
-
-		for (InscripcionDto inscripcionDto : inscripcionesMujeres) {
-
-			String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getAtleta().getNombre(),
-					stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
-			tablaClasificacionesMujeres.addRow(clasificacionesTabla);
-			posicion++;
-		}
-
-	}
+	
 
 	private JPanel getPnListaNorth() {
 		if (pnListaNorth == null) {
@@ -927,7 +893,6 @@ public class MainWindow extends JFrame {
 			pnOrganizadorCentro.add(getBtnOrganizadorCancelar());
 			pnOrganizadorCentro.add(getBtnOrganizadorSiguiente());
 			pnOrganizadorCentro.add(getBtVerVarrerasOrganizacion());
-			pnOrganizadorCentro.add(getBtVerClasificacionesOrganizacion());
 		}
 		return pnOrganizadorCentro;
 	}
@@ -980,25 +945,7 @@ public class MainWindow extends JFrame {
 		return pnListaClasificacionesOrganizador;
 	}
 
-	private JPanel getPnListaClasificacionesOrganizadorHombres() {
-		if (pnListaClasificacionesOrganizadorHombres == null) {
-			pnListaClasificacionesOrganizadorHombres = new JPanel();
-			pnListaClasificacionesOrganizadorHombres.setLayout(new BorderLayout(0, 0));
-			pnListaClasificacionesOrganizadorHombres.add(getPnPrincipalVerClasificacionesOrganizador(),
-					BorderLayout.CENTER);
-		}
-		return pnListaClasificacionesOrganizadorHombres;
-	}
-
-	private JPanel getPnListaClasificacionesOrganizadorMujeres() {
-		if (pnListaClasificacionesOrganizadorMujeres == null) {
-			pnListaClasificacionesOrganizadorMujeres = new JPanel();
-			pnListaClasificacionesOrganizadorMujeres.setLayout(new BorderLayout(0, 0));
-			pnListaClasificacionesOrganizadorMujeres.add(getPnPrincipalVerClasificacionesOrganizador(),
-					BorderLayout.CENTER);
-		}
-		return pnListaClasificacionesOrganizadorMujeres;
-	}
+	
 
 	private Component getPnPrincipalVerClasificacionesOrganizador() {
 		if (pnPrincipalVerClasificacionesOrganizador == null) {
@@ -1006,11 +953,8 @@ public class MainWindow extends JFrame {
 			pnPrincipalVerClasificacionesOrganizador.setLayout(null);
 			pnPrincipalVerClasificacionesOrganizador.add(getScVerClasificaciones());
 			pnPrincipalVerClasificacionesOrganizador.add(getLbClasificacionGeneral());
-			pnPrincipalVerClasificacionesOrganizador.add(getScVerClasificacionesHombres());
-			pnPrincipalVerClasificacionesOrganizador.add(getScVerClasificacionesMujeres());
-			pnPrincipalVerClasificacionesOrganizador.add(getLbClasificacionGeneralHombres());
-			pnPrincipalVerClasificacionesOrganizador.add(getLbClasificacionGeneralMujeres());
 			pnPrincipalVerClasificacionesOrganizador.add(getBtListaClasificacionesAtras());
+	
 
 			// pnPrincipalVerClasificacionesOrganizador.add(getBtAtrasVerCarrerasOrganizador());
 		}
@@ -1025,6 +969,8 @@ public class MainWindow extends JFrame {
 			pnPrincipalVerCarrerasOrganizador.add(getBtVerAtletasInscritosPorXCarrera());
 			pnPrincipalVerCarrerasOrganizador.add(getScVerAtletasInscritosPorXCarrera());
 			pnPrincipalVerCarrerasOrganizador.add(getBtAtrasVerCarrerasOrganizador());
+			pnPrincipalVerCarrerasOrganizador.add(getBtImportarTiemposCarrera());
+			pnPrincipalVerCarrerasOrganizador.add(getBtVerClasificacionesOrganizacion_1());
 		}
 		return pnPrincipalVerCarrerasOrganizador;
 	}
@@ -1056,7 +1002,7 @@ public class MainWindow extends JFrame {
 	private JScrollPane getScVerClasificaciones() {
 		if (scVerClasificaciones == null) {
 			scVerClasificaciones = new JScrollPane();
-			scVerClasificaciones.setBounds(43, 56, 252, 369);
+			scVerClasificaciones.setBounds(43, 56, 713, 369);
 			scVerClasificaciones.setViewportView(getTbVerClasificaciones());
 		}
 		return scVerClasificaciones;
@@ -1067,47 +1013,9 @@ public class MainWindow extends JFrame {
 			lbClasificacionGeneral = new JLabel("Clasificación General");
 			lbClasificacionGeneral.setFont(new Font("Tahoma", Font.PLAIN, 15));
 			lbClasificacionGeneral.setHorizontalAlignment(SwingConstants.CENTER);
-			lbClasificacionGeneral.setBounds(43, 25, 252, 22);
+			lbClasificacionGeneral.setBounds(43, 25, 713, 22);
 		}
 		return lbClasificacionGeneral;
-	}
-
-	private JScrollPane getScVerClasificacionesHombres() {
-		if (scVerClasificacionesHombres == null) {
-			scVerClasificacionesHombres = new JScrollPane();
-			scVerClasificacionesHombres.setBounds(322, 56, 252, 369);
-			scVerClasificacionesHombres.setViewportView(getTbVerClasificacionesHombres());
-		}
-		return scVerClasificacionesHombres;
-	}
-
-	private JScrollPane getScVerClasificacionesMujeres() {
-		if (scVerClasificacionesMujeres == null) {
-			scVerClasificacionesMujeres = new JScrollPane();
-			scVerClasificacionesMujeres.setBounds(603, 56, 252, 369);
-			scVerClasificacionesMujeres.setViewportView(getTbVerClasificacionesMujeres());
-		}
-		return scVerClasificacionesMujeres;
-	}
-
-	private JLabel getLbClasificacionGeneralHombres() {
-		if (lbClasificacionGeneralHombres == null) {
-			lbClasificacionGeneralHombres = new JLabel("Clasificación General Hombres");
-			lbClasificacionGeneralHombres.setHorizontalAlignment(SwingConstants.CENTER);
-			lbClasificacionGeneralHombres.setFont(new Font("Tahoma", Font.PLAIN, 15));
-			lbClasificacionGeneralHombres.setBounds(322, 25, 252, 22);
-		}
-		return lbClasificacionGeneralHombres;
-	}
-
-	private JLabel getLbClasificacionGeneralMujeres() {
-		if (lbClasificacionGeneralMujeres == null) {
-			lbClasificacionGeneralMujeres = new JLabel("Clasificación General Mujeres");
-			lbClasificacionGeneralMujeres.setHorizontalAlignment(SwingConstants.CENTER);
-			lbClasificacionGeneralMujeres.setFont(new Font("Tahoma", Font.PLAIN, 15));
-			lbClasificacionGeneralMujeres.setBounds(603, 25, 252, 22);
-		}
-		return lbClasificacionGeneralMujeres;
 	}
 
 	public JTable getTbVerCarreras() {
@@ -1126,36 +1034,12 @@ public class MainWindow extends JFrame {
 		if (tbVerClasificaciones == null) {
 			tbVerClasificaciones = new JTable();
 			tbVerClasificaciones.setModel(new DefaultTableModel(new Object[][] {},
-					new String[] { "Posición", "Género", "Nombre", "Tiempo" }));
+					new String[] { "Posición", "Categoría", "Género", "Nombre", "Tiempo" }));
 
 			tbVerClasificaciones.setDefaultEditor(Object.class, null);
 
 		}
 		return tbVerClasificaciones;
-	}
-
-	public JTable getTbVerClasificacionesHombres() {
-		if (tbVerClasificacionesHombres == null) {
-			tbVerClasificacionesHombres = new JTable();
-			tbVerClasificacionesHombres.setModel(
-					new DefaultTableModel(new Object[][] {}, new String[] { "Posición", "Nombre", "Tiempo" }));
-
-			tbVerClasificacionesHombres.setDefaultEditor(Object.class, null);
-
-		}
-		return tbVerClasificacionesHombres;
-	}
-
-	public JTable getTbVerClasificacionesMujeres() {
-		if (tbVerClasificacionesMujeres == null) {
-			tbVerClasificacionesMujeres = new JTable();
-			tbVerClasificacionesMujeres.setModel(
-					new DefaultTableModel(new Object[][] {}, new String[] { "Posición", "Nombre", "Tiempo" }));
-
-			tbVerClasificacionesMujeres.setDefaultEditor(Object.class, null);
-
-		}
-		return tbVerClasificacionesMujeres;
 	}
 
 	/**
@@ -1180,7 +1064,7 @@ public class MainWindow extends JFrame {
 				}
 
 			});
-			btVerAtletasInscritosPorXCarrera.setBounds(161, 198, 596, 38);
+			btVerAtletasInscritosPorXCarrera.setBounds(161, 198, 298, 38);
 		}
 		return btVerAtletasInscritosPorXCarrera;
 	}
@@ -1207,6 +1091,7 @@ public class MainWindow extends JFrame {
 					String.valueOf(inscripcionDto.getFechaInscripcion()), inscripcionDto.getEstadoInscripcion() };
 
 			tablaAtletasInscritosX.addRow(alluneedislove);
+			
 
 		}
 	}
@@ -1427,32 +1312,13 @@ public class MainWindow extends JFrame {
 		return btVistaAtletaAtras;
 	}
 
-	private JButton getBtVerClasificacionesOrganizacion() {
-		if (btVerClasificacionesOrganizacion == null) {
-			btVerClasificacionesOrganizacion = new JButton("Ver Clasificaciones");
-			btVerClasificacionesOrganizacion.setFont(new Font("Arial", Font.PLAIN, 14));
-			btVerClasificacionesOrganizacion.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					reset(tablaClasificaciones);
-					reset(tablaClasificacionesHombres);
-					reset(tablaClasificacionesMujeres);
-					cargarTablaClasificacionesOrganizador();
-					showCard(PANEL_VERCLASIFICACIONESORGANIZADOR);
-				}
-			});
-			btVerClasificacionesOrganizacion.setMnemonic('c');
-			btVerClasificacionesOrganizacion.setBounds(210, 247, 435, 46);
-		}
-		return btVerClasificacionesOrganizacion;
-	}
-
 	private JButton getBtListaClasificacionesAtras() {
 		if (btListaClasificacionesAtras == null) {
 			btListaClasificacionesAtras = new JButton("Atras");
 			btListaClasificacionesAtras.setFont(new Font("Arial", Font.PLAIN, 14));
 			btListaClasificacionesAtras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_ORGANIZADOR);
+					showCard(PANEL_VERCARRERASORGANIZADOR);
 				}
 			});
 			btListaClasificacionesAtras.setBounds(30, 435, 136, 34);
@@ -1598,4 +1464,155 @@ public class MainWindow extends JFrame {
 		}
 		return lbPagarInscripcion;
 	}
+	private JButton getBtImportarTiemposCarrera() {
+		if (btImportarTiemposCarrera == null) {
+			btImportarTiemposCarrera = new JButton("Importar tiempos de carrera seleccionada");
+			btImportarTiemposCarrera.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					importarTiemposCarreraDada();
+				}
+			});
+			btImportarTiemposCarrera.setMnemonic('T');
+			btImportarTiemposCarrera.setFont(new Font("Arial", Font.PLAIN, 14));
+			btImportarTiemposCarrera.setBounds(459, 198, 298, 38);
+		}
+		return btImportarTiemposCarrera;
+	}
+
+	protected void importarTiemposCarreraDada() {
+		
+		String nombreCarrera = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0)); //nombreCarrera
+
+		System.out.println(nombreCarrera);
+		
+		CarreraDto carrera = db.selectCarrerasNombre(nombreCarrera);//idCarrera
+		
+		System.out.println(carrera.getIdCarrera() + "    "  + carrera.getNombre());
+		
+		
+		Map<String, String> fichero = FileUtil.cargarTiempos(nombreCarrera);
+		
+		int numeroTiemposImportados = 0;
+			for (Map.Entry<String, String> dorsalTiempo : fichero.entrySet()) {
+				    System.out.println(dorsalTiempo.getKey() + "/" + dorsalTiempo.getValue());
+				    numeroTiemposImportados++;
+				}
+			
+		//hasta aquí todo bien, ya tengo el nombre de la carrera, el dorsal del atleta y el tiempo, que si es 0 será NF (no finaliza).
+			
+		//Ahora toca recorrer ese diccionario, e insertar en la tabla inscripciones 
+			
+			
+		int contadorActualizaciones = UpdateInscribirseAtleta.updateInscripcionTiempoByDorsalAndIdCarrera(carrera.getIdCarrera(), fichero);
+		
+		System.out.println("Número de tiempos importados:   " + numeroTiemposImportados);
+
+		System.out.println("Número de tiempos registrados con éxito:   " + contadorActualizaciones);
+		
+		
+		db.selectInscripcion();
+
+					//Categoria.calculaCategoria(inscripcionDto.getAtleta().getEdad(),
+						//	inscripcionDto.getAtleta().getSexo()),
+		
+		
+		JOptionPane.showConfirmDialog(this,
+				"La operación ha sido completada. \nEl número de tiempos importados es: " + numeroTiemposImportados
+						+ "\nEl número de tiempos registrados con éxito es: " + contadorActualizaciones, 
+							"Importar tiempos carrera " + nombreCarrera, JOptionPane.DEFAULT_OPTION);			
+			
+	
+		
+	}
+	private JButton getBtVerClasificacionesOrganizacion_1() {
+		if (btVerClasificacionesOrganizacion == null) {
+			btVerClasificacionesOrganizacion = new JButton("Ver Clasificaciones");
+			btVerClasificacionesOrganizacion.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					reset(tablaClasificaciones);
+					accionClasificaciones();
+					showCard(PANEL_VERCLASIFICACIONESORGANIZADOR);
+				}
+			});
+			btVerClasificacionesOrganizacion.setMnemonic('c');
+			btVerClasificacionesOrganizacion.setFont(new Font("Arial", Font.PLAIN, 14));
+			btVerClasificacionesOrganizacion.setBounds(283, 417, 435, 46);
+		}
+		return btVerClasificacionesOrganizacion;
+	}
+	
+	protected void accionClasificaciones() {
+		String nombreCarrera = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0)); //nombreCarrera
+
+		
+		System.out.println(nombreCarrera);
+		
+		CarreraDto carrera = db.selectCarrerasNombre(nombreCarrera);//idCarrera
+		
+		System.out.println(carrera.getIdCarrera() + "    "  + carrera.getNombre());
+		
+		
+		//ahora necesito una lista de inscripciones
+		//tengo el id de la carrera
+		//he de sacar todas las inscipciones con ese idCarrera
+		//Teniendo ya eso, qe me da la categoria, y demas es trabajar con esa lista de inscripciones
+		
+
+		ArrayList<InscripcionDto> inscripciones = db.getArrayClasificaciones(carrera.getIdCarrera());
+		
+		
+		for (InscripcionDto inscripcionDto : inscripciones) {
+			System.out.println( inscripcionDto.getCategoria() +"             " +carrera.getNombre() + "            " + inscripcionDto.getAtleta().getSexo() + "          " +inscripcionDto.getAtleta().getNombre() + "               " +  stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()));
+		}
+		
+		
+		
+		
+
+		int posicion = 1;
+		String categoria = "";
+
+		for (InscripcionDto inscripcionDto : inscripciones) {
+			
+			if(inscripcionDto.getCategoria().equals(categoria)) {
+				String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getCategoria(), inscripcionDto.getAtleta().getSexo(), 
+						inscripcionDto.getAtleta().getNombre(),
+						stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
+				tablaClasificaciones.addRow(clasificacionesTabla);
+				posicion++;
+			} else {
+				posicion = 1;
+				String[] clasificacionesTabla = { Integer.toString(posicion) + "º",inscripcionDto.getCategoria(), inscripcionDto.getAtleta().getSexo(), 
+						inscripcionDto.getAtleta().getNombre(),
+						stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
+				tablaClasificaciones.addRow(clasificacionesTabla);
+				posicion++;	
+			}
+
+			
+		}
+		
+	
+				
+	}
+
+//	public void cargarTablaClasificacionesOrganizador() {
+//		
+//		
+//		GestorDB db = new GestorDB();
+//
+//		ArrayList<InscripcionDto> inscripciones = db.getArrayClasificaciones();
+//
+//		int posicion = 1;
+//
+//		for (InscripcionDto inscripcionDto : inscripciones) {
+//
+//			String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getAtleta().getSexo(), 
+//					inscripcionDto.getAtleta().getNombre(),
+//					stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
+//			tablaClasificaciones.addRow(clasificacionesTabla);
+//			posicion++;
+//		}
+//	}
 }
