@@ -8,6 +8,7 @@ import java.util.List;
 
 import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.carrera.CarreraDto;
+import ipsTeamwork.model.categoria.CategoriaDto;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 
 public class DtoBuilder {
@@ -23,6 +24,21 @@ public class DtoBuilder {
 			dto.setEdad(Integer.parseInt(rs.getString(4)));
 			dto.setDNI(rs.getString(2));
 			dto.setDiscapacitado(Integer.parseInt(rs.getString(6)) == 1 ? true : false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return dto;
+	}
+	
+	public static CategoriaDto toCategoriaDto(ResultSet rs) {
+		CategoriaDto dto = new CategoriaDto();
+
+		try {
+			dto.carrera_id = rs.getString(1);
+			dto.nombre = rs.getString(2);
+			dto.edadInic = rs.getInt(3);
+			dto.edadFin = rs.getInt(4);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -74,6 +90,25 @@ public class DtoBuilder {
 				dto.setDorsal(rs.getString("dorsal"));
 				dto.setEstadoInscripcion(rs.getString("estadoInscripcion"));
 				dto.setFormaDePago(rs.getString("formaDePago"));
+				ret.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
+	
+	public static List<CategoriaDto> toCategoriaDtoList(ResultSet rs) {
+		List<CategoriaDto> ret = new ArrayList<CategoriaDto>();
+		CategoriaDto dto = null;
+
+		try {
+			while (rs.next()) {
+				dto.carrera_id = rs.getString(1);
+				dto.nombre = rs.getString(2);
+				dto.edadInic = rs.getInt(3);
+				dto.edadFin = rs.getInt(4);
 				ret.add(dto);
 			}
 		} catch (SQLException e) {

@@ -205,6 +205,7 @@ public class MainWindow extends JFrame {
 	private JTable tableCategorias;
 
 	private List<CategoriaDto> categoriasCreacion = null;
+	private List<CategoriaDto> categoriasFiltrado = null;
 
 	/**
 	 * Create the frame.
@@ -700,7 +701,7 @@ public class MainWindow extends JFrame {
 									("" + ((String) comboRegistroSexo.getSelectedItem()).charAt(0)),
 									chckbxRegistroDiscapacidad.isSelected() ? 1 : 0, textRegistroEmail.getText()));
 
-							String cate = Categoria.calculaCategoria(atletaActual.getEdad(), atletaActual.getSexo());
+							String cate = Categoria.calculaCategoria(atletaActual, carreraActual);
 							atletaActual.setCategoria(cate);
 							showCard(PANEL_ATLETA);
 							cleanRegistro();
@@ -949,7 +950,7 @@ public class MainWindow extends JFrame {
 		else {
 			if (new ExisteAtletaByEmail().execute(email)) {
 				setAtletaActual(new ReadAtletaByEmail(email).execute());
-				atletaActual.setCategoria(Categoria.calculaCategoria(atletaActual.getEdad(), atletaActual.getSexo()));
+				atletaActual.setCategoria(Categoria.calculaCategoria(atletaActual, carreraActual));
 				System.out.println(atletaActual.getCategoria());
 
 				showCard(PANEL_ATLETA);
@@ -970,6 +971,8 @@ public class MainWindow extends JFrame {
 			JButton btnCrearCarreras = new JButton("Crear Carreras");
 			btnCrearCarreras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					categoriasCreacion = new ArrayList<CategoriaDto>();
+					categoriasFiltrado = new ArrayList<CategoriaDto>();
 					showCard(PANEL_CREACION_CARRERAS);
 				}
 			});
@@ -1237,8 +1240,8 @@ public class MainWindow extends JFrame {
 		for (InscripcionDto inscripcionDto : atletas) {
 
 			String[] alluneedislove = { inscripcionDto.getAtleta().getDNI(), inscripcionDto.getAtleta().getNombre(),
-					Categoria.calculaCategoria(inscripcionDto.getAtleta().getEdad(),
-							inscripcionDto.getAtleta().getSexo()),
+					Categoria.calculaCategoria(inscripcionDto.getAtleta(),
+							inscripcionDto.getCarrera()),
 					String.valueOf(inscripcionDto.getFechaInscripcion()), inscripcionDto.getEstadoInscripcion() };
 
 			tablaAtletasInscritosX.addRow(alluneedislove);
@@ -1938,7 +1941,7 @@ public class MainWindow extends JFrame {
 	
 	private boolean existeEseRangoDeEdad(int init, int fin) {
 		if(categoriasCreacion.isEmpty()) {
-			return true;//ARREGLAR ESTO
+			return true;
 		}
 		for(CategoriaDto cat : categoriasCreacion) {
 			if(init>= cat.edadInic && fin<=cat.edadFin)
@@ -1952,13 +1955,14 @@ public class MainWindow extends JFrame {
 			JOptionPane.showMessageDialog(null, "Error: Al crear las categorías no puedes dejar valores vacios.");
 		}
 		else {
-			categoriasCreacion = new ArrayList<CategoriaDto>();
 			CategoriaDto cat = new CategoriaDto();
 			cat.nombre = txtNombreCat.getText();
 			cat.edadInic = Integer.parseInt(txtEdadMin.getText());
 			cat.edadFin = Integer.parseInt(txtEdadMax.getText());
 			if(existeEseRangoDeEdad(cat.edadInic, cat.edadFin)) {
+				categoriasFiltrado = new ArrayList<CategoriaDto>();
 				categoriasCreacion.add(cat);
+				categoriasFiltrado.add(cat);
 				cargarTablaCategoria();
 			}
 			else {
@@ -1969,6 +1973,13 @@ public class MainWindow extends JFrame {
 	}
 	
 	public void cargarTablaCategoria() {		
+		for (CategoriaDto dto : categoriasFiltrado ) {
+			String[] categoriasTabla = { dto.nombre, String.valueOf(dto.edadInic), String.valueOf(dto.edadFin) };
+			tablaCategorias.addRow(categoriasTabla);
+		}
+	}
+	
+	public void cargarTablaCategoriaPostDelete() {		
 		for (CategoriaDto dto : categoriasCreacion ) {
 			String[] categoriasTabla = { dto.nombre, String.valueOf(dto.edadInic), String.valueOf(dto.edadFin) };
 			tablaCategorias.addRow(categoriasTabla);
@@ -1982,7 +1993,7 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					if(checkIfSelectedCategory()) {
 						reset(tablaCategorias);
-						cargarTablaCategoria();
+						cargarTablaCategoriaPostDelete();
 					}
 				}
 			});

@@ -28,4 +28,5 @@ public class CategoriaDto {
 	public String nombre;
 	public int edadInic;
 	public int edadFin;
+	public String carrera_id;
 }

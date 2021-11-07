@@ -14,6 +14,7 @@ public class SQLStrings {
 
 	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2, nombre varchar2, fecha date, tipo varchar2, distancia number, cuota number, fechaFinInsc date, plazasDisp number, maxPlazas number not null, CONSTRAINT chk_tipo CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
 
+	public static String createCategoria = "CREATE TABLE categoria (idCarrera varchar2, nombreCategoria varchar2, integer edadInicio, integer edadFin, primary key (idCarrera, nombreCategoria))";
 	// inserts
 
 	public static String insertBolt = "Insert into atleta values('69','11122234A','Bolt',35,'F',0, 'manolo@mnaolo'); ";
@@ -32,7 +33,7 @@ public class SQLStrings {
 
 	public static String insertAtletaValues = "insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado, email) values (?, ?, ?, ?, ?, ?, ?)";
 	public static String insertInscripcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
-
+	public static String insertCategoriaValues = "insert into categoria(idCarrera, nombreCategoria, edadInicio, edadFin) values (?, ?, ?, ?)";
 	
 	// selects
 
@@ -47,6 +48,8 @@ public class SQLStrings {
 	public static String existeAtletaByEmail = "select * from atleta where email = ?";
 
 	public static String estaLlenaLaLista = "select count(*) from inscripcion i where i.idcarrera = ?";
+	
+	public static String categoriaParticipante = "select * from categoria where idCarrera = ?";
 
 	// Consulta para el metodo estadoInscripcion
 
