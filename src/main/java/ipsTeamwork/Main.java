@@ -18,9 +18,13 @@ public class Main {
 		
 		GestorDB db = new GestorDB();
 		
+		db.crearTablas();
 		db.borrarTablas();
 		db.crearTablas();
 		db.poblarTablas();
+		
+		db.pruebasImportarTiempos();
+
 		
 		
 		System.out.println("Listado de carreras.");
@@ -43,6 +47,7 @@ public class Main {
 		System.out.println();
 		System.out.println();
 		System.out.println();
+		
 
 //		
 //		System.out.println("Clasificacion general.");

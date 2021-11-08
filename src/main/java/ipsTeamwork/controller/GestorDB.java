@@ -10,22 +10,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
 import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.atleta.crud.ListarAtletasArray;
 import ipsTeamwork.model.carrera.CarreraDto;
+import ipsTeamwork.model.categoria.CategoriaDto;
+import ipsTeamwork.model.categoria.crud.AddCategoria;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.util.DateUtil;
 import ipsTeamwork.util.DtoBuilder;
 
-/**
- * Clase que accede a la base de datos y tiene métodos para sacar y añadir datos
- * 
- * @author Sergio Arroni del Riego
- *
- */
 public class GestorDB {
 
 	private Connection conn = null;
@@ -35,7 +32,7 @@ public class GestorDB {
 	private ResultSet rs = null;
 
 	/**
-	 * Método que establece una conexion con la base de datos.
+	 * Metodo que establece una conexion con la base de datos.
 	 */
 	private void conectar() {
 		try {
@@ -78,12 +75,22 @@ public class GestorDB {
 	public void crearTablas() {
 		conectar();
 		try {
-
+//			pst = conn.prepareStatement(SQLStrings.dropCategoria);
+//			pst.execute();
+//			pst = conn.prepareStatement(SQLStrings.dropInscripcion);
+//			pst.execute();			
+//			pst = conn.prepareStatement(SQLStrings.dropCarrera);
+//			pst.execute();
+//			pst = conn.prepareStatement(SQLStrings.dropAtleta);
+//			pst.execute();
+			
 			pst = conn.prepareStatement(SQLStrings.createAtleta);
 			pst.execute();
 			pst = conn.prepareStatement(SQLStrings.createCarrera);
 			pst.execute();
 			pst = conn.prepareStatement(SQLStrings.createInscripcion);
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.createCategoria);
 			pst.execute();
 
 		} catch (SQLException e) {
@@ -267,6 +274,8 @@ public class GestorDB {
 		}
 		return carreras.get(0);
 	}
+	
+	
 
 	/**
 	 * @author Sergio Arroni
@@ -300,57 +309,94 @@ public class GestorDB {
 		return carreras;
 	}
 
-	public ArrayList<InscripcionDto> getArrayClasificaciones() {
+	public ArrayList<InscripcionDto> getArrayClasificaciones(String idCarrera) {
 		conectar();
 
 		ArrayList<InscripcionDto> inscripciones = new ArrayList<InscripcionDto>();
 		try {
-			PreparedStatement ps = conn.prepareStatement(SQLStrings.clasificacionGeneralPresentados);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.selectInscripcionByIDCarrera);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+			ps.setString(1, idCarrera);
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-
+				
 				InscripcionDto inscripcion = new InscripcionDto();
 				inscripcion.setAtleta(new AtletaDto());
+				inscripcion.setCarrera(new CarreraDto());
 
-				inscripcion.getAtleta().setNombre(rs.getString(2));
-				inscripcion.getAtleta().setSexo(rs.getString(1));
-				inscripcion.setTiempoCorriendo(Integer.toString(rs.getInt(3)));
+
+				inscripcion.getAtleta().setIdAtleta(rs.getString(1));
+				
+
+				
+				PreparedStatement psAtleta = conn.prepareStatement(SQLStrings.selectAtletaById);
+				psAtleta.setString(1, rs.getString(1));
+				
+				ResultSet rsAtleta = psAtleta.executeQuery();
+				
+				inscripcion.getAtleta().setSexo(rsAtleta.getString(5));
+				inscripcion.getAtleta().setNombre(rsAtleta.getString(3));
+
+				
+				inscripcion.getCarrera().setIdCarrera(rs.getString(2));
+				inscripcion.setDorsal(rs.getString(3));
+				inscripcion.setFechaInscripcion(rs.getDate(4));
+				inscripcion.setEstadoInscripcion(rs.getString(5));
+				inscripcion.setFormaDePago(rs.getString(6));
+				inscripcion.setTiempoCorriendo(rs.getString(7));
+				inscripcion.setCategoria(rs.getString(8));
 
 				inscripciones.add(inscripcion);
 			}
-
-			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoFinaliza);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-			rs = ps.executeQuery();
-
-			while (rs.next()) {
-
-				InscripcionDto inscripcion = new InscripcionDto();
-				inscripcion.setAtleta(new AtletaDto());
-
-				inscripcion.getAtleta().setNombre(rs.getString(2));
-				inscripcion.getAtleta().setSexo(rs.getString(1));
-				inscripcion.setTiempoCorriendo("NF");
-
-				inscripciones.add(inscripcion);
-			}
-
-			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoPresentados);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-			rs = ps.executeQuery();
-
-			while (rs.next()) {
-
-				InscripcionDto inscripcion = new InscripcionDto();
-
-				inscripcion.setAtleta(new AtletaDto());
-
-				inscripcion.getAtleta().setSexo(rs.getString(1));
-
-				inscripcion.getAtleta().setNombre(rs.getString(2));
-				inscripcion.setTiempoCorriendo("NP");
-
-				inscripciones.add(inscripcion);
-			}
+			
+//			PreparedStatement ps = conn.prepareStatement(SQLStrings.clasificacionGeneralPresentados);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+//			ResultSet rs = ps.executeQuery();
+//
+//			while (rs.next()) {
+//
+//				InscripcionDto inscripcion = new InscripcionDto();
+//				inscripcion.setAtleta(new AtletaDto());
+//
+//				inscripcion.getAtleta().setNombre(rs.getString(2));
+//				inscripcion.getAtleta().setSexo(rs.getString(1));
+//				
+//				inscripcion.setTiempoCorriendo(Integer.toString(rs.getInt(3)));
+//				
+//
+//				inscripciones.add(inscripcion);
+//			}
+////
+//			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoFinaliza);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+//			rs = ps.executeQuery();
+//
+//			while (rs.next()) {
+//
+//				InscripcionDto inscripcion = new InscripcionDto();
+//				inscripcion.setAtleta(new AtletaDto());
+//
+//				inscripcion.getAtleta().setNombre(rs.getString(2));
+//				inscripcion.getAtleta().setSexo(rs.getString(1));
+//				inscripcion.setTiempoCorriendo("NF");
+//
+//				inscripciones.add(inscripcion);
+//			}
+//
+//			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoPresentados);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+//			rs = ps.executeQuery();
+//
+//			while (rs.next()) {
+//
+//				InscripcionDto inscripcion = new InscripcionDto();
+//
+//				inscripcion.setAtleta(new AtletaDto());
+//
+//				inscripcion.getAtleta().setSexo(rs.getString(1));
+//
+//				inscripcion.getAtleta().setNombre(rs.getString(2));
+//				inscripcion.setTiempoCorriendo("NP");
+//
+//				inscripciones.add(inscripcion);
+//			}
 
 		} catch (SQLException e) {
 			System.out.println("Error de script de DB: " + e.getMessage());
@@ -360,115 +406,8 @@ public class GestorDB {
 		return inscripciones;
 	}
 
-	public ArrayList<InscripcionDto> getArrayClasificacionesHombres() {
-		conectar();
-
-		ArrayList<InscripcionDto> inscripciones = new ArrayList<InscripcionDto>();
-		try {
-			PreparedStatement ps = conn.prepareStatement(SQLStrings.clasificacionGeneralPresentadosHombres);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-			ResultSet rs = ps.executeQuery();
-
-			while (rs.next()) {
-
-				InscripcionDto inscripcion = new InscripcionDto();
-				inscripcion.setAtleta(new AtletaDto());
-
-				inscripcion.getAtleta().setNombre(rs.getString(1));
-				inscripcion.setTiempoCorriendo(Integer.toString(rs.getInt(2)));
-
-				inscripciones.add(inscripcion);
-			}
-
-			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoFinalizaHombres);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-			rs = ps.executeQuery();
-
-			while (rs.next()) {
-
-				InscripcionDto inscripcion = new InscripcionDto();
-				inscripcion.setAtleta(new AtletaDto());
-
-				inscripcion.getAtleta().setNombre(rs.getString(1));
-				inscripcion.setTiempoCorriendo("NF");
-
-				inscripciones.add(inscripcion);
-			}
-
-			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoPresentadosHombres);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-			rs = ps.executeQuery();
-
-			while (rs.next()) {
-
-				InscripcionDto inscripcion = new InscripcionDto();
-				inscripcion.setAtleta(new AtletaDto());
-
-				inscripcion.getAtleta().setNombre(rs.getString(1));
-				inscripcion.setTiempoCorriendo("NP");
-
-				inscripciones.add(inscripcion);
-			}
-
-		} catch (SQLException e) {
-			System.out.println("Error de script de DB: " + e.getMessage());
-		} finally {
-			cerrar();
-		}
-		return inscripciones;
-	}
-
-	public ArrayList<InscripcionDto> getArrayClasificacionesMujeres() {
-		conectar();
-
-		ArrayList<InscripcionDto> inscripciones = new ArrayList<InscripcionDto>();
-		try {
-			PreparedStatement ps = conn.prepareStatement(SQLStrings.clasificacionGeneralPresentadosMujeres);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-			ResultSet rs = ps.executeQuery();
-
-			while (rs.next()) {
-
-				InscripcionDto inscripcion = new InscripcionDto();
-				inscripcion.setAtleta(new AtletaDto());
-
-				inscripcion.getAtleta().setNombre(rs.getString(1));
-				inscripcion.setTiempoCorriendo(Integer.toString(rs.getInt(2)));
-
-				inscripciones.add(inscripcion);
-			}
-
-			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoFinalizaMujeres);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-			rs = ps.executeQuery();
-
-			while (rs.next()) {
-
-				InscripcionDto inscripcion = new InscripcionDto();
-				inscripcion.setAtleta(new AtletaDto());
-
-				inscripcion.getAtleta().setNombre(rs.getString(1));
-				inscripcion.setTiempoCorriendo("NF");
-
-				inscripciones.add(inscripcion);
-			}
-
-			ps = conn.prepareStatement(SQLStrings.clasificacionGeneralNoPresentadosMujeres);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-			rs = ps.executeQuery();
-
-			while (rs.next()) {
-
-				InscripcionDto inscripcion = new InscripcionDto();
-				inscripcion.setAtleta(new AtletaDto());
-
-				inscripcion.getAtleta().setNombre(rs.getString(1));
-				inscripcion.setTiempoCorriendo("NP");
-
-				inscripciones.add(inscripcion);
-			}
-
-		} catch (SQLException e) {
-			System.out.println("Error de script de DB: " + e.getMessage());
-		} finally {
-			cerrar();
-		}
-		return inscripciones;
-	}
+	
+	
 
 	public void selectInscripcion() {
 		conectar();
@@ -558,6 +497,11 @@ public class GestorDB {
 				InscripcionDto inscripcion = new InscripcionDto();
 				pst2.setString(1, rs.getString("idAtleta"));
 				AtletaDto nuevoAtleta = new AtletaDto();
+				
+				CarreraDto cdto = new CarreraDto();
+				cdto.setIdCarrera(idCarrera);
+				inscripcion.setCarrera(cdto);
+				
 				rs2 = pst2.executeQuery();
 
 				while (rs2.next()) {
@@ -594,8 +538,26 @@ public class GestorDB {
 	 */
 	public void poblarTablas() {
 		poblarCarreras(20);
-		poblarAtletas(20);
+		poblarAtletas(20);		
 		poblarInscripciones(20);
+		poblarCategorias();
+	}
+
+	private void poblarCategorias() {
+		List<CarreraDto> carreras = listarCarreras();
+		
+		for (int i = 0; i < carreras.size(); i++) {
+			CarreraDto c =  carreras.get(i);
+			
+			CategoriaDto cat = new CategoriaDto();
+			
+			cat.carrera_id = c.getIdCarrera();
+			cat.edadFin = 50;
+			cat.edadInic = 18;
+			cat.nombre = "cat " + c.getNombre() + " | 18 a 50";
+			
+			new AddCategoria(cat).execute();
+		}
 	}
 
 	private void poblarInscripciones(int num) {
@@ -746,65 +708,9 @@ public class GestorDB {
 
 	}
 
-	public void obtenerClasificacionGeneralHombres() {
+	
 
-		conectar();
-		try {
-
-			pst = conn.prepareStatement(SQLStrings.clasificacionGeneralPresentadosHombres);
-
-			rs = pst.executeQuery();
-
-			int valor = printResultSetOrdenadoClasificaciones(rs, 1, true);
-
-			pst = conn.prepareStatement(SQLStrings.clasificacionGeneralNoFinalizaHombres);
-
-			rs = pst.executeQuery();
-
-			int valor2 = printResultSetOrdenadoClasificaciones(rs, valor, false);
-
-			pst = conn.prepareStatement(SQLStrings.clasificacionGeneralNoPresentadosHombres);
-
-			rs = pst.executeQuery();
-
-			printResultSetOrdenadoClasificaciones(rs, valor2, false);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			cerrar();
-		}
-
-	}
-
-	public void obtenerClasificacionGeneralMujeres() {
-		conectar();
-		try {
-
-			pst = conn.prepareStatement(SQLStrings.clasificacionGeneralPresentadosMujeres);
-
-			rs = pst.executeQuery();
-
-			int valor = printResultSetOrdenadoClasificaciones(rs, 1, true);
-
-			pst = conn.prepareStatement(SQLStrings.clasificacionGeneralNoFinalizaMujeres);
-
-			rs = pst.executeQuery();
-
-			int valor2 = printResultSetOrdenadoClasificaciones(rs, valor, false);
-
-			pst = conn.prepareStatement(SQLStrings.clasificacionGeneralNoPresentadosMujeres);
-
-			rs = pst.executeQuery();
-
-			printResultSetOrdenadoClasificaciones(rs, valor2, false);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			cerrar();
-		}
-	}
+	
 
 	public List<CarreraDto> listarCarreras() {
 		List<CarreraDto> ret = null;
@@ -840,5 +746,56 @@ public class GestorDB {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+	}
+
+	public void pruebasImportarTiempos() {
+		insertarCarreraPredefinida();
+		insertarAtletaPredefinido();
+		insertarInscripcionPredefinida();
+		
+	}
+
+	private void insertarInscripcionPredefinida() {
+		conectar();
+		try {
+			pst = conn.prepareStatement(SQLStrings.insertInscripcionPredefinida);
+			pst.setDate(1, new java.sql.Date(new Date().getTime()));
+			pst.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			cerrar();
+		}
+		
+	}
+
+	private void insertarAtletaPredefinido() {
+		
+			conectar();
+			try {
+				pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido);
+				pst.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				cerrar();
+			}
+		
+		
+	}
+
+	private void insertarCarreraPredefinida() {
+		conectar();
+		try {
+			pst = conn.prepareStatement(SQLStrings.insertCarreraPredefinida);
+			
+			pst.setDate(1, java.sql.Date.valueOf("2022-03-31"));
+			pst.setDate(2, java.sql.Date.valueOf("2023-03-31"));
+			pst.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			cerrar();
+		}		
 	}
 }

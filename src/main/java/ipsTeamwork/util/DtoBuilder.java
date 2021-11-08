@@ -105,6 +105,7 @@ public class DtoBuilder {
 
 		try {
 			while (rs.next()) {
+				dto = new CategoriaDto();
 				dto.carrera_id = rs.getString(1);
 				dto.nombre = rs.getString(2);
 				dto.edadInic = rs.getInt(3);

@@ -26,9 +26,8 @@ public class AddCategoria {
 			pst.setInt(4, Categoria.edadFin);
 			pst.executeUpdate();
 			pst.close();
-
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		} finally {
 			gdb.cerrarCon();
 		}

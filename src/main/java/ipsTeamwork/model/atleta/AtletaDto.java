@@ -14,11 +14,11 @@ public class AtletaDto {
 	private String sexo;
 	private boolean discapacitado;
 	private String email;
-	private String categoria;
+	//private String categoria;
 	
-	public String getCategoria() {
-		return categoria;
-	}
+//	public String getCategoria() {
+//		return categoria;
+//	}
 
 	public AtletaDto() {
 		
@@ -33,9 +33,9 @@ public class AtletaDto {
 		this.email = email;
 	}
 
-	public void setCategoria(String categoria) {
-		this.categoria = categoria;
-	}
+//	public void setCategoria(String categoria) {
+//		this.categoria = categoria;
+//	}
 
 	/**
 	 * @return the dNI

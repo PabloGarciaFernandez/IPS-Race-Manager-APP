@@ -11,7 +11,13 @@ import ipsTeamwork.model.categoria.CategoriaDto;
 import ipsTeamwork.util.DtoBuilder;
 
 public class FindCategoria {
-	public List<CategoriaDto> execute(String idCarrera) {
+	private String idCarrera;
+	
+	public FindCategoria(String id) {
+		this.idCarrera = id;
+	}
+	
+	public List<CategoriaDto> execute() {
 		GestorDB gdb = new GestorDB();
 		Connection c = gdb.getConnection();
 		ResultSet rs = null;
@@ -26,7 +32,7 @@ public class FindCategoria {
 			rs.close();
 			pst.close();
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		} finally {
 			gdb.cerrarCon();
 		}
