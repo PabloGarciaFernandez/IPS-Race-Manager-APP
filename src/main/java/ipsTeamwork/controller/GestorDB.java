@@ -92,6 +92,8 @@ public class GestorDB {
 			pst.execute();
 			pst = conn.prepareStatement(SQLStrings.createCategoria);
 			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.createPago);
+			pst.execute();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -108,6 +110,9 @@ public class GestorDB {
 	public void borrarTablas() {
 		conectar();
 		try {
+			pst = conn.prepareStatement("drop table categoria");
+			pst.execute();
+			
 			pst = conn.prepareStatement("drop table atleta");
 			pst.execute();
 
@@ -115,6 +120,9 @@ public class GestorDB {
 			pst.execute();
 
 			pst = conn.prepareStatement("drop table inscripcion");
+			pst.execute();
+			
+			pst = conn.prepareStatement("drop table pago");
 			pst.execute();
 
 		} catch (SQLException e) {
@@ -124,9 +132,9 @@ public class GestorDB {
 		}
 	}
 
-	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇
+	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ 
 	// |INSERT DATOS |
-	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭
+	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭
 
 	public void insertarAtleta() {
 		conectar();
@@ -248,6 +256,21 @@ public class GestorDB {
 			cerrar();
 		}
 	}
+	
+	public void selectPagos() {
+		conectar();
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.selectAllPago);
+			ResultSet rs = ps.executeQuery();
+
+			printResultSet(rs);
+
+		} catch (SQLException e) {
+			System.out.println("Error de script de DB: " + e.getMessage());
+		} finally {
+			cerrar();
+		}
+	}
 
 	/**
 	 * @author Sergio Arroni
@@ -272,7 +295,8 @@ public class GestorDB {
 		} finally {
 			cerrar();
 		}
-		return carreras.get(0);
+		if (carreras.size() < 1) return null;
+		else return carreras.get(0);
 	}
 	
 	
@@ -554,8 +578,9 @@ public class GestorDB {
 			cat.carrera_id = c.getIdCarrera();
 			cat.edadFin = 50;
 			cat.edadInic = 18;
-			cat.nombre = "cat " + c.getNombre() + " | 18 a 50";
+			cat.nombre = "cat " + c.getNombre().substring(5) + " | 18 a 50";
 			
+			System.out.println(cat.nombre);
 			new AddCategoria(cat).execute();
 		}
 	}

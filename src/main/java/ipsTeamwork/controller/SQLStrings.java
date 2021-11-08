@@ -17,8 +17,10 @@ public class SQLStrings {
 
 	public static String createCategoria = "CREATE TABLE categoria (idCarrera varchar2, nombreCategoria varchar2, edadInicio integer, edadFin integer, primary key (idCarrera, nombreCategoria))";
 
-	// inserts
+	public static String createPago = "create table pago (idPago varchar2, idCarrera varchar2, dniAtleta varchar2, fecha date, importe number, primary key (idPago))";
 	
+	
+	// inserts
 	public static String insertAtletaPredefinido = "Insert into atleta values ('idMariano', 'dniMariano', 'Mariano Rajoy', 45, 'M', 1, 'mariano@gmail.com');";
 
 	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?, 'Asfalto', 100, 20, ?, 120, 120);";
@@ -26,6 +28,7 @@ public class SQLStrings {
 	public static String insertInscripcionPredefinida = "Insert into inscripcion values ('idMariano', 'idMaratonMadrid', '1', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano');";
 
 	
+	// inserts
 	public static String insertBolt = "Insert into atleta values('69','11122234A','Bolt',35,'F',0, 'manolo@mnaolo'); ";
 
 	public static String insertUsain = "Insert into atleta values('96','11122233A','Usain',25,'M',1); ";
@@ -43,13 +46,12 @@ public class SQLStrings {
 	
 	
 	public static String insertAtletaValues = "insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado, email) values (?, ?, ?, ?, ?, ?, ?)";
+	
 	public static String insertInscripcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
+
 	public static String insertCategoriaValues = "insert into categoria(idCarrera, nombreCategoria, edadInicio, edadFin) values (?, ?, ?, ?)";
 	
-	
-	
-	
-	// selects
+
 
 	
 	public static String selectAtletaById = "select * from atleta where idAtleta = ?";
@@ -57,6 +59,8 @@ public class SQLStrings {
 	public static String selectAllAtleta = "select * from atleta";
 
 	public static String selectAllCarrera = "select * from carrera";
+	
+	public static String selectAllPago = "select * from pago";
 
 	public static String selectCarreraByNombre = "select * from carrera where nombre = ?";
 
@@ -69,7 +73,6 @@ public class SQLStrings {
 	public static String categoriaParticipante = "select * from categoria where idCarrera = ?";
 
 	// Consulta para el metodo estadoInscripcion
-
 	protected static String estadoInscripcion = "select * from inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' order by fechaInscripcion, estadoInscripcion";
 
 	protected static String estadoInscripcionAtleta = "select * from atleta where idAtleta = ?";

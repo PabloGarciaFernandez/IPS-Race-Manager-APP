@@ -6,19 +6,17 @@ import javax.swing.UIManager;
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.view.MainWindow;
 
-public class Main {
+public class Main { //rama 15298
 
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel("com.jtattoo.plaf.texture.TextureLookAndFeel");
 		} catch (Exception e) {
 			System.out.println("Algo malo paso: " + e.getMessage());
-		}
-		
+		}		
 		
 		GestorDB db = new GestorDB();
 		
-		db.crearTablas();
 		db.borrarTablas();
 		db.crearTablas();
 		db.poblarTablas();
