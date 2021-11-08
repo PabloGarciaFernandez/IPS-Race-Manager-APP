@@ -31,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.model.atleta.AtletaDto;
+import ipsTeamwork.model.atleta.crud.AddAtleta;
 import ipsTeamwork.model.atleta.crud.ExisteAtletaByEmail;
 import ipsTeamwork.model.atleta.crud.FindAtletaInCarrera;
 import ipsTeamwork.model.atleta.crud.ReadAtletaByEmail;
@@ -78,11 +79,9 @@ public class MainWindow extends JFrame {
 	private JButton btnListaAtras;
 	private JPanel pnRegistro;
 	private JPanel pnRegistroCenter;
-	private JTextField textRegistroEmail;
 	private JTextField textRegistroEdad;
 	private JTextField textRegistroNombre;
 	private JTextField textRegistroApellidos;
-	private JLabel lblRegistroEmail;
 	private JLabel lblRegistroRegistroEdad;
 	private JLabel lblRegistroNombre;
 	private JLabel lblRegistroApellidos;
@@ -231,7 +230,7 @@ public class MainWindow extends JFrame {
 			btnAtleta.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnAtleta.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_INGRESO);
+					showCard(PANEL_ATLETA);
 				}
 			});
 			btnAtleta.setBounds(241, 345, 146, 23);
@@ -305,15 +304,39 @@ public class MainWindow extends JFrame {
 //					DefaultTableModel tbVerAtletasMisCarreras = (DefaultTableModel) tb.getModel();
 //
 //					reset(tbVerAtletasMisCarreras);
-
-					showCard(PANEL_LISTA_INSCRIPCIONES);
-					((PanelListarInscripciones) pnVistaInscripcionesAtleta).cargarInscripcionesEnTabla();
+					misCarrerasMeth();
+					
 				}
 			});
 			btnMisCarreras.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnMisCarreras.setBounds(210, 247, 435, 46);
 		}
 		return btnMisCarreras;
+	}
+	
+	private void misCarrerasMeth() {
+		if(atletaActual != null) {
+			setAtletaActual(atletaActual);
+			((PanelListarInscripciones) pnVistaInscripcionesAtleta).cargarInscripcionesEnTabla();
+			showCard(PANEL_LISTA_INSCRIPCIONES);						
+		}
+		else {
+			String name = JOptionPane.showInputDialog("Introduce el correo de atleta: ");
+			if(!name.trim().equals("")) {
+				atletaActual = new ReadAtletaByEmail(name).execute();
+				setAtletaActual(atletaActual);
+				if(atletaActual != null) {
+					((PanelListarInscripciones) pnVistaInscripcionesAtleta).cargarInscripcionesEnTabla();
+					showCard(PANEL_LISTA_INSCRIPCIONES);
+				}
+				else {
+					JOptionPane.showMessageDialog(null, "Error: Atleta no existente");
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(null, "Introduce un email");
+			}
+		}
 	}
 
 	public void showCard(String name) {
@@ -431,8 +454,6 @@ public class MainWindow extends JFrame {
 			btnListaInscribirse = new JButton("Inscribirse");
 			btnListaInscribirse.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// if selected from table register person into race.
-					// then printear justificante. CosasAMover.printJustificante(email);
 					inscribirAtleta();
 				}
 			});
@@ -534,11 +555,9 @@ public class MainWindow extends JFrame {
 		if (pnRegistroCenter == null) {
 			pnRegistroCenter = new JPanel();
 			pnRegistroCenter.setLayout(null);
-			pnRegistroCenter.add(getTextRegistroEmail());
 			pnRegistroCenter.add(getTextRegistroEdad());
 			pnRegistroCenter.add(getTextRegistroNombre());
 			pnRegistroCenter.add(getTextRegistroApellidos());
-			pnRegistroCenter.add(getLblRegistroEmail());
 			pnRegistroCenter.add(getLblRegistroRegistroEdad());
 			pnRegistroCenter.add(getLblRegistroNombre());
 			pnRegistroCenter.add(getLblRegistroApellidos());
@@ -572,22 +591,12 @@ public class MainWindow extends JFrame {
 		return pnPagoTarjetaCenter;
 	}
 
-	private JTextField getTextRegistroEmail() {
-		if (textRegistroEmail == null) {
-			textRegistroEmail = new JTextField();
-			textRegistroEmail.setFont(new Font("Arial", Font.PLAIN, 14));
-			textRegistroEmail.setColumns(10);
-			textRegistroEmail.setBounds(169, 99, 370, 20);
-		}
-		return textRegistroEmail;
-	}
-
 	private JTextField getTextRegistroEdad() {
 		if (textRegistroEdad == null) {
 			textRegistroEdad = new JTextField();
 			textRegistroEdad.setFont(new Font("Arial", Font.PLAIN, 14));
 			textRegistroEdad.setColumns(10);
-			textRegistroEdad.setBounds(169, 161, 370, 20);
+			textRegistroEdad.setBounds(169, 223, 370, 20);
 		}
 		return textRegistroEdad;
 	}
@@ -597,7 +606,7 @@ public class MainWindow extends JFrame {
 			textRegistroNombre = new JTextField();
 			textRegistroNombre.setFont(new Font("Arial", Font.PLAIN, 14));
 			textRegistroNombre.setColumns(10);
-			textRegistroNombre.setBounds(169, 192, 370, 20);
+			textRegistroNombre.setBounds(169, 130, 370, 20);
 		}
 		return textRegistroNombre;
 	}
@@ -607,25 +616,16 @@ public class MainWindow extends JFrame {
 			textRegistroApellidos = new JTextField();
 			textRegistroApellidos.setFont(new Font("Arial", Font.PLAIN, 14));
 			textRegistroApellidos.setColumns(10);
-			textRegistroApellidos.setBounds(169, 223, 370, 20);
+			textRegistroApellidos.setBounds(169, 161, 370, 20);
 		}
 		return textRegistroApellidos;
-	}
-
-	private JLabel getLblRegistroEmail() {
-		if (lblRegistroEmail == null) {
-			lblRegistroEmail = new JLabel("Email:");
-			lblRegistroEmail.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblRegistroEmail.setBounds(46, 99, 80, 20);
-		}
-		return lblRegistroEmail;
 	}
 
 	private JLabel getLblRegistroRegistroEdad() {
 		if (lblRegistroRegistroEdad == null) {
 			lblRegistroRegistroEdad = new JLabel("Edad:");
 			lblRegistroRegistroEdad.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblRegistroRegistroEdad.setBounds(46, 161, 80, 20);
+			lblRegistroRegistroEdad.setBounds(46, 223, 80, 20);
 		}
 		return lblRegistroRegistroEdad;
 	}
@@ -634,7 +634,7 @@ public class MainWindow extends JFrame {
 		if (lblRegistroNombre == null) {
 			lblRegistroNombre = new JLabel("Nombre:");
 			lblRegistroNombre.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblRegistroNombre.setBounds(46, 192, 80, 20);
+			lblRegistroNombre.setBounds(46, 130, 80, 20);
 		}
 		return lblRegistroNombre;
 	}
@@ -643,7 +643,7 @@ public class MainWindow extends JFrame {
 		if (lblRegistroApellidos == null) {
 			lblRegistroApellidos = new JLabel("Apellidos:");
 			lblRegistroApellidos.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblRegistroApellidos.setBounds(46, 223, 80, 20);
+			lblRegistroApellidos.setBounds(46, 161, 80, 20);
 		}
 		return lblRegistroApellidos;
 	}
@@ -659,20 +659,25 @@ public class MainWindow extends JFrame {
 									textRegistroNombre.getText() + " " + textRegistroApellidos.getText(),
 									Integer.parseInt(textRegistroEdad.getText()),
 									("" + ((String) comboRegistroSexo.getSelectedItem()).charAt(0)),
-									chckbxRegistroDiscapacidad.isSelected() ? 1 : 0, textRegistroEmail.getText()));
+									chckbxRegistroDiscapacidad.isSelected() ? 1 : 0, textIngresoEmail.getText()));
 
 							String cate = Categoria.calculaCategoria(atletaActual.getEdad(), atletaActual.getSexo());
 							atletaActual.setCategoria(cate);
-							showCard(PANEL_ATLETA);
+							atletaActual.setIdAtleta(UUID.randomUUID().toString());
+							new AddAtleta(atletaActual).execute();
+							setAtletaActual(new ReadAtletaByEmail(textIngresoEmail.getText()).execute());
+							dbIngresoAtleta();
 							cleanRegistro();
-							JOptionPane.showMessageDialog(null, "Registro satisfactorio , bienvenido.");
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "No puedes participar siendo menor de edad");
 						}
 					}
 				}
 			});
 			btnRegistroSiguiente.setForeground(Color.BLACK);
 			btnRegistroSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnRegistroSiguiente.setBounds(452, 348, 121, 23);
+			btnRegistroSiguiente.setBounds(742, 438, 132, 35);
 		}
 		return btnRegistroSiguiente;
 	}
@@ -681,7 +686,6 @@ public class MainWindow extends JFrame {
 		textRegistroDNI.setText("");
 		textRegistroNombre.setText("");
 		textRegistroApellidos.setText("");
-		textRegistroEmail.setText("");
 		textRegistroEdad.setText("");
 		comboRegistroSexo.setSelectedIndex(-1);
 		chckbxRegistroDiscapacidad.setSelected(false);
@@ -709,11 +713,10 @@ public class MainWindow extends JFrame {
 				|| txPagoTarjetaNumero.getText().isEmpty() || txPagoTarjetaNumero.getText().isBlank());
 	}
 
-	private boolean isEmptyRegister() { // modificar de cara a siguientes sprints.
+	private boolean isEmptyRegister() {
 		return (textRegistroDNI.getText().isEmpty() || textRegistroNombre.getText().isEmpty()
-				|| textRegistroApellidos.getText().isEmpty() || textRegistroEmail.getText().isEmpty()
-				|| textRegistroEdad.getText().isEmpty()); // esto no va a funcionar
-															// comboRegistroSexo.getSelectedItem().equals(""));
+				|| textRegistroApellidos.getText().isEmpty()
+				|| textRegistroEdad.getText().isEmpty());
 	}
 
 	private JButton getBtnRegistroCancelar() {
@@ -721,19 +724,19 @@ public class MainWindow extends JFrame {
 			btnRegistroCancelar = new JButton("Cancelar");
 			btnRegistroCancelar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_INICIO);
+					showCard(PANEL_INGRESO);
 				}
 			});
 			btnRegistroCancelar.setForeground(Color.BLACK);
 			btnRegistroCancelar.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnRegistroCancelar.setBounds(10, 348, 95, 23);
+			btnRegistroCancelar.setBounds(32, 437, 134, 36);
 		}
 		return btnRegistroCancelar;
 	}
 
 	private JLabel getLblRegistro() {
 		if (lblRegistro == null) {
-			lblRegistro = new JLabel("REGISTRO DE CUENTA");
+			lblRegistro = new JLabel("REGISTRO DE ATLETA");
 			lblRegistro.setFont(new Font("Arial", Font.BOLD, 25));
 			lblRegistro.setBounds(37, 21, 691, 53);
 		}
@@ -762,7 +765,7 @@ public class MainWindow extends JFrame {
 		if (lblRegistroDNI == null) {
 			lblRegistroDNI = new JLabel("DNI:");
 			lblRegistroDNI.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblRegistroDNI.setBounds(46, 130, 80, 20);
+			lblRegistroDNI.setBounds(46, 192, 80, 20);
 		}
 		return lblRegistroDNI;
 	}
@@ -772,7 +775,7 @@ public class MainWindow extends JFrame {
 			textRegistroDNI = new JTextField();
 			textRegistroDNI.setFont(new Font("Arial", Font.PLAIN, 14));
 			textRegistroDNI.setColumns(10);
-			textRegistroDNI.setBounds(169, 130, 370, 20);
+			textRegistroDNI.setBounds(169, 192, 370, 20);
 		}
 		return textRegistroDNI;
 	}
@@ -854,7 +857,7 @@ public class MainWindow extends JFrame {
 			btnIngresoCancelar = new JButton("Cancelar");
 			btnIngresoCancelar.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_INICIO);
+					showCard(PANEL_LISTA_CARRERAS);
 				}
 			});
 			btnIngresoCancelar.setForeground(Color.BLACK);
@@ -881,26 +884,30 @@ public class MainWindow extends JFrame {
 
 	private void inscribirAtleta() {
 		if (checkCarreraRow() && checkIfParticipable()) {
-			if (new FindAtletaInCarrera().execute(atletaActual.getIdAtleta(), carreraActual.getIdCarrera())) {
-				String otro = "Nombre del corredor: " + atletaActual.getNombre()
-						+ "\nEstas apuntado a la carrera con nombre: " + carreraActual.getNombre()
-						+ "\nEn la categoria: " + atletaActual.getCategoria() + "\nCon fecha de inscripcion: "
-						+ new Date() + "\nTienes que pagar: " + carreraActual.getCuota();
+			showCard(PANEL_INGRESO);
+		}
+	}
+	
+	private void dbIngresoAtleta() {
+		if (new FindAtletaInCarrera().execute(atletaActual.getIdAtleta(), carreraActual.getIdCarrera())) {
+			String otro = "Nombre del corredor: " + atletaActual.getNombre()
+					+ "\nEstas apuntado a la carrera con nombre: " + carreraActual.getNombre()
+					+ "\nEn la categoria: " + atletaActual.getCategoria() + "\nCon fecha de inscripcion: "
+					+ new Date() + "\nTienes que pagar: " + carreraActual.getCuota();
 
-				System.out.println(carreraActual.getIdCarrera());
-				inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaActual, carreraActual,
-						UUID.randomUUID().toString().substring(0, 3), "Pre-Inscrito", new Date(), null);
-				
-				carreraActual.setPlazasDisp(carreraActual.getPlazasDisp()-1);
-				new UpdateCarrera().execute(carreraActual);
-				
-				JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, otro, "Justificante carrera",
-						JOptionPane.DEFAULT_OPTION);
-				showCard(PANEL_PAGARINSCRIPCION);
-				textIngresoEmail.setText("");
-			} else {
-				JOptionPane.showMessageDialog(this, "Error: Ya estas en esta carrera.");
-			}
+			System.out.println(carreraActual.getIdCarrera());
+			inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaActual, carreraActual,
+					UUID.randomUUID().toString().substring(0, 3), "Pre-Inscrito", new Date(), null);
+			
+			carreraActual.setPlazasDisp(carreraActual.getPlazasDisp()-1);
+			new UpdateCarrera().execute(carreraActual);
+			
+			JOptionPane.showConfirmDialog(btPagarInscripcionTransferencia, otro, "Justificante carrera",
+					JOptionPane.DEFAULT_OPTION);
+			showCard(PANEL_PAGARINSCRIPCION);
+			textIngresoEmail.setText("");
+		} else {
+			JOptionPane.showMessageDialog(this, "Error: Ya estas en esta carrera.");
 		}
 	}
 
@@ -913,9 +920,9 @@ public class MainWindow extends JFrame {
 				atletaActual.setCategoria(Categoria.calculaCategoria(atletaActual.getEdad(), atletaActual.getSexo()));
 				System.out.println(atletaActual.getCategoria());
 
-				showCard(PANEL_ATLETA);
+				dbIngresoAtleta();
 			} else {
-				JOptionPane.showMessageDialog(this, "No estás registrado.");
+				showCard(PANEL_REGISTRO);
 			}
 		}
 	}
