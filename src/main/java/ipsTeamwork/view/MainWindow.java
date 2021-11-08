@@ -1057,9 +1057,6 @@ public class MainWindow extends JFrame {
 		}
 		
 		
-		
-		
-		
 		computarEfectosPagos(carrera, pagos);
 	}
 
@@ -1651,15 +1648,15 @@ public class MainWindow extends JFrame {
 
 	private boolean checkeoCreacionCarreras() {
 		if (checkeoCarreraCampos()) {
-			JOptionPane.showMessageDialog(null, "Error: Al crear la carrera no puedes dejar valores vacios.");
+			JOptionPane.showMessageDialog(this, "Error: Al crear la carrera no puedes dejar valores vacios.");
 			return false;
 		}
 		if (checkeoCantidadCategorías()) {
-			JOptionPane.showMessageDialog(null, "Error: No puedes crear una carrera sin categorías");
+			JOptionPane.showMessageDialog(this, "Error: No puedes crear una carrera sin categorías");
 			return false;
 		}
 		if (checkFecha()) {
-			JOptionPane.showMessageDialog(null, "La fecha con formato yyyy-MM-dd");
+			JOptionPane.showMessageDialog(this, "La fecha debe tener el formato yyyy-mm-dd");
 			return false;
 		}
 		return true;
@@ -2202,7 +2199,7 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 				}
 			});
-			btnGenerarDorsalesVistaOrganizador.setBounds(767, 164, 97, 23);
+			btnGenerarDorsalesVistaOrganizador.setBounds(767, 164, 90, 23);
 		}
 		return btnGenerarDorsalesVistaOrganizador;
 	}

@@ -15,8 +15,6 @@ public static Map<String, String> cargarTiempos (String nombreFicheroEntradaCarr
 	    String[] datos= null;	 
 	    
 	    
-
-	    
 	    try {
 	    	   BufferedReader fichero= new BufferedReader(new FileReader("files/" + nombreFicheroEntradaCarrera+".txt"));
 	    		while (fichero.ready()) {
@@ -34,8 +32,6 @@ public static Map<String, String> cargarTiempos (String nombreFicheroEntradaCarr
 	    		}
 	    		
 	    		
-	    		
-	    		 
 	    		fichero.close();
 	    }
 	    catch (FileNotFoundException fnfe) {
