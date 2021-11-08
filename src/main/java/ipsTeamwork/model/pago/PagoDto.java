@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import ipsTeamwork.controller.GestorDB;
 
-public class Pago {
+public class PagoDto {
 	private String INSERT = "insert into pago(idPago, idCarrera, dniAtleta, fecha, importe) values (?, ?, ?, ?, ?)";
 	
 	@Override
@@ -24,13 +24,15 @@ public class Pago {
 	public String dni;
 	public String idCarrera;
 	
-	public Pago(Date d, double importe, String dni) {
+	public PagoDto(Date d, double importe, String dni) {
 		this.id = UUID.randomUUID().toString();
 		this.date = d;
 		this.importe = importe;
 		this.dni = dni;
 	}
 	
+	public PagoDto() {}
+
 	public void setIdCarrera(String id) {
 		this.idCarrera = id;
 	}

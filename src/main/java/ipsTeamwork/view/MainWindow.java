@@ -50,7 +50,7 @@ import ipsTeamwork.model.categoria.CategoriaDto;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
 import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtleta;
-import ipsTeamwork.model.pago.Pago;
+import ipsTeamwork.model.pago.PagoDto;
 import ipsTeamwork.util.DtoBuilder;
 import ipsTeamwork.util.FileUtil;
 import ipsTeamwork.util.Parser;
@@ -1021,7 +1021,7 @@ public class MainWindow extends JFrame {
 	
 	private void cargarPagos() {
 		String nombre = "";
-		List<Pago> pagos = null;
+		List<PagoDto> pagos = null;
 		
 		try {
 			nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
@@ -1050,21 +1050,51 @@ public class MainWindow extends JFrame {
 			e.printStackTrace();
 		}
 		
-		for (Iterator<Pago> iterator = pagos.iterator(); iterator.hasNext();) {
-			Pago pago = iterator.next();
+		for (Iterator<PagoDto> iterator = pagos.iterator(); iterator.hasNext();) {
+			PagoDto pago = iterator.next();
 			pago.setIdCarrera(carrera.getIdCarrera());
 			pago.autoInsert();
 		}
 		
-		new GestorDB().selectPagos();
 		
 		
 		
-		computarInscripcionesConPagos();
+		
+		computarEfectosPagos(carrera, pagos);
 	}
 
-	private void computarInscripcionesConPagos() {
+	private void computarEfectosPagos(CarreraDto para, List<PagoDto> pagos) {
+		List<InscripcionDto> inscripcionesParaCarrera = db.estadoInscripcion(para.getIdCarrera());
+		List<String> errores = new ArrayList<String>();
 		
+		for (PagoDto p : pagos) {
+			boolean carreraCorrecta = false;
+			for (InscripcionDto idto : inscripcionesParaCarrera) {
+				AtletaDto atletaDeInscripcion = new GestorDB().findAtletaById(idto.getIdAtleta());
+				
+				if (atletaDeInscripcion == null) continue;
+				
+				if (p.dni == atletaDeInscripcion.getDNI()) {
+					carreraCorrecta = true;
+					if (p.date.after(para.getFechaFin())) {
+						GestorDB.escribirIncidencia(idto, "Pago fuera de plazo. Devolver " + p.importe + "€");
+					} if (p.importe < para.getCuota()) {
+						GestorDB.escribirIncidencia(idto, "Pago insuficiente. Devolver " + p.importe + "€");
+					} if (p.importe > para.getCuota()) {
+						GestorDB.escribirIncidencia(idto, "Pago excede la cuota. Devolver " + (p.importe-para.getCuota()) + "€");
+						UpdateInscribirseAtleta.execute(idto, "INSCRITO");
+					} else {
+						UpdateInscribirseAtleta.execute(idto, "INSCRITO");
+					}
+				}
+			}
+			if (!carreraCorrecta) {
+				errores.add("Error: Dni " + p.dni + " ha hecho una transferencia de " + p.importe + "€ a una carrera en la que no está inscrito.");
+			}
+		}
+		
+		
+		JOptionPane.showMessageDialog(this, errores.toArray());
 	}
 
 	private JButton getBtVerVarrerasOrganizacion() {

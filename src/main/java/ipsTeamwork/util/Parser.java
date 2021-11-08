@@ -9,11 +9,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-import ipsTeamwork.model.pago.Pago;
+import ipsTeamwork.model.pago.PagoDto;
 
 public class Parser {
-	public static List<Pago> parsePaymentFile(File f, boolean debug) throws FileNotFoundException {
-		List<Pago> ret = new ArrayList<Pago>();
+	public static List<PagoDto> parsePaymentFile(File f, boolean debug) throws FileNotFoundException {
+		List<PagoDto> ret = new ArrayList<PagoDto>();
 		Scanner s = new Scanner(f);
 		
 		while(s.hasNextLine()) {
@@ -24,7 +24,7 @@ public class Parser {
 			
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			try {
-				Pago p = new Pago(format.parse(tokens[0]), Double.parseDouble(tokens[1]), tokens[2]);
+				PagoDto p = new PagoDto(format.parse(tokens[0]), Double.parseDouble(tokens[1]), tokens[2]);
 				ret.add(p);
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
@@ -33,8 +33,8 @@ public class Parser {
 			}			
 		}
 		
-		for (Iterator<Pago> iterator = ret.iterator(); iterator.hasNext();) {
-			Pago pago = iterator.next();
+		for (Iterator<PagoDto> iterator = ret.iterator(); iterator.hasNext();) {
+			PagoDto pago = iterator.next();
 			if (debug) System.out.println(pago.toString());
 		}
 		

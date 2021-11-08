@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -20,6 +19,8 @@ import ipsTeamwork.model.carrera.CarreraDto;
 import ipsTeamwork.model.categoria.CategoriaDto;
 import ipsTeamwork.model.categoria.crud.AddCategoria;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
+import ipsTeamwork.model.inscripcion.crud.AppendIncidencia;
+import ipsTeamwork.model.pago.PagoDto;
 import ipsTeamwork.util.DateUtil;
 import ipsTeamwork.util.DtoBuilder;
 
@@ -241,7 +242,7 @@ public class GestorDB {
 			cerrar();
 		}
 	}
-
+	
 	public void selectCarreras() {
 		conectar();
 		try {
@@ -822,5 +823,51 @@ public class GestorDB {
 		} finally {
 			cerrar();
 		}		
+	}
+
+	public List<PagoDto> listarPagos() {
+		List<PagoDto> pagos = null;
+		
+		conectar();
+		try {
+			pst = conn.prepareStatement(SQLStrings.selectAllPago);
+			
+			rs = pst.executeQuery();
+			
+			pagos= DtoBuilder.toPagoDtoList(rs);
+
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			cerrar();
+		}
+		
+		
+		return pagos;
+	}
+
+	public static void escribirIncidencia(InscripcionDto idto, String string) {
+		new AppendIncidencia(string, idto.getIdCarrera(), idto.getIdAtleta());
+	}
+	
+	public AtletaDto findAtletaById(String idAtleta) {
+		AtletaDto ret = null;
+		conectar();	
+		
+		try {
+			pst = conn.prepareStatement(SQLStrings.selectAtletaById);
+			pst.setString(1, idAtleta);
+			rs = pst.executeQuery();
+			
+			ret = DtoBuilder.toAtletaDto(rs);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {			
+			cerrar();
+		}
+				
+		return ret;
 	}
 }

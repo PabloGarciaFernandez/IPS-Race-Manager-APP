@@ -10,12 +10,13 @@ import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.carrera.CarreraDto;
 import ipsTeamwork.model.categoria.CategoriaDto;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
+import ipsTeamwork.model.pago.PagoDto;
 
 public class DtoBuilder {
 
-	public static AtletaDto toAtletaDto(ResultSet rs) {
+	public static AtletaDto toAtletaDto(ResultSet rs) throws SQLException {
 		AtletaDto dto = new AtletaDto();
-
+		if (!rs.next()) return null;
 		try {
 			dto.setSexo(rs.getString(5));
 			dto.setNombre(rs.getString(3));
@@ -170,5 +171,27 @@ public class DtoBuilder {
 		}
 
 		return ret;
+	}
+
+	public static List<PagoDto> toPagoDtoList(ResultSet rs) {
+		List<PagoDto> pagos = new ArrayList<PagoDto>();
+		
+		try {
+			while (rs.next()) {
+				PagoDto p = new PagoDto();
+				
+				p.date = rs.getDate("date");
+				p.dni = rs.getString("dni");
+				p.id = rs.getString("id");
+				p.idCarrera = rs.getString("idCarrera");
+				p.importe = rs.getDouble("importe");
+				
+				pagos.add(p);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return pagos;
 	}
 }

@@ -11,7 +11,7 @@ public class SQLStrings {
 	// creates
 	public static String createAtleta = "CREATE TABLE atleta (idAtleta varchar2 NOT NULL, dni varchar2 not null, nombre varchar2 not null, edad integer not null, sexo varchar not null, discapacitado bit NOT NULL, email varchar2 not null, CONSTRAINT CHK_Atleta CHECK (edad >18 AND (sexo='M' OR sexo='F' OR sexo='NB')) , primary key (idAtleta), constraint unique_email UNIQUE (email))";
 
-	public static String createInscripcion = "CREATE TABLE inscripcion (idAtleta varchar2 NOT NULL, idCarrera varchar NOT NULL, dorsal varchar2, fechaInscripcion date not null, estadoInscripcion varchar2 not null, formaDePago varchar2, tiempoCorriendo integer,  categoria varchar2, CONSTRAINT CHK_Inscripcion CHECK ( (formaDePago='Transferencia' OR formaDePago='Tarjeta') AND (estadoInscripcion='Inscrito' OR estadoInscripcion='Pre-Inscrito' OR estadoInscripcion='Pendiente de Pago')), primary key (idAtleta, idCarrera, dorsal), CONSTRAINT FK_idAtleta FOREIGN KEY (idAtleta) REFERENCES atleta(idAtleta), CONSTRAINT FK_idCarrera FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera) )";
+	public static String createInscripcion = "CREATE TABLE inscripcion (idAtleta varchar2 NOT NULL, idCarrera varchar NOT NULL, dorsal varchar2, fechaInscripcion date not null, estadoInscripcion varchar2 not null, formaDePago varchar2, tiempoCorriendo integer,  categoria varchar2, incidenciasPagos varchar2, CONSTRAINT CHK_Inscripcion CHECK ( (formaDePago='Transferencia' OR formaDePago='Tarjeta') AND (estadoInscripcion='Inscrito' OR estadoInscripcion='Pre-Inscrito' OR estadoInscripcion='Pendiente de Pago')), primary key (idAtleta, idCarrera, dorsal), CONSTRAINT FK_idAtleta FOREIGN KEY (idAtleta) REFERENCES atleta(idAtleta), CONSTRAINT FK_idCarrera FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera) )";
 
 	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2, nombre varchar2, fecha date, tipo varchar2, distancia number, cuota number, fechaFinInsc date, plazasDisp number, maxPlazas number not null, CONSTRAINT chk_tipo CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
 
@@ -25,7 +25,7 @@ public class SQLStrings {
 
 	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?, 'Asfalto', 100, 20, ?, 120, 120);";
 	
-	public static String insertInscripcionPredefinida = "Insert into inscripcion values ('idMariano', 'idMaratonMadrid', '1', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano');";
+	public static String insertInscripcionPredefinida = "Insert into inscripcion values ('idMariano', 'idMaratonMadrid', '1', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '');";
 
 	
 	// inserts
