@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -47,10 +48,12 @@ import ipsTeamwork.model.carrera.crud.SelectAllVistaAtleta;
 import ipsTeamwork.model.carrera.crud.UpdateCarrera;
 import ipsTeamwork.model.categoria.Categoria;
 import ipsTeamwork.model.categoria.CategoriaDto;
+import ipsTeamwork.model.categoria.crud.AddCategoria;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
 import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtleta;
 import ipsTeamwork.model.pago.Pago;
+import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtletaDorsal;
 import ipsTeamwork.util.DtoBuilder;
 import ipsTeamwork.util.FileUtil;
 import ipsTeamwork.util.Parser;
@@ -65,12 +68,14 @@ public class MainWindow extends JFrame {
 	private static final String PANEL_LISTA_CARRERAS = "panel_lista_carreras_atleta";
 	private static final String PANEL_REGISTRO = "panel_registro";
 	private static final String PANEL_INGRESO = "panel_ingreso";
-	private static final String PANEL_VERCARRERASORGANIZADOR = "panel_lista_carreras_organizador";
+	private static final String PANEL_VER_CARRERAS_ORGANIZADOR = "panel_lista_carreras_organizador";
 	private static final String PANEL_VERCLASIFICACIONESORGANIZADOR = "panel_lista_clasificaciones_organizador";
 	private static final String PANEL_PAGARINSCRIPCION = "panel_PagarInscripcion";
 	private static final String PANEL_LISTA_INSCRIPCIONES = "panel_lista_inscripciones_atleta";
+	private static final String PANEL_CONFIGURAR_PLAZOS = "panel_configuracion_plazos";
 	private static final String PANEL_PAGO_TARJETA = "panel_pago_tarjeta";
 	private static final String PANEL_CREACION_CARRERAS = "panel_creacion_carreras";
+	private static final String PANEL_GENERAL_DORSALES = "panel_generar_dorsales";
 
 	private JPanel contentPane;
 	private JPanel pnInicio;
@@ -134,6 +139,8 @@ public class MainWindow extends JFrame {
 	private DefaultTableModel tablaAtleta;
 	private DefaultTableModel tablaCategorias;
 	private DefaultTableModel tablaAtletasInscritosX;
+	private DefaultTableModel tablaPlazosInscripciones;
+	private DefaultTableModel tablaGenerarDorsales;
 
 	private DefaultTableModel tablaClasificaciones;
 
@@ -165,7 +172,6 @@ public class MainWindow extends JFrame {
 	private JTextField txPagoTarjetaFechaCaducidad;
 	private JButton btPagoTarjetaEnviar;
 	private JLabel lbPagarInscripcion;
-	private JButton btnGenerarDorsalesVistaOrganizador;
 
 	private JPanel pnCreacionCarrera;
 	private JLabel lblCreacionDeCarreras;
@@ -206,6 +212,45 @@ public class MainWindow extends JFrame {
 
 	private FileUtil fileUtil = new FileUtil();
 	private JButton btVerClasificacionesOrganizacion;
+	private JPanel pnConfiguracionPlazos;
+	private JPanel pnPrincipalConfiguracionPlazos;
+	private JLabel lbConfiguracionPlazos;
+	private JButton btAtrasConfiguracionPlazos;
+	private JButton btCreacionCarreraConfiguracionPlazos;
+	private JButton btADDConfiguracionPlazos;
+	private JLabel lbCuotaConfiguracionPlazos;
+	private JTextField txCuotaConfiguracionPlazos;
+	private JLabel lbFechaInicioConfiguracionPlazos;
+	private JTextField txFechaInicioConfiguracionPlazos;
+	private JLabel lblFechaFinConfiguracionPlazos;
+	private JTextField txFechaFinConfiguracionPlazos;
+	private JScrollPane scConfiguracionPlazos;
+	private JTable tbConfiguracionPlazos;
+	private JPanel pnGeneralDorsales;
+	private JPanel pnGenerarDorsalesPrincipal;
+	private JLabel lbGenerarDorsales;
+	private JScrollPane scGeneralDorsales;
+	private JTable tbGeneralDorsales;
+	private JButton btAtrasGeneralDorsales;
+	private JButton btSiguienteGeneralDorsales;
+	private JButton btGeneralDorsales;
+	private JLabel lbVIPSGeneralDorsales;
+	private JTextField txVipsGeneralDorsales;
+
+	private String fechaIni;
+
+	private String fechaFin;
+
+	private String cuota;
+	private JTextField txDatosCarreraConfiguracionPlazos;
+
+	private boolean primera;
+	private JTextField txdatosCarreraGeneralDorsales;
+	private JButton btnGenerarDorsalesVistaOrganizador;
+
+	private Map<String, String> diccionarioPlazos = new HashMap<String, String>();
+
+	private int numeroGenteInscritaEnLaCarreraActual;
 
 	/**
 	 * Create the frame.
@@ -214,10 +259,14 @@ public class MainWindow extends JFrame {
 		db = new GestorDB();
 		tb = (DefaultTableModel) getTbVerCarreras().getModel();
 		tablaClasificaciones = (DefaultTableModel) getTbVerClasificaciones().getModel();
+		tablaGenerarDorsales = (DefaultTableModel) getTbGeneralDorsales().getModel();
 		tablaAtleta = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
 		tablaCategorias = (DefaultTableModel) getTableCategorias().getModel();
 		tablaAtletasInscritosX = (DefaultTableModel) getTbAtletasInscritosEnXCarrera().getModel();
+		tablaPlazosInscripciones = (DefaultTableModel) getTbConfiguracionPlazos().getModel();
 		pnVistaInscripcionesAtleta = new PanelListarInscripciones(this, atletaActual);
+		// booleano para la historia 15297 :)
+		primera = true;
 		setResizable(false);
 		setTitle("Carreras");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -232,13 +281,16 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnListaCarrerasAtleta(), PANEL_LISTA_CARRERAS);
 		contentPane.add(getPnRegistro(), PANEL_REGISTRO);
 		contentPane.add(getPnIngreso(), PANEL_INGRESO);
-		contentPane.add(getPnListaCarrerasOrganizador(), PANEL_VERCARRERASORGANIZADOR);
+		contentPane.add(getPnListaCarrerasOrganizador(), PANEL_VER_CARRERAS_ORGANIZADOR);
 		contentPane.add(getPnPagarInscripcion(), PANEL_PAGARINSCRIPCION);
 		contentPane.add(pnVistaInscripcionesAtleta, PANEL_LISTA_INSCRIPCIONES);
 		contentPane.add(getPnListaClasificacionesOrganizador(), PANEL_VERCLASIFICACIONESORGANIZADOR);
 		contentPane.add(getPnPagoTarjeta(), PANEL_PAGO_TARJETA);
 		contentPane.add(getPnCreacionCarrera(), PANEL_CREACION_CARRERAS);
-
+		contentPane.add(getPnConfiguracionPlazos(), PANEL_CONFIGURAR_PLAZOS);
+		contentPane.add(getPnGeneralDorsales(), PANEL_GENERAL_DORSALES);
+		// Hardcode del texto, que aparecia siempre con un tab
+		getTxFechaInicioConfiguracionPlazos().setText("");
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
 	}
@@ -901,6 +953,7 @@ public class MainWindow extends JFrame {
 		} else {
 			JOptionPane.showMessageDialog(this, "Error: Ya estas en esta carrera.");
 		}
+
 	}
 
 	private void ingresoAtleta(String email) {
@@ -939,7 +992,6 @@ public class MainWindow extends JFrame {
 			btnCrearCarreras.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnCrearCarreras.setBounds(210, 330, 435, 46);
 			pnOrganizadorCentro.add(btnCrearCarreras);
-
 		}
 		return pnOrganizadorCentro;
 	}
@@ -1002,9 +1054,9 @@ public class MainWindow extends JFrame {
 
 			pnPrincipalVerCarrerasOrganizador.add(getBtImportarTiemposCarrera());
 //			pnPrincipalVerCarrerasOrganizador.add(getBtVerClasificacionesOrganizacion_1());
+
 			pnPrincipalVerCarrerasOrganizador.add(getBtVerClasificacionesOrganizacion());
 
-			
 			JButton btnCargarTransacciones = new JButton("Cargar pagos");
 			btnCargarTransacciones.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -1018,48 +1070,46 @@ public class MainWindow extends JFrame {
 		}
 		return pnPrincipalVerCarrerasOrganizador;
 	}
-	
+
 	private void cargarPagos() {
 		String nombre = "";
 		List<Pago> pagos = null;
-		
+
 		try {
 			nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
 		} catch (IndexOutOfBoundsException e) {
 			System.err.println("No hay ninguna carrera seleccionada.");
 			return;
 		}
-		
+
 		CarreraDto carrera = db.selectCarrerasNombre(nombre);
 
 		File file = null;
-		
+
 		JFileChooser jfk = new JFileChooser();
 		int retVal = jfk.showOpenDialog(this);
-		
+
 		if (retVal == JFileChooser.APPROVE_OPTION) {
 			file = jfk.getSelectedFile();
 		} else {
 			JOptionPane.showMessageDialog(this, "No se seleccionó ningún archivo.");
 			return;
 		}
-		
+
 		try {
-			 pagos = Parser.parsePaymentFile(file, false);
+			pagos = Parser.parsePaymentFile(file, false);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 		for (Iterator<Pago> iterator = pagos.iterator(); iterator.hasNext();) {
 			Pago pago = iterator.next();
 			pago.setIdCarrera(carrera.getIdCarrera());
 			pago.autoInsert();
 		}
-		
+
 		new GestorDB().selectPagos();
-		
-		
-		
+
 		computarInscripcionesConPagos();
 	}
 
@@ -1074,7 +1124,7 @@ public class MainWindow extends JFrame {
 			btVerVarrerasOrganizacion.setMnemonic('v');
 			btVerVarrerasOrganizacion.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_VERCARRERASORGANIZADOR);
+					showCard(PANEL_VER_CARRERAS_ORGANIZADOR);
 				}
 			});
 			btVerVarrerasOrganizacion.setBounds(210, 102, 435, 46);
@@ -1426,7 +1476,9 @@ public class MainWindow extends JFrame {
 				}
 			});
 			btVerClasificacionesOrganizacion.setMnemonic('c');
-			btVerClasificacionesOrganizacion.setBounds(161, 418, 596, 46);
+
+			btVerClasificacionesOrganizacion.setBounds(215, 424, 435, 46);
+
 		}
 		return btVerClasificacionesOrganizacion;
 	}
@@ -1437,7 +1489,7 @@ public class MainWindow extends JFrame {
 			btListaClasificacionesAtras.setFont(new Font("Arial", Font.PLAIN, 14));
 			btListaClasificacionesAtras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					showCard(PANEL_VERCARRERASORGANIZADOR);
+					showCard(PANEL_VER_CARRERAS_ORGANIZADOR);
 				}
 			});
 			btListaClasificacionesAtras.setBounds(30, 435, 136, 34);
@@ -1732,8 +1784,10 @@ public class MainWindow extends JFrame {
 			btnCreacionCarrerasSiguiente = new JButton("Siguiente");
 			btnCreacionCarrerasSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (!checkeoCreacionCarreras()) {
+					if (checkeoCreacionCarreras()) {
 						assignacionValoresCarrera();
+						showCard(PANEL_CONFIGURAR_PLAZOS);
+						printLabelPlazos();
 					}
 				}
 			});
@@ -1749,12 +1803,13 @@ public class MainWindow extends JFrame {
 			creacionCarrera.setFecha(new SimpleDateFormat("yyyy-MM-dd").parse(txtFechaEjecucion.getText()));
 			creacionCarrera.setDistancia(Integer.parseInt(txtKm.getText()));
 			creacionCarrera.setMaxPlazas(Integer.parseInt(txtPlazas.getText()));
+			creacionCarrera.setPlazasDisp(Integer.parseInt(txtPlazas.getText()));
 			creacionCarrera.setIdCarrera(UUID.randomUUID().toString());
 			creacionCarrera.setTipo(cmbTipoCarrera.getSelectedItem().toString());
 			creacionCarrera.setNombre(txtNombreCarrera.getText());
 			creacionCarrera.setDescripcion(txtDescripcion.getText());
 		} catch (ParseException e1) {
-
+			e1.printStackTrace();
 		}
 	}
 
@@ -1909,6 +1964,7 @@ public class MainWindow extends JFrame {
 			JOptionPane.showMessageDialog(null, "Error: Al crear las categorías no puedes dejar valores vacios.");
 		} else {
 			CategoriaDto cat = new CategoriaDto();
+//			cat.carrera_id = creacionCarrera.getIdCarrera();
 			cat.nombre = txtNombreCat.getText();
 			cat.edadInic = Integer.parseInt(txtEdadMin.getText());
 			cat.edadFin = Integer.parseInt(txtEdadMax.getText());
@@ -2138,7 +2194,8 @@ public class MainWindow extends JFrame {
 
 		for (InscripcionDto inscripcionDto : inscripciones) {
 			System.err.println("categoria: " + inscripcionDto.getCategoria());
-			if(inscripcionDto.getCategoria() == null) {
+			inscripcionDto.setCategoria(Categoria.calculaCategoria(atletaActual, carrera));
+			if (inscripcionDto.getCategoria() == null) {
 				inscripcionDto.setCategoria("SIN CATEGORIA");
 				System.err.println("\"SIN CATEGORIA\" por accionClasificaciones() - MainWindow linea 2156");
 			}
@@ -2165,19 +2222,489 @@ public class MainWindow extends JFrame {
 
 	}
 
+	private void generarDorsales() {
+	}
+
+	private JPanel getPnConfiguracionPlazos() {
+		if (pnConfiguracionPlazos == null) {
+			pnConfiguracionPlazos = new JPanel();
+			pnConfiguracionPlazos.setLayout(new BorderLayout(0, 0));
+			pnConfiguracionPlazos.add(getPnPrincipalConfiguracionPlazos(), BorderLayout.CENTER);
+		}
+		return pnConfiguracionPlazos;
+	}
+
+	private JPanel getPnPrincipalConfiguracionPlazos() {
+		if (pnPrincipalConfiguracionPlazos == null) {
+			pnPrincipalConfiguracionPlazos = new JPanel();
+			pnPrincipalConfiguracionPlazos.setLayout(null);
+			pnPrincipalConfiguracionPlazos.add(getLbConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getBtAtrasConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getBtCreacionCarreraConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getBtADDConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getLbCuotaConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getTxCuotaConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getLbFechaInicioConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getTxFechaInicioConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getLblFechaFinConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getTxFechaFinConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getScConfiguracionPlazos());
+			pnPrincipalConfiguracionPlazos.add(getTxDatosCarreraConfiguracionPlazos());
+		}
+		return pnPrincipalConfiguracionPlazos;
+	}
+
+	private JLabel getLbConfiguracionPlazos() {
+		if (lbConfiguracionPlazos == null) {
+			lbConfiguracionPlazos = new JLabel("Configuración de los Plazos de Inscripción");
+			lbConfiguracionPlazos.setFont(new Font("Arial", Font.BOLD, 25));
+			lbConfiguracionPlazos.setBounds(135, 56, 527, 58);
+		}
+		return lbConfiguracionPlazos;
+	}
+
+	private JButton getBtAtrasConfiguracionPlazos() {
+		if (btAtrasConfiguracionPlazos == null) {
+			btAtrasConfiguracionPlazos = new JButton("Atras");
+			btAtrasConfiguracionPlazos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_CREACION_CARRERAS);
+				}
+			});
+			btAtrasConfiguracionPlazos.setFont(new Font("Arial", Font.BOLD, 20));
+			btAtrasConfiguracionPlazos.setMnemonic('a');
+			btAtrasConfiguracionPlazos.setBounds(45, 401, 153, 45);
+		}
+		return btAtrasConfiguracionPlazos;
+	}
+
+	private JButton getBtCreacionCarreraConfiguracionPlazos() {
+		if (btCreacionCarreraConfiguracionPlazos == null) {
+			btCreacionCarreraConfiguracionPlazos = new JButton("Crear Carrera");
+			btCreacionCarreraConfiguracionPlazos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					db.insertarCarreraNueva(creacionCarrera);
+					for (CategoriaDto c : categoriasCreacion) {
+						c.carrera_id = creacionCarrera.getIdCarrera();
+						new AddCategoria(c).execute();
+
+					}
+					showCard(PANEL_ORGANIZADOR);
+					db.selectCarreras();
+					reset(tb);
+					reset(tablaAtleta);
+					cargarTablaCarrerasAtleta();
+					cargarTablaCarrerasOrganizador();
+				}
+			});
+			btCreacionCarreraConfiguracionPlazos.setFont(new Font("Arial", Font.BOLD, 20));
+			btCreacionCarreraConfiguracionPlazos.setMnemonic('r');
+			btCreacionCarreraConfiguracionPlazos.setBounds(630, 401, 205, 45);
+		}
+		return btCreacionCarreraConfiguracionPlazos;
+	}
+
+	private JButton getBtADDConfiguracionPlazos() {
+		if (btADDConfiguracionPlazos == null) {
+			btADDConfiguracionPlazos = new JButton("Add");
+			btADDConfiguracionPlazos.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					try {
+						addPlazo();
+					} catch (ParseException e1) {
+						e1.printStackTrace();
+					}
+
+				}
+			});
+			btADDConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			btADDConfiguracionPlazos.setMnemonic('d');
+			btADDConfiguracionPlazos.setBounds(373, 405, 126, 37);
+		}
+		return btADDConfiguracionPlazos;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Añade un nuevo plazo de inscripcion a una carrera
+	 * @throws ParseException
+	 * 
+	 */
+	private void addPlazo() throws ParseException {
+		fechaIni = getTxFechaInicioConfiguracionPlazos().getText();
+		fechaFin = getTxFechaFinConfiguracionPlazos().getText();
+		cuota = getTxCuotaConfiguracionPlazos().getText();
+
+		if (tablaPlazosInscripciones.getRowCount() > 3) {
+			JOptionPane.showConfirmDialog(btADDConfiguracionPlazos, "Ya no puedes añadir mas plazos", "Error",
+					JOptionPane.DEFAULT_OPTION);
+		} else if (fechaIni.matches("\\d{4}-\\d{2}-\\d{2}") && fechaFin.matches("\\d{4}-\\d{2}-\\d{2}")
+				&& cuota.matches("[+-]?\\d*(\\.\\d+)?")) {
+
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			Date parsedIni = format.parse(fechaIni);
+			Date parsedFin = format.parse(fechaFin);
+			java.sql.Date fechaIniDate = new java.sql.Date(parsedIni.getTime());
+			java.sql.Date fechaFinDate = new java.sql.Date(parsedFin.getTime());
+			if (fechaIniDate.before(fechaFinDate) && fechaFinDate.before(creacionCarrera.getFecha())) {
+
+				tablaPlazosInscripciones.addRow(new String[] { fechaIni, fechaFin, cuota });
+
+				if (primera) {
+					creacionCarrera.setFechaInicioIns(fechaIniDate);
+					creacionCarrera.setFechaFin(fechaFinDate);
+					creacionCarrera.setCuota(Integer.parseInt(cuota));
+					primera = false;
+				}
+
+				String toDo = fechaIni + "," + fechaFin + "," + cuota;
+
+				diccionarioPlazos.put(creacionCarrera.getNombre(), toDo);
+
+				getTxFechaInicioConfiguracionPlazos().setText(fechaFin);
+				getTxFechaInicioConfiguracionPlazos().setEditable(false);
+			} else {
+				JOptionPane.showConfirmDialog(btADDConfiguracionPlazos,
+						"La fecha Final tiene que ser posterior a la fecha Inicio", "Error",
+						JOptionPane.DEFAULT_OPTION);
+			}
+
+		} else {
+			JOptionPane.showConfirmDialog(btADDConfiguracionPlazos,
+					"Has insertado mal los datos en los campos, revisa que las fechas estan en formato ISO y la cuota es solo numeros",
+					"Error", JOptionPane.DEFAULT_OPTION);
+		}
+	}
+
+	private JLabel getLbCuotaConfiguracionPlazos() {
+		if (lbCuotaConfiguracionPlazos == null) {
+			lbCuotaConfiguracionPlazos = new JLabel("Cuota");
+			lbCuotaConfiguracionPlazos.setDisplayedMnemonic('c');
+			lbCuotaConfiguracionPlazos.setLabelFor(getTxCuotaConfiguracionPlazos());
+			lbCuotaConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			lbCuotaConfiguracionPlazos.setBounds(537, 302, 83, 37);
+		}
+		return lbCuotaConfiguracionPlazos;
+	}
+
+	private JTextField getTxCuotaConfiguracionPlazos() {
+		if (txCuotaConfiguracionPlazos == null) {
+			txCuotaConfiguracionPlazos = new JTextField();
+			txCuotaConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			txCuotaConfiguracionPlazos.setBounds(630, 302, 96, 37);
+			txCuotaConfiguracionPlazos.setColumns(10);
+		}
+		return txCuotaConfiguracionPlazos;
+	}
+
+	private JLabel getLbFechaInicioConfiguracionPlazos() {
+		if (lbFechaInicioConfiguracionPlazos == null) {
+			lbFechaInicioConfiguracionPlazos = new JLabel("Fecha Inicio");
+			lbFechaInicioConfiguracionPlazos.setLabelFor(getTxFechaInicioConfiguracionPlazos());
+			lbFechaInicioConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			lbFechaInicioConfiguracionPlazos.setDisplayedMnemonic('i');
+			lbFechaInicioConfiguracionPlazos.setBounds(42, 302, 109, 37);
+		}
+		return lbFechaInicioConfiguracionPlazos;
+	}
+
+	private JTextField getTxFechaInicioConfiguracionPlazos() {
+		if (txFechaInicioConfiguracionPlazos == null) {
+			txFechaInicioConfiguracionPlazos = new JTextField();
+			txFechaInicioConfiguracionPlazos.setText("       ");
+			txFechaInicioConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			txFechaInicioConfiguracionPlazos.setColumns(10);
+			txFechaInicioConfiguracionPlazos.setBounds(161, 302, 96, 37);
+		}
+		return txFechaInicioConfiguracionPlazos;
+	}
+
+	private JLabel getLblFechaFinConfiguracionPlazos() {
+		if (lblFechaFinConfiguracionPlazos == null) {
+			lblFechaFinConfiguracionPlazos = new JLabel("Fecha Fin");
+			lblFechaFinConfiguracionPlazos.setLabelFor(getTxFechaFinConfiguracionPlazos());
+			lblFechaFinConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			lblFechaFinConfiguracionPlazos.setDisplayedMnemonic('f');
+			lblFechaFinConfiguracionPlazos.setBounds(289, 302, 109, 37);
+		}
+		return lblFechaFinConfiguracionPlazos;
+	}
+
+	private JTextField getTxFechaFinConfiguracionPlazos() {
+		if (txFechaFinConfiguracionPlazos == null) {
+			txFechaFinConfiguracionPlazos = new JTextField();
+			txFechaFinConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
+			txFechaFinConfiguracionPlazos.setColumns(10);
+			txFechaFinConfiguracionPlazos.setBounds(403, 302, 96, 37);
+		}
+		return txFechaFinConfiguracionPlazos;
+	}
+
+	private JScrollPane getScConfiguracionPlazos() {
+		if (scConfiguracionPlazos == null) {
+			scConfiguracionPlazos = new JScrollPane();
+			scConfiguracionPlazos.setBounds(145, 107, 516, 170);
+			scConfiguracionPlazos.setViewportView(getTbConfiguracionPlazos());
+		}
+		return scConfiguracionPlazos;
+	}
+
+	private JTable getTbConfiguracionPlazos() {
+		if (tbConfiguracionPlazos == null) {
+			tbConfiguracionPlazos = new JTable();
+			tbConfiguracionPlazos.setModel(
+					new DefaultTableModel(new Object[][] {}, new String[] { "Fecha Inicio", "Fecha Fin", "Cuota" }));
+
+			tbConfiguracionPlazos.setDefaultEditor(Object.class, null);
+		}
+		return tbConfiguracionPlazos;
+	}
+
+	private JPanel getPnGeneralDorsales() {
+		if (pnGeneralDorsales == null) {
+			pnGeneralDorsales = new JPanel();
+			pnGeneralDorsales.setLayout(new BorderLayout(0, 0));
+			pnGeneralDorsales.add(getPnGenerarDorsalesPrincipal(), BorderLayout.CENTER);
+		}
+		return pnGeneralDorsales;
+	}
+
+	private JPanel getPnGenerarDorsalesPrincipal() {
+		if (pnGenerarDorsalesPrincipal == null) {
+			pnGenerarDorsalesPrincipal = new JPanel();
+			pnGenerarDorsalesPrincipal.setLayout(null);
+			pnGenerarDorsalesPrincipal.add(getLbGenerarDorsales());
+			pnGenerarDorsalesPrincipal.add(getScGeneralDorsales());
+			pnGenerarDorsalesPrincipal.add(getBtAtrasGeneralDorsales());
+			pnGenerarDorsalesPrincipal.add(getBtSiguienteGeneralDorsales());
+			pnGenerarDorsalesPrincipal.add(getBtGeneralDorsales());
+			pnGenerarDorsalesPrincipal.add(getLbVIPSGeneralDorsales());
+			pnGenerarDorsalesPrincipal.add(getTxVipsGeneralDorsales());
+			pnGenerarDorsalesPrincipal.add(getTxdatosCarreraGeneralDorsales());
+		}
+		return pnGenerarDorsalesPrincipal;
+	}
+
+	private JLabel getLbGenerarDorsales() {
+		if (lbGenerarDorsales == null) {
+			lbGenerarDorsales = new JLabel("Generar Dorsales");
+			lbGenerarDorsales.setFont(new Font("Arial", Font.BOLD, 25));
+			lbGenerarDorsales.setBounds(325, 62, 213, 40);
+		}
+		return lbGenerarDorsales;
+	}
+
+	private JScrollPane getScGeneralDorsales() {
+		if (scGeneralDorsales == null) {
+			scGeneralDorsales = new JScrollPane();
+			scGeneralDorsales.setBounds(164, 137, 539, 188);
+			scGeneralDorsales.setViewportView(getTbGeneralDorsales());
+		}
+		return scGeneralDorsales;
+	}
+
+	private JTable getTbGeneralDorsales() {
+		if (tbGeneralDorsales == null) {
+			tbGeneralDorsales = new JTable();
+			tbGeneralDorsales
+					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Dorsal", "DNI", "Nombre" }));
+
+			tbGeneralDorsales.setDefaultEditor(Object.class, null);
+		}
+		return tbGeneralDorsales;
+	}
+
+	private JButton getBtAtrasGeneralDorsales() {
+		if (btAtrasGeneralDorsales == null) {
+			btAtrasGeneralDorsales = new JButton("Atras");
+			btAtrasGeneralDorsales.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_VER_CARRERAS_ORGANIZADOR);
+				}
+			});
+			btAtrasGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
+			btAtrasGeneralDorsales.setMnemonic('a');
+			btAtrasGeneralDorsales.setBounds(10, 419, 163, 40);
+		}
+		return btAtrasGeneralDorsales;
+	}
+
+	private JButton getBtSiguienteGeneralDorsales() {
+		if (btSiguienteGeneralDorsales == null) {
+			btSiguienteGeneralDorsales = new JButton("Siguiente");
+			btSiguienteGeneralDorsales.setMnemonic('s');
+			btSiguienteGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
+			btSiguienteGeneralDorsales.setBounds(691, 419, 163, 40);
+		}
+		return btSiguienteGeneralDorsales;
+	}
+
+	private JButton getBtGeneralDorsales() {
+		if (btGeneralDorsales == null) {
+			btGeneralDorsales = new JButton("General Dorsales");
+			btGeneralDorsales.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					if (CheckVips()) {
+						GenerarDorsales();
+					}
+
+				}
+
+			});
+			btGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
+			btGeneralDorsales.setMnemonic('g');
+			btGeneralDorsales.setBounds(325, 424, 213, 30);
+		}
+		return btGeneralDorsales;
+	}
+
+	protected boolean CheckVips() {
+
+		if (txVipsGeneralDorsales.getText().equals("")) {
+			return true;
+		}
+
+		if (Integer.parseInt(txVipsGeneralDorsales.getText()) > numeroGenteInscritaEnLaCarreraActual) {
+			JOptionPane.showConfirmDialog(btGeneralDorsales, "No puedes generar más Vips que corredos haya inscritos",
+					"Error", JOptionPane.DEFAULT_OPTION);
+			return false;
+		}
+		return true;
+
+	}
+
+	private void GenerarDorsales() {
+
+		reset(tablaGenerarDorsales);
+
+		int vips;
+		if (txVipsGeneralDorsales.getText().equals("")) {
+			vips = 0;
+		} else {
+			vips = Integer.parseInt(txVipsGeneralDorsales.getText());
+		}
+
+		String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
+
+		CarreraDto aux = db.selectCarrerasNombre(nombre);
+
+		String id = aux.getIdCarrera();
+
+		List<AtletaDto> atletas = db.listaAtletasOrdenadorPorFechaIns(id);
+
+		for (int i = 0; i < numeroGenteInscritaEnLaCarreraActual; i++) {
+
+			String dorsal = String.valueOf(i + vips);
+
+			String[] pizza = { dorsal, atletas.get(i).getDNI(), atletas.get(i).getNombre() };
+
+			UpdateInscribirseAtletaDorsal.execute(id, atletas.get(i).getIdAtleta(), dorsal);
+
+			tablaGenerarDorsales.addRow(pizza);
+
+		}
+	}
+
+	private JLabel getLbVIPSGeneralDorsales() {
+		if (lbVIPSGeneralDorsales == null) {
+			lbVIPSGeneralDorsales = new JLabel("¿Cuantos Vips quieres reservar?");
+			lbVIPSGeneralDorsales.setDisplayedMnemonic('V');
+			lbVIPSGeneralDorsales.setLabelFor(getTxVipsGeneralDorsales());
+			lbVIPSGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
+			lbVIPSGeneralDorsales.setBounds(36, 366, 294, 19);
+		}
+		return lbVIPSGeneralDorsales;
+	}
+
+	private JTextField getTxVipsGeneralDorsales() {
+		if (txVipsGeneralDorsales == null) {
+			txVipsGeneralDorsales = new JTextField();
+			txVipsGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
+			txVipsGeneralDorsales.setBounds(340, 366, 43, 22);
+			txVipsGeneralDorsales.setColumns(10);
+		}
+		return txVipsGeneralDorsales;
+	}
+
+	private JTextField getTxDatosCarreraConfiguracionPlazos() {
+
+		if (txDatosCarreraConfiguracionPlazos == null) {
+			txDatosCarreraConfiguracionPlazos = new JTextField();
+			txDatosCarreraConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 15));
+			txDatosCarreraConfiguracionPlazos.setEditable(false);
+			txDatosCarreraConfiguracionPlazos.setBounds(45, 10, 793, 31);
+			txDatosCarreraConfiguracionPlazos.setColumns(10);
+
+		}
+		return txDatosCarreraConfiguracionPlazos;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo que imprime la label del panel de Plazos con info de la
+	 *         carrera. Esa info esta guardada en dos String los cuales hay que
+	 *         modificar en algun momento o siempre valdran null
+	 * 
+	 */
+	private void printLabelPlazos() {
+
+		txDatosCarreraConfiguracionPlazos.setText("Configurando los plazos de inscripcion de la carrera: "
+				+ creacionCarrera.getNombre() + ", con fecha de inicio de la carrera: " + creacionCarrera.getFecha());
+
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private JTextField getTxdatosCarreraGeneralDorsales() {
+
+		if (txdatosCarreraGeneralDorsales == null) {
+			txdatosCarreraGeneralDorsales = new JTextField();
+			txdatosCarreraGeneralDorsales.setEditable(false);
+			txdatosCarreraGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 13));
+			txdatosCarreraGeneralDorsales.setBounds(10, 10, 847, 30);
+			txdatosCarreraGeneralDorsales.setColumns(10);
+
+		}
+		return txdatosCarreraGeneralDorsales;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo que imprime la etiqueta de los dorsales con info de la carrera
+	 */
+	private void printLabelDorsales() {
+
+		String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
+
+		CarreraDto aux = db.selectCarrerasNombre(nombre);
+
+		String id = aux.getIdCarrera();
+
+		numeroGenteInscritaEnLaCarreraActual = db.numInscritosxCarrera(id);
+
+		txdatosCarreraGeneralDorsales.setText(
+				"Carrera con nombre: " + nombre + ",  con num de inscritos: " + numeroGenteInscritaEnLaCarreraActual);
+	}
+
 	private JButton getBtnGenerarDorsalesVistaOrganizador() {
 		if (btnGenerarDorsalesVistaOrganizador == null) {
 			btnGenerarDorsalesVistaOrganizador = new JButton("Generar dorsales");
 			btnGenerarDorsalesVistaOrganizador.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_GENERAL_DORSALES);
+
+					printLabelDorsales();
 				}
 			});
-			btnGenerarDorsalesVistaOrganizador.setBounds(767, 164, 97, 23);
+			btnGenerarDorsalesVistaOrganizador.setBounds(767, 155, 121, 34);
 		}
 		return btnGenerarDorsalesVistaOrganizador;
-	}
-	
-	private void generarDorsales() {
-		
 	}
 }
