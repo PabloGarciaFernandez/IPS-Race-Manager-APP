@@ -1064,7 +1064,7 @@ public class MainWindow extends JFrame {
 	}
 
 	private void computarInscripcionesConPagos() {
-		System.err.println("sin implementar");
+		
 	}
 
 	private JButton getBtVerVarrerasOrganizacion() {
