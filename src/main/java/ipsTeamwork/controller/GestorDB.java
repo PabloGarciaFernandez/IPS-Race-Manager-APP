@@ -84,7 +84,7 @@ public class GestorDB {
 //			pst.execute();
 //			pst = conn.prepareStatement(SQLStrings.dropAtleta);
 //			pst.execute();
-			
+
 			pst = conn.prepareStatement(SQLStrings.createAtleta);
 			pst.execute();
 			pst = conn.prepareStatement(SQLStrings.createCarrera);
@@ -113,7 +113,7 @@ public class GestorDB {
 		try {
 			pst = conn.prepareStatement("drop table categoria");
 			pst.execute();
-			
+
 			pst = conn.prepareStatement("drop table atleta");
 			pst.execute();
 
@@ -122,7 +122,7 @@ public class GestorDB {
 
 			pst = conn.prepareStatement("drop table inscripcion");
 			pst.execute();
-			
+
 			pst = conn.prepareStatement("drop table pago");
 			pst.execute();
 
@@ -133,7 +133,7 @@ public class GestorDB {
 		}
 	}
 
-	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ 
+	// ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇ ͇
 	// |INSERT DATOS |
 	// ˭˭˭˭˭˭˭˭˭˭˭˭˭˭˭
 
@@ -161,10 +161,38 @@ public class GestorDB {
 		}
 	}
 
+	public void insertarCarreraNueva(CarreraDto carrera) {
+		conectar();
+		try {
+			pst = conn.prepareStatement(SQLStrings.insertCarreraValuesNuevo);
+
+			pst.setString(1, carrera.getIdCarrera());
+			pst.setString(2, carrera.getNombre());
+
+			pst.setDate(3, new java.sql.Date(carrera.getFecha().getTime())); // fecha origen
+			pst.setDate(4, new java.sql.Date(carrera.getFechaInicioIns().getTime())); // fecha origen
+
+			pst.setString(5, carrera.getTipo());
+			pst.setDouble(6, carrera.getDistancia()); // distancia en km
+			pst.setFloat(7, carrera.getCuota()); // cuota;
+
+			pst.setDate(8, new java.sql.Date(carrera.getFechaFin().getTime())); // fecha fin insc
+
+			pst.setInt(9, carrera.getPlazasDisp());
+			pst.setInt(10, carrera.getMaxPlazas());
+			pst.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			cerrar();
+		}
+	}
+
 	public void insertarCarrera() {
 		conectar();
 		try {
 			pst = conn.prepareStatement(SQLStrings.insertNewYork);
+
 			pst.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -257,7 +285,7 @@ public class GestorDB {
 			cerrar();
 		}
 	}
-	
+
 	public void selectPagos() {
 		conectar();
 		try {
@@ -292,46 +320,78 @@ public class GestorDB {
 			carreras = DtoBuilder.toCarreraDtoList(rs);
 
 		} catch (SQLException e) {
+			e.printStackTrace();
 			System.out.println("Error de script de DB: " + e.getMessage());
 		} finally {
 			cerrar();
 		}
-		if (carreras.size() < 1) return null;
-		else return carreras.get(0);
+		if (carreras.size() < 1)
+			return null;
+		else
+			return carreras.get(0);
 	}
-	
-	
 
 	/**
 	 * @author Sergio Arroni
 	 * 
-	 *         Metodo que devuelve todas las carreras
+	 *         Saca el numero de atletas inscritos en x carrera
+	 * 
+	 * @return
 	 */
-	public ArrayList<CarreraDto> getArrayCarreras() {
+	public int numInscritosxCarrera(String nombre) {
 		conectar();
 
-		ArrayList<CarreraDto> carreras = new ArrayList<CarreraDto>();
+		int cont = 0;
 		try {
-			PreparedStatement ps = conn.prepareStatement(SQLStrings.selectAllCarrera);
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.numAtletasInscritosXCarrera);
+
+			ps.setString(1, nombre);
+
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-
-				CarreraDto carrera = new CarreraDto();
-
-				carrera.setIdCarrera(rs.getString("idCarrera"));
-				carrera.setTipo(rs.getString("tipo"));
-				carrera.setPlazasDisp(rs.getInt("maxPlazas"));
-
-				carreras.add(carrera);
+				cont = rs.getInt("cont");
 			}
 
 		} catch (SQLException e) {
-			System.out.println("Error de script de DB: " + e.getMessage());
+			e.printStackTrace();
+
 		} finally {
 			cerrar();
 		}
-		return carreras;
+		return cont;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Saca una lista de Atletas inscritos en X carrera por fecha de
+	 *         inscripcion
+	 * 
+	 * @return
+	 */
+	public List<AtletaDto> listaAtletasOrdenadorPorFechaIns(String id) {
+		conectar();
+
+		List<AtletaDto> atletas = new ArrayList<AtletaDto>();
+
+		int cont = 0;
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQLStrings.listaAtletasInscritosEnXCarrera);
+
+			ps.setString(1, id);
+
+			ResultSet rs = ps.executeQuery();
+
+			atletas = DtoBuilder.toAtletaDtoList(rs);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+
+		} finally {
+			cerrar();
+		}
+		return atletas;
 	}
 
 	public ArrayList<InscripcionDto> getArrayClasificaciones(String idCarrera) {
@@ -344,25 +404,21 @@ public class GestorDB {
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
-				
+
 				InscripcionDto inscripcion = new InscripcionDto();
 				inscripcion.setAtleta(new AtletaDto());
 				inscripcion.setCarrera(new CarreraDto());
 
-
 				inscripcion.getAtleta().setIdAtleta(rs.getString(1));
-				
 
-				
 				PreparedStatement psAtleta = conn.prepareStatement(SQLStrings.selectAtletaById);
 				psAtleta.setString(1, rs.getString(1));
-				
+
 				ResultSet rsAtleta = psAtleta.executeQuery();
-				
+
 				inscripcion.getAtleta().setSexo(rsAtleta.getString(5));
 				inscripcion.getAtleta().setNombre(rsAtleta.getString(3));
 
-				
 				inscripcion.getCarrera().setIdCarrera(rs.getString(2));
 				inscripcion.setDorsal(rs.getString(3));
 				inscripcion.setFechaInscripcion(rs.getDate(4));
@@ -373,7 +429,7 @@ public class GestorDB {
 
 				inscripciones.add(inscripcion);
 			}
-			
+
 //			PreparedStatement ps = conn.prepareStatement(SQLStrings.clasificacionGeneralPresentados);// AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 //			ResultSet rs = ps.executeQuery();
 //
@@ -430,9 +486,6 @@ public class GestorDB {
 		}
 		return inscripciones;
 	}
-
-	
-	
 
 	public void selectInscripcion() {
 		conectar();
@@ -522,23 +575,19 @@ public class GestorDB {
 				InscripcionDto inscripcion = new InscripcionDto();
 				pst2.setString(1, rs.getString("idAtleta"));
 				AtletaDto nuevoAtleta = new AtletaDto();
-				
+
 				CarreraDto cdto = new CarreraDto();
 				cdto.setIdCarrera(idCarrera);
 				inscripcion.setCarrera(cdto);
-				
+
 				rs2 = pst2.executeQuery();
 
 				while (rs2.next()) {
-					System.out.println("-----------------");
 					nuevoAtleta.setDNI(rs2.getString("dni"));
-					System.out.println("Manolo Wacho-----------" + rs2.getString("dni"));
 					nuevoAtleta.setEdad(rs2.getInt("edad"));
 					nuevoAtleta.setSexo(rs2.getString("sexo"));
 					nuevoAtleta.setNombre(rs2.getString("nombre"));
 				}
-
-				System.out.println("Manolo-----------" + nuevoAtleta.getDNI());
 
 				inscripcion.setAtleta(nuevoAtleta);
 				// Esto es para que me lea bien la fecha
@@ -563,24 +612,24 @@ public class GestorDB {
 	 */
 	public void poblarTablas() {
 		poblarCarreras(20);
-		poblarAtletas(20);		
+		poblarAtletas(20);
 		poblarInscripciones(20);
 		poblarCategorias();
 	}
 
 	private void poblarCategorias() {
 		List<CarreraDto> carreras = listarCarreras();
-		
+
 		for (int i = 0; i < carreras.size(); i++) {
-			CarreraDto c =  carreras.get(i);
-			
+			CarreraDto c = carreras.get(i);
+
 			CategoriaDto cat = new CategoriaDto();
-			
+
 			cat.carrera_id = c.getIdCarrera();
 			cat.edadFin = 50;
 			cat.edadInic = 18;
 			cat.nombre = "cat " + c.getNombre().substring(5) + " | 18 a 50";
-			
+
 			System.out.println(cat.nombre);
 			new AddCategoria(cat).execute();
 		}
@@ -734,10 +783,6 @@ public class GestorDB {
 
 	}
 
-	
-
-	
-
 	public List<CarreraDto> listarCarreras() {
 		List<CarreraDto> ret = null;
 		conectar();
@@ -778,7 +823,7 @@ public class GestorDB {
 		insertarCarreraPredefinida();
 		insertarAtletaPredefinido();
 		insertarInscripcionPredefinida();
-		
+
 	}
 
 	private void insertarInscripcionPredefinida() {
@@ -792,37 +837,37 @@ public class GestorDB {
 		} finally {
 			cerrar();
 		}
-		
+
 	}
 
 	private void insertarAtletaPredefinido() {
-		
-			conectar();
-			try {
-				pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido);
-				pst.execute();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				cerrar();
-			}
-		
-		
+
+		conectar();
+		try {
+			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido);
+			pst.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			cerrar();
+		}
+
 	}
 
 	private void insertarCarreraPredefinida() {
 		conectar();
 		try {
 			pst = conn.prepareStatement(SQLStrings.insertCarreraPredefinida);
-			
+
 			pst.setDate(1, java.sql.Date.valueOf("2022-03-31"));
 			pst.setDate(2, java.sql.Date.valueOf("2023-03-31"));
+			pst.setDate(3, java.sql.Date.valueOf("2024-03-31"));
 			pst.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			cerrar();
-		}		
+		}
 	}
 
 	public List<PagoDto> listarPagos() {

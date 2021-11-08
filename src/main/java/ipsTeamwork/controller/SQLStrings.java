@@ -7,27 +7,25 @@ public class SQLStrings {
 	public static String dropInscripcion = "drop table inscripcion";
 	public static String dropCategoria = "drop table categoria";
 
-
 	// creates
 	public static String createAtleta = "CREATE TABLE atleta (idAtleta varchar2 NOT NULL, dni varchar2 not null, nombre varchar2 not null, edad integer not null, sexo varchar not null, discapacitado bit NOT NULL, email varchar2 not null, CONSTRAINT CHK_Atleta CHECK (edad >18 AND (sexo='M' OR sexo='F' OR sexo='NB')) , primary key (idAtleta), constraint unique_email UNIQUE (email))";
 
 	public static String createInscripcion = "CREATE TABLE inscripcion (idAtleta varchar2 NOT NULL, idCarrera varchar NOT NULL, dorsal varchar2, fechaInscripcion date not null, estadoInscripcion varchar2 not null, formaDePago varchar2, tiempoCorriendo integer,  categoria varchar2, incidenciasPagos varchar2, CONSTRAINT CHK_Inscripcion CHECK ( (formaDePago='Transferencia' OR formaDePago='Tarjeta') AND (estadoInscripcion='Inscrito' OR estadoInscripcion='Pre-Inscrito' OR estadoInscripcion='Pendiente de Pago')), primary key (idAtleta, idCarrera, dorsal), CONSTRAINT FK_idAtleta FOREIGN KEY (idAtleta) REFERENCES atleta(idAtleta), CONSTRAINT FK_idCarrera FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera) )";
 
-	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2, nombre varchar2, fecha date, tipo varchar2, distancia number, cuota number, fechaFinInsc date, plazasDisp number, maxPlazas number not null, CONSTRAINT chk_tipo CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
+	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2, nombre varchar2, fecha date, fechaInicioIns date, tipo varchar2, distancia number, cuota number, fechaFinInsc date, plazasDisp number, maxPlazas number not null, CONSTRAINT chk_tipo CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
 
 	public static String createCategoria = "CREATE TABLE categoria (idCarrera varchar2, nombreCategoria varchar2, edadInicio integer, edadFin integer, primary key (idCarrera, nombreCategoria))";
 
 	public static String createPago = "create table pago (idPago varchar2, idCarrera varchar2, dniAtleta varchar2, fecha date, importe number, primary key (idPago))";
-	
-	
+
 	// inserts
 	public static String insertAtletaPredefinido = "Insert into atleta values ('idMariano', 'dniMariano', 'Mariano Rajoy', 45, 'M', 1, 'mariano@gmail.com');";
 
-	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?, 'Asfalto', 100, 20, ?, 120, 120);";
-	
-	public static String insertInscripcionPredefinida = "Insert into inscripcion values ('idMariano', 'idMaratonMadrid', '1', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '');";
+	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?,?, 'Asfalto', 100, 20, ?, 120, 120);";
 
-	
+	public static String insertInscripcionPredefinida = "Insert into inscripcion values ('idMariano', 'idMaratonMadrid', '1', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano');";
+
+
 	// inserts
 	public static String insertBolt = "Insert into atleta values('69','11122234A','Bolt',35,'F',0, 'manolo@mnaolo'); ";
 
@@ -43,23 +41,21 @@ public class SQLStrings {
 
 	public static String insertCarreraValues = "insert into carrera(idCarrera, nombre, fecha, tipo, distancia, cuota, fechaFinInsc, plazasDisp, maxPlazas) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-	
-	
+	public static String insertCarreraValuesNuevo = "insert into carrera(idCarrera, nombre, fecha,fechaInicioIns , tipo, distancia, cuota, fechaFinInsc, plazasDisp, maxPlazas) values (?, ?, ?, ?,?, ?, ?, ?, ?, ?)";
+
 	public static String insertAtletaValues = "insert into atleta(idAtleta, dni, nombre, edad, sexo, discapacitado, email) values (?, ?, ?, ?, ?, ?, ?)";
-	
+
 	public static String insertInscripcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
 
 	public static String insertCategoriaValues = "insert into categoria(idCarrera, nombreCategoria, edadInicio, edadFin) values (?, ?, ?, ?)";
-	
 
-
-	
 	public static String selectAtletaById = "select * from atleta where idAtleta = ?";
+	// select
 
 	public static String selectAllAtleta = "select * from atleta";
 
 	public static String selectAllCarrera = "select * from carrera";
-	
+
 	public static String selectAllPago = "select * from pago";
 
 	public static String selectCarreraByNombre = "select * from carrera where nombre = ?";
@@ -69,7 +65,7 @@ public class SQLStrings {
 	public static String existeAtletaByEmail = "select * from atleta where email = ?";
 
 	public static String estaLlenaLaLista = "select count(*) from inscripcion i where i.idcarrera = ?";
-	
+
 	public static String categoriaParticipante = "select * from categoria where idCarrera = ?";
 
 	// Consulta para el metodo estadoInscripcion
@@ -79,18 +75,28 @@ public class SQLStrings {
 
 	public static String atletaParticipanteDeCarrera = "select count(*) from inscripcion i where i.idAtleta = ? and i.idCarrera = ?";
 
+	// Update Inscripciones
+
+	public static String updateDorsales = "Update inscripcion set dorsal = ? where idCarrera = ? and idAtleta = ?";
+
+	// count atletas inscritos
+
+	protected static String numAtletasInscritosXCarrera = "select count(*) as cont from inscripcion where idCarrera = ? and estadoInscripcion = 'Inscrito'";
+
+	// count atletas inscritos
+
+	protected static String listaAtletasInscritosEnXCarrera = "select a.* from inscripcion i, atleta a where idCarrera = ? and a.idAtleta = i.idAtleta and estadoInscripcion = 'Inscrito' order by fechaInscripcion";
+
 	// Consultas para sacar las clasificaciones
 
 	public static String clasificacionGeneralPrueba = "select i.idAtleta, i.idCarrera, i.tiempoCorriendo from inscripcion i where  i.tiempoCorriendo > 0 order by i.tiempoCorriendo";
 
 	public static String selectInscripcionByIDCarrera = "select * from inscripcion where idCarrera = ? order by categoria, tiempoCorriendo";
-	
-	
+
 	public static String clasificacionGeneralPresentados = "select a.sexo, a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo > 0  order by i.tiempoCorriendo";
 
 	public static String clasificacionGeneralNoFinaliza = "select a.sexo, a.nombre, i.tiempoCorriendo from atleta a, inscripcion i where a.idAtleta = i.idAtleta and i.tiempoCorriendo = 0 order by a.nombre";
 
 	public static String clasificacionGeneralNoPresentados = "select a.sexo, a.nombre from atleta a where a.idAtleta NOT IN (select idAtleta from inscripcion)  order by a.nombre";
-
 
 }

@@ -7,10 +7,12 @@ public class CarreraDto {
 	private String nombre;
 	private String tipo;
 	private Date fecha;
+	private Date fechaInicioIns;
 	private double distancia;
 	private float cuota;
 	private Date fechaFin;
 	private int maxPlazas;
+	private int numInscritos;
 
 	private String descripcion;
 	
@@ -23,6 +25,34 @@ public class CarreraDto {
 	}
 
 	private int plazasDisp;
+
+	/**
+	 * @return the numInscritos
+	 */
+	public int getNumInscritos() {
+		return numInscritos;
+	}
+
+	/**
+	 * @param numInscritos the numInscritos to set
+	 */
+	public void setNumInscritos(int numInscritos) {
+		this.numInscritos = numInscritos;
+	}
+
+	/**
+	 * @return the fechaInicioIns
+	 */
+	public Date getFechaInicioIns() {
+		return fechaInicioIns;
+	}
+
+	/**
+	 * @param fechaInicioIns the fechaInicioIns to set
+	 */
+	public void setFechaInicioIns(Date fechaInicioIns) {
+		this.fechaInicioIns = fechaInicioIns;
+	}
 
 	/**
 	 * @return the id
