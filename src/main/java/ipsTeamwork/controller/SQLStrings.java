@@ -19,11 +19,25 @@ public class SQLStrings {
 	public static String createPago = "create table pago (idPago varchar2, idCarrera varchar2, dniAtleta varchar2, fecha date, importe number, primary key (idPago))";
 
 	// inserts
-	public static String insertAtletaPredefinido = "Insert into atleta values ('idMariano', 'dniMariano', 'Mariano Rajoy', 45, 'M', 1, 'mariano@gmail.com');";
+	public static String insertAtletaPredefinido = "Insert into atleta values ('idMariano', 'dniMariano', 'Mariano Rajoy', 60, 'M', 1, 'mariano@gmail.com');";
+	public static String insertAtletaPredefinido2 = "Insert into atleta values ('idPedro', 'dniPedro', 'Pedro Sánchez', 20, 'M', 1, 'pedro@gmail.com');";
+	public static String insertAtletaPredefinido3 = "Insert into atleta values ('idSantiago', 'dniSantiago', 'Santiago Abascal', 20, 'M', 1, 'santiago@gmail.com');";
+	public static String insertAtletaPredefinido4 = "Insert into atleta values ('idPablo', 'dniPablo', 'Pablo Iglesias', 34, 'M', 1, 'Pablo@gmail.com');";
+	public static String insertAtletaPredefinido5 = "Insert into atleta values ('idCasado', 'dniCasado', 'Pablo Casado', 30, 'M', 1, 'Casado@gmail.com');";
+	public static String insertAtletaPredefinido6 = "Insert into atleta values ('idAyuso', 'dniAyuso', 'Isabel Diaz Ayuso', 65, 'F', 1, 'Ayuso@gmail.com');";
+	
+	
+	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?,?, 'Asfalto', 100, 20, ?, 6, 6);";
 
-	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?,?, 'Asfalto', 100, 20, ?, 120, 120);";
+	public static String insertInscripcionPredefinida = "Insert into inscripcion values ('idMariano', 'idMaratonMadrid', '1', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '');";
+	public static String insertInscripcionPredefinida1 = "Insert into inscripcion values ('idPedro', 'idMaratonMadrid', '2', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '');";
+	public static String insertInscripcionPredefinida2 = "Insert into inscripcion values ('idSantiago', 'idMaratonMadrid', '3', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '');";
+	public static String insertInscripcionPredefinida3 = "Insert into inscripcion values ('idPablo', 'idMaratonMadrid', '4', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '');";
+	public static String insertInscripcionPredefinida4 = "Insert into inscripcion values ('idCasado', 'idMaratonMadrid', '5', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '');";
+	public static String insertInscripcionPredefinida5 = "Insert into inscripcion values ('idAyuso', 'idMaratonMadrid', '6', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '');";
 
-	public static String insertInscripcionPredefinida = "Insert into inscripcion values ('idMariano', 'idMaratonMadrid', '1', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano');";
+	public static String insertCategoriaPredefinida1 = "Insert into categoria values ('idMaratonMadrid', 'Junior', 18, 35);";
+	public static String insertCategoriaPredefinida2 = "Insert into categoria values ('idMaratonMadrid', 'Veterano', 36, 70);";
 
 
 	// inserts
@@ -69,6 +83,8 @@ public class SQLStrings {
 	public static String categoriaParticipante = "select * from categoria where idCarrera = ?";
 
 	// Consulta para el metodo estadoInscripcion
+	public static String inscripcionesPorCarrera = "select * from inscripcion i where idCarrera = ?";
+	
 	protected static String estadoInscripcion = "select * from inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' order by fechaInscripcion, estadoInscripcion";
 
 	protected static String estadoInscripcionAtleta = "select * from atleta where idAtleta = ?";
@@ -89,7 +105,7 @@ public class SQLStrings {
 
 	// Consultas para sacar las clasificaciones
 
-	public static String clasificacionGeneralPrueba = "select i.idAtleta, i.idCarrera, i.tiempoCorriendo from inscripcion i where  i.tiempoCorriendo > 0 order by i.tiempoCorriendo";
+	public static String clasificacionGeneralPrueba = "select i.idAtleta, i.idCarrera, i.tiempoCorriendo from inscripcion i where  i.tiempoCorriendo > 0 order by i.tiempoCorriendo asc";
 
 	public static String selectInscripcionByIDCarrera = "select * from inscripcion where idCarrera = ? order by categoria, tiempoCorriendo";
 

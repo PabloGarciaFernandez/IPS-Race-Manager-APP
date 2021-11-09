@@ -270,7 +270,7 @@ public class GestorDB {
 			cerrar();
 		}
 	}
-	
+
 	public void selectCarreras() {
 		conectar();
 		try {
@@ -605,6 +605,56 @@ public class GestorDB {
 		return atletasInscritos;
 	}
 
+	public ArrayList<InscripcionDto> todasLasInscripcionesCarrera(String idCarrera) {
+		conectar();
+
+		ArrayList<InscripcionDto> inscripciones = new ArrayList<InscripcionDto>();
+
+		try {
+
+			PreparedStatement pst2 = conn.prepareStatement(SQLStrings.estadoInscripcionAtleta);
+			pst = conn.prepareStatement(SQLStrings.inscripcionesPorCarrera);
+
+			pst.setString(1, idCarrera);
+
+			rs = pst.executeQuery();
+
+			while (rs.next()) {
+				ResultSet rs2 = null;
+				InscripcionDto inscripcion = new InscripcionDto();
+				pst2.setString(1, rs.getString("idAtleta"));
+				AtletaDto nuevoAtleta = new AtletaDto();
+
+				CarreraDto cdto = new CarreraDto();
+				cdto.setIdCarrera(idCarrera);
+				inscripcion.setCarrera(cdto);
+
+				rs2 = pst2.executeQuery();
+
+				while (rs2.next()) {
+					nuevoAtleta.setDNI(rs2.getString("dni"));
+					nuevoAtleta.setEdad(rs2.getInt("edad"));
+					nuevoAtleta.setSexo(rs2.getString("sexo"));
+					nuevoAtleta.setNombre(rs2.getString("nombre"));
+				}
+
+				inscripcion.setAtleta(nuevoAtleta);
+				inscripcion.setIdAtleta(rs.getString("idAtleta"));
+				// Esto es para que me lea bien la fecha
+				inscripcion.setEstadoInscripcion(rs.getString("estadoInscripcion"));
+				inscripcion.setFechaInscripcion(rs.getDate("fechaInscripcion"));
+				inscripciones.add(inscripcion);
+				rs2.close();
+			}
+			pst2.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			cerrar();
+		}
+		return inscripciones;
+	}
+
 	/**
 	 * @author Juan Torrente
 	 * 
@@ -823,6 +873,25 @@ public class GestorDB {
 		insertarCarreraPredefinida();
 		insertarAtletaPredefinido();
 		insertarInscripcionPredefinida();
+		insertarCategoriaPredefinida();
+
+	}
+
+	private void insertarCategoriaPredefinida() {
+
+		conectar();
+		try {
+			pst = conn.prepareStatement(SQLStrings.insertCategoriaPredefinida1);
+
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertCategoriaPredefinida2);
+
+			pst.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			cerrar();
+		}
 
 	}
 
@@ -830,6 +899,21 @@ public class GestorDB {
 		conectar();
 		try {
 			pst = conn.prepareStatement(SQLStrings.insertInscripcionPredefinida);
+			pst.setDate(1, new java.sql.Date(new Date().getTime()));
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertInscripcionPredefinida1);
+			pst.setDate(1, new java.sql.Date(new Date().getTime()));
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertInscripcionPredefinida2);
+			pst.setDate(1, new java.sql.Date(new Date().getTime()));
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertInscripcionPredefinida3);
+			pst.setDate(1, new java.sql.Date(new Date().getTime()));
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertInscripcionPredefinida4);
+			pst.setDate(1, new java.sql.Date(new Date().getTime()));
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertInscripcionPredefinida5);
 			pst.setDate(1, new java.sql.Date(new Date().getTime()));
 			pst.execute();
 		} catch (SQLException e) {
@@ -845,6 +929,16 @@ public class GestorDB {
 		conectar();
 		try {
 			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido);
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido2);
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido3);
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido4);
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido5);
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido6);
 			pst.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -872,67 +966,65 @@ public class GestorDB {
 
 	public List<PagoDto> listarPagos() {
 		List<PagoDto> pagos = null;
-		
+
 		conectar();
 		try {
 			pst = conn.prepareStatement(SQLStrings.selectAllPago);
-			
-			rs = pst.executeQuery();
-			
-			pagos= DtoBuilder.toPagoDtoList(rs);
 
-			
-		} catch(Exception e) {
+			rs = pst.executeQuery();
+
+			pagos = DtoBuilder.toPagoDtoList(rs);
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
-		
-		
+
 		return pagos;
 	}
 
 	public static void escribirIncidencia(InscripcionDto idto, String string) {
 		new AppendIncidencia(string, idto.getIdCarrera(), idto.getIdAtleta());
 	}
-	
+
 	public AtletaDto findAtletaById(String idAtleta) {
 		AtletaDto ret = null;
-		conectar();	
-		
+		conectar();
+
 		try {
 			pst = conn.prepareStatement(SQLStrings.selectAtletaById);
 			pst.setString(1, idAtleta);
 			rs = pst.executeQuery();
-			
+
 			ret = DtoBuilder.toAtletaDto(rs);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {			
+		} finally {
 			cerrar();
 		}
-				
+
 		return ret;
 	}
-	
+
 	public AtletaDto findAtletaByIdNull(String idAtleta) {
 		AtletaDto ret = null;
-		conectar();	
-		
+		conectar();
+
 		try {
 			pst = conn.prepareStatement(SQLStrings.selectAtletaById);
 			pst.setString(1, idAtleta);
 			rs = pst.executeQuery();
-			
+
 			ret = DtoBuilder.toAtletaDtoNull(rs);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {			
+		} finally {
 			cerrar();
 		}
-				
+
 		return ret;
 	}
 }

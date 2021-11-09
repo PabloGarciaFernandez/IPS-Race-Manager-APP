@@ -232,7 +232,6 @@ public class MainWindow extends JFrame {
 	private JScrollPane scGeneralDorsales;
 	private JTable tbGeneralDorsales;
 	private JButton btAtrasGeneralDorsales;
-	private JButton btSiguienteGeneralDorsales;
 	private JButton btGeneralDorsales;
 	private JLabel lbVIPSGeneralDorsales;
 	private JTextField txVipsGeneralDorsales;
@@ -1076,7 +1075,7 @@ public class MainWindow extends JFrame {
 		String nombre = "";
 
 		List<PagoDto> pagos = null;
-		
+
 		try {
 			nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
 		} catch (IndexOutOfBoundsException e) {
@@ -1103,37 +1102,41 @@ public class MainWindow extends JFrame {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 		for (Iterator<PagoDto> iterator = pagos.iterator(); iterator.hasNext();) {
 			PagoDto pago = iterator.next();
 
 			pago.setIdCarrera(carrera.getIdCarrera());
 			pago.autoInsert();
 		}
-		
+
 		computarEfectosPagos(carrera, pagos);
 
 	}
 
 	private void computarEfectosPagos(CarreraDto para, List<PagoDto> pagos) {
-		List<InscripcionDto> inscripcionesParaCarrera = db.estadoInscripcion(para.getIdCarrera());
+		List<InscripcionDto> inscripcionesParaCarrera = db.todasLasInscripcionesCarrera(para.getIdCarrera());
 		List<String> errores = new ArrayList<String>();
-		
+
 		for (PagoDto p : pagos) {
 			boolean carreraCorrecta = false;
 			for (InscripcionDto idto : inscripcionesParaCarrera) {
 				AtletaDto atletaDeInscripcion = new GestorDB().findAtletaByIdNull(idto.getIdAtleta());
-				
-				if (atletaDeInscripcion == null) continue;
-				
-				if (p.dni == atletaDeInscripcion.getDNI()) {
+
+				if (atletaDeInscripcion == null)
+					continue;
+
+				if (p.dni.equals(atletaDeInscripcion.getDNI())) {
 					carreraCorrecta = true;
 					if (p.date.after(para.getFechaFin())) {
 						GestorDB.escribirIncidencia(idto, "Pago fuera de plazo. Devolver " + p.importe + "€");
-					} if (p.importe < para.getCuota()) {
+					}
+					if (p.importe < para.getCuota()) {
 						GestorDB.escribirIncidencia(idto, "Pago insuficiente. Devolver " + p.importe + "€");
-					} if (p.importe > para.getCuota()) {
-						GestorDB.escribirIncidencia(idto, "Pago excede la cuota. Devolver " + (p.importe-para.getCuota()) + "€");
+					}
+					if (p.importe > para.getCuota()) {
+						GestorDB.escribirIncidencia(idto,
+								"Pago excede la cuota. Devolver " + (p.importe - para.getCuota()) + "€");
 						UpdateInscribirseAtleta.execute(idto, "INSCRITO");
 					} else {
 						UpdateInscribirseAtleta.execute(idto, "INSCRITO");
@@ -1141,11 +1144,11 @@ public class MainWindow extends JFrame {
 				}
 			}
 			if (!carreraCorrecta) {
-				errores.add("Error: Dni " + p.dni + " ha hecho una transferencia de " + p.importe + "€ a una carrera en la que no está inscrito.");
+				errores.add("Error: Dni " + p.dni + " ha hecho una transferencia de " + p.importe
+						+ "€ a una carrera en la que no está inscrito.");
 			}
 		}
-		
-		
+
 		JOptionPane.showMessageDialog(this, errores.toArray());
 	}
 
@@ -1208,7 +1211,7 @@ public class MainWindow extends JFrame {
 		if (tbVerClasificaciones == null) {
 			tbVerClasificaciones = new JTable();
 			tbVerClasificaciones.setModel(new DefaultTableModel(new Object[][] {},
-					new String[] { "Posición", "Categoría", "Género", "Nombre", "Tiempo" }));
+					new String[] { "Posición", "Dorsal", "Categoría", "Género", "Nombre", "Tiempo" }));
 
 			tbVerClasificaciones.setDefaultEditor(Object.class, null);
 
@@ -1250,6 +1253,7 @@ public class MainWindow extends JFrame {
 	 * 
 	 */
 	private void mirarParticipantes() {
+		if(getTbVerCarreras().getSelectedRow() != -1) {
 
 		String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
 
@@ -1265,6 +1269,9 @@ public class MainWindow extends JFrame {
 
 			tablaAtletasInscritosX.addRow(alluneedislove);
 
+		}
+		} else {
+			JOptionPane.showMessageDialog(this, "Selecciona una carrera");
 		}
 	}
 
@@ -1504,7 +1511,7 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					reset(tablaClasificaciones);
 					accionClasificaciones();
-					showCard(PANEL_VERCLASIFICACIONESORGANIZADOR);
+					
 				}
 			});
 			btVerClasificacionesOrganizacion.setMnemonic('c');
@@ -2134,6 +2141,8 @@ public class MainWindow extends JFrame {
 	}
 
 	protected void importarTiemposCarreraDada() {
+		
+		if(getTbVerCarreras().getSelectedRow() != -1) {
 
 		String nombreCarrera = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0)); // nombreCarrera
 
@@ -2172,6 +2181,9 @@ public class MainWindow extends JFrame {
 				"La operación ha sido completada. \nEl número de tiempos importados es: " + numeroTiemposImportados
 						+ "\nEl número de tiempos registrados con éxito es: " + contadorActualizaciones,
 				"Importar tiempos carrera " + nombreCarrera, JOptionPane.DEFAULT_OPTION);
+		} else {
+			JOptionPane.showMessageDialog(this, "Selecciona una carrera");
+		}
 	}
 
 //	private JButton getBtVerClasificacionesOrganizacion_1() {
@@ -2192,6 +2204,7 @@ public class MainWindow extends JFrame {
 //	}
 
 	protected void accionClasificaciones() {
+		if(getTbVerCarreras().getSelectedRow() != -1) {
 		reset(tablaClasificaciones);
 
 		System.out.println("cosa del debug");
@@ -2225,25 +2238,30 @@ public class MainWindow extends JFrame {
 		String categoria = "";
 
 		for (InscripcionDto inscripcionDto : inscripciones) {
-			System.err.println("categoria: " + inscripcionDto.getCategoria());
-			inscripcionDto.setCategoria(Categoria.calculaCategoria(atletaActual, carrera));
+			AtletaDto atleta = new AtletaDto();
+
 			if (inscripcionDto.getCategoria() == null) {
 				inscripcionDto.setCategoria("SIN CATEGORIA");
 				System.err.println("\"SIN CATEGORIA\" por accionClasificaciones() - MainWindow linea 2156");
 			}
 			if (inscripcionDto.getCategoria().equals(categoria)) {
 				System.err.println("hasta aqui bien");
-				String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getCategoria(),
-						inscripcionDto.getAtleta().getSexo(), inscripcionDto.getAtleta().getNombre(),
+				String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getDorsal(),
+						inscripcionDto.getCategoria(), inscripcionDto.getAtleta().getSexo(),
+						inscripcionDto.getAtleta().getNombre(),
 						stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
 				tablaClasificaciones.addRow(clasificacionesTabla);
 				posicion++;
+
 			} else {
+				categoria = inscripcionDto.getCategoria();
+
 				System.err.println("hasta aqui bien");
 
 				posicion = 1;
-				String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getCategoria(),
-						inscripcionDto.getAtleta().getSexo(), inscripcionDto.getAtleta().getNombre(),
+				String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getDorsal(),
+						inscripcionDto.getCategoria(), inscripcionDto.getAtleta().getSexo(),
+						inscripcionDto.getAtleta().getNombre(),
 						stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
 				tablaClasificaciones.addRow(clasificacionesTabla);
 				posicion++;
@@ -2251,6 +2269,9 @@ public class MainWindow extends JFrame {
 		}
 
 		showCard(PANEL_VERCLASIFICACIONESORGANIZADOR);
+		} else {
+			JOptionPane.showMessageDialog(this, "Selecciona una carrera");
+		}
 
 	}
 
@@ -2510,7 +2531,6 @@ public class MainWindow extends JFrame {
 			pnGenerarDorsalesPrincipal.add(getLbGenerarDorsales());
 			pnGenerarDorsalesPrincipal.add(getScGeneralDorsales());
 			pnGenerarDorsalesPrincipal.add(getBtAtrasGeneralDorsales());
-			pnGenerarDorsalesPrincipal.add(getBtSiguienteGeneralDorsales());
 			pnGenerarDorsalesPrincipal.add(getBtGeneralDorsales());
 			pnGenerarDorsalesPrincipal.add(getLbVIPSGeneralDorsales());
 			pnGenerarDorsalesPrincipal.add(getTxVipsGeneralDorsales());
@@ -2561,16 +2581,6 @@ public class MainWindow extends JFrame {
 			btAtrasGeneralDorsales.setBounds(10, 419, 163, 40);
 		}
 		return btAtrasGeneralDorsales;
-	}
-
-	private JButton getBtSiguienteGeneralDorsales() {
-		if (btSiguienteGeneralDorsales == null) {
-			btSiguienteGeneralDorsales = new JButton("Siguiente");
-			btSiguienteGeneralDorsales.setMnemonic('s');
-			btSiguienteGeneralDorsales.setFont(new Font("Arial", Font.PLAIN, 20));
-			btSiguienteGeneralDorsales.setBounds(691, 419, 163, 40);
-		}
-		return btSiguienteGeneralDorsales;
 	}
 
 	private JButton getBtGeneralDorsales() {
