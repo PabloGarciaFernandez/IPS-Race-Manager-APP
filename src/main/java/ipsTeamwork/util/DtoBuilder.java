@@ -16,7 +16,7 @@ public class DtoBuilder {
 
 	public static AtletaDto toAtletaDto(ResultSet rs) throws SQLException {
 		AtletaDto dto = new AtletaDto();
-		if (!rs.next()) return null;
+//		if (!rs.next()) return null;
 		try {
 			dto.setSexo(rs.getString(5));
 			dto.setNombre(rs.getString(3));

@@ -985,6 +985,7 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					categoriasCreacion = new ArrayList<CategoriaDto>();
 					categoriasFiltrado = new ArrayList<CategoriaDto>();
+					cleanCreacion();
 					showCard(PANEL_CREACION_CARRERAS);
 				}
 			});
