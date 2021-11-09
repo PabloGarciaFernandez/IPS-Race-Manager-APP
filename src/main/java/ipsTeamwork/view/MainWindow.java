@@ -165,10 +165,10 @@ public class MainWindow extends JFrame {
 	private JPanel pnPagoTarjetaCenter;
 	private JLabel lbPagoTarjeta;
 	private JLabel lbPagoTarjetaNumero;
-	private JLabel lbPagoTarjetaCódigoCVC;
+	private JLabel lbPagoTarjetaCodigoCVC;
 	private JLabel lbPagoTarjetaFechaCaducidad;
 	private JTextField txPagoTarjetaNumero;
-	private JTextField txPagoTarjetaCódigoCVC;
+	private JTextField txPagoTarjetaCodigoCVC;
 	private JTextField txPagoTarjetaFechaCaducidad;
 	private JButton btPagoTarjetaEnviar;
 	private JLabel lbPagarInscripcion;
@@ -753,7 +753,7 @@ public class MainWindow extends JFrame {
 	}
 
 	private boolean camposVacios() {
-		return (txPagoTarjetaCódigoCVC.getText().isEmpty() || txPagoTarjetaCódigoCVC.getText().isBlank()
+		return (txPagoTarjetaCodigoCVC.getText().isEmpty() || txPagoTarjetaCodigoCVC.getText().isBlank()
 				|| txPagoTarjetaFechaCaducidad.getText().isEmpty() || txPagoTarjetaFechaCaducidad.getText().isBlank()
 				|| txPagoTarjetaNumero.getText().isEmpty() || txPagoTarjetaNumero.getText().isBlank());
 	}
@@ -1122,7 +1122,7 @@ public class MainWindow extends JFrame {
 		for (PagoDto p : pagos) {
 			boolean carreraCorrecta = false;
 			for (InscripcionDto idto : inscripcionesParaCarrera) {
-				AtletaDto atletaDeInscripcion = new GestorDB().findAtletaById(idto.getIdAtleta());
+				AtletaDto atletaDeInscripcion = new GestorDB().findAtletaByIdNull(idto.getIdAtleta());
 				
 				if (atletaDeInscripcion == null) continue;
 				
@@ -1549,12 +1549,12 @@ public class MainWindow extends JFrame {
 	}
 
 	private JLabel getLbPagoTarjetaCódigoCVC() {
-		if (lbPagoTarjetaCódigoCVC == null) {
-			lbPagoTarjetaCódigoCVC = new JLabel("Código CVC: ");
-			lbPagoTarjetaCódigoCVC.setFont(new Font("Tahoma", Font.PLAIN, 15));
-			lbPagoTarjetaCódigoCVC.setBounds(60, 234, 187, 35);
+		if (lbPagoTarjetaCodigoCVC == null) {
+			lbPagoTarjetaCodigoCVC = new JLabel("Código CVC: ");
+			lbPagoTarjetaCodigoCVC.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lbPagoTarjetaCodigoCVC.setBounds(60, 234, 187, 35);
 		}
-		return lbPagoTarjetaCódigoCVC;
+		return lbPagoTarjetaCodigoCVC;
 	}
 
 	private JLabel getLbPagoTarjetaFechaCaducidad() {
@@ -1577,13 +1577,13 @@ public class MainWindow extends JFrame {
 	}
 
 	private JTextField getTxPagoTarjetaCódigoCVC() {
-		if (txPagoTarjetaCódigoCVC == null) {
-			txPagoTarjetaCódigoCVC = new JTextField();
-			txPagoTarjetaCódigoCVC.setFont(new Font("Tahoma", Font.PLAIN, 15));
-			txPagoTarjetaCódigoCVC.setColumns(10);
-			txPagoTarjetaCódigoCVC.setBounds(346, 234, 268, 35);
+		if (txPagoTarjetaCodigoCVC == null) {
+			txPagoTarjetaCodigoCVC = new JTextField();
+			txPagoTarjetaCodigoCVC.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			txPagoTarjetaCodigoCVC.setColumns(10);
+			txPagoTarjetaCodigoCVC.setBounds(346, 234, 268, 35);
 		}
-		return txPagoTarjetaCódigoCVC;
+		return txPagoTarjetaCodigoCVC;
 	}
 
 	private JTextField getTxPagoTarjetaFechaCaducidad() {
@@ -1653,7 +1653,7 @@ public class MainWindow extends JFrame {
 	}
 
 	private void vaciarPanelPagoTarjeta() {
-		txPagoTarjetaCódigoCVC.setText("");
+		txPagoTarjetaCodigoCVC.setText("");
 		txPagoTarjetaFechaCaducidad.setText("");
 		txPagoTarjetaNumero.setText("");
 	}

@@ -32,6 +32,24 @@ public class DtoBuilder {
 		return dto;
 	}
 	
+	public static AtletaDto toAtletaDtoNull(ResultSet rs) throws SQLException {
+		AtletaDto dto = new AtletaDto();
+		if (!rs.next()) return null;
+		try {
+			dto.setSexo(rs.getString(5));
+			dto.setNombre(rs.getString(3));
+			dto.setIdAtleta(rs.getString(1));
+			dto.setEmail(rs.getString(7));
+			dto.setEdad(Integer.parseInt(rs.getString(4)));
+			dto.setDNI(rs.getString(2));
+			dto.setDiscapacitado(Integer.parseInt(rs.getString(6)) == 1 ? true : false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return dto;
+	}
+	
 	public static CategoriaDto toCategoriaDto(ResultSet rs) {
 		CategoriaDto dto = new CategoriaDto();
 

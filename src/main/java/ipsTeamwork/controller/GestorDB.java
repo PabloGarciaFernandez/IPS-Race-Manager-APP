@@ -915,4 +915,24 @@ public class GestorDB {
 				
 		return ret;
 	}
+	
+	public AtletaDto findAtletaByIdNull(String idAtleta) {
+		AtletaDto ret = null;
+		conectar();	
+		
+		try {
+			pst = conn.prepareStatement(SQLStrings.selectAtletaById);
+			pst.setString(1, idAtleta);
+			rs = pst.executeQuery();
+			
+			ret = DtoBuilder.toAtletaDtoNull(rs);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {			
+			cerrar();
+		}
+				
+		return ret;
+	}
 }
