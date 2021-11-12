@@ -210,7 +210,6 @@ public class MainWindow extends JFrame {
 
 	private JButton btImportarTiemposCarrera;
 
-	private FileUtil fileUtil = new FileUtil();
 	private JButton btVerClasificacionesOrganizacion;
 	private JPanel pnConfiguracionPlazos;
 	private JPanel pnPrincipalConfiguracionPlazos;
@@ -1253,23 +1252,23 @@ public class MainWindow extends JFrame {
 	 * 
 	 */
 	private void mirarParticipantes() {
-		if(getTbVerCarreras().getSelectedRow() != -1) {
+		if (getTbVerCarreras().getSelectedRow() != -1) {
 
-		String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
+			String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
 
-		CarreraDto carreras = db.selectCarrerasNombre(nombre);
+			CarreraDto carreras = db.selectCarrerasNombre(nombre);
 
-		List<InscripcionDto> inscripciones = db.estadoInscripcion(carreras.getIdCarrera());
+			List<InscripcionDto> inscripciones = db.estadoInscripcion(carreras.getIdCarrera());
 
-		for (InscripcionDto inscripcionDto : inscripciones) {
+			for (InscripcionDto inscripcionDto : inscripciones) {
 
-			String[] alluneedislove = { inscripcionDto.getAtleta().getDNI(), inscripcionDto.getAtleta().getNombre(),
-					Categoria.calculaCategoria(inscripcionDto.getAtleta(), inscripcionDto.getCarrera()),
-					String.valueOf(inscripcionDto.getFechaInscripcion()), inscripcionDto.getEstadoInscripcion() };
+				String[] alluneedislove = { inscripcionDto.getAtleta().getDNI(), inscripcionDto.getAtleta().getNombre(),
+						Categoria.calculaCategoria(inscripcionDto.getAtleta(), inscripcionDto.getCarrera()),
+						String.valueOf(inscripcionDto.getFechaInscripcion()), inscripcionDto.getEstadoInscripcion() };
 
-			tablaAtletasInscritosX.addRow(alluneedislove);
+				tablaAtletasInscritosX.addRow(alluneedislove);
 
-		}
+			}
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecciona una carrera");
 		}
@@ -1511,7 +1510,7 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					reset(tablaClasificaciones);
 					accionClasificaciones();
-					
+
 				}
 			});
 			btVerClasificacionesOrganizacion.setMnemonic('c');
@@ -2141,141 +2140,122 @@ public class MainWindow extends JFrame {
 	}
 
 	protected void importarTiemposCarreraDada() {
-		
-		if(getTbVerCarreras().getSelectedRow() != -1) {
 
-		String nombreCarrera = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0)); // nombreCarrera
+		if (getTbVerCarreras().getSelectedRow() != -1) {
 
-		System.out.println(nombreCarrera);
+			String nombreCarrera = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0)); // nombreCarrera
 
-		CarreraDto carrera = db.selectCarrerasNombre(nombreCarrera);// idCarrera
+			System.out.println(nombreCarrera);
 
-		System.out.println(carrera.getIdCarrera() + "    " + carrera.getNombre());
+			CarreraDto carrera = db.selectCarrerasNombre(nombreCarrera);// idCarrera
 
-		Map<String, String> fichero = FileUtil.cargarTiempos(nombreCarrera);
+			System.out.println(carrera.getIdCarrera() + "    " + carrera.getNombre());
 
-		int numeroTiemposImportados = 0;
-		for (Map.Entry<String, String> dorsalTiempo : fichero.entrySet()) {
-			System.out.println(dorsalTiempo.getKey() + "/" + dorsalTiempo.getValue());
-			numeroTiemposImportados++;
-		}
+			Map<String, String> fichero = FileUtil.cargarTiempos(nombreCarrera);
 
-		// hasta aquí todo bien, ya tengo el nombre de la carrera, el dorsal del atleta
-		// y el tiempo, que si es 0 será NF (no finaliza).
+			int numeroTiemposImportados = 0;
+			for (Map.Entry<String, String> dorsalTiempo : fichero.entrySet()) {
+				System.out.println(dorsalTiempo.getKey() + "/" + dorsalTiempo.getValue());
+				numeroTiemposImportados++;
+			}
 
-		// Ahora toca recorrer ese diccionario, e insertar en la tabla inscripciones
+			// hasta aquí todo bien, ya tengo el nombre de la carrera, el dorsal del atleta
+			// y el tiempo, que si es 0 será NF (no finaliza).
 
-		int contadorActualizaciones = UpdateInscribirseAtleta
-				.updateInscripcionTiempoByDorsalAndIdCarrera(carrera.getIdCarrera(), fichero);
+			// Ahora toca recorrer ese diccionario, e insertar en la tabla inscripciones
 
-		System.out.println("Número de tiempos importados:   " + numeroTiemposImportados);
+			int contadorActualizaciones = UpdateInscribirseAtleta
+					.updateInscripcionTiempoByDorsalAndIdCarrera(carrera.getIdCarrera(), fichero);
 
-		System.out.println("Número de tiempos registrados con éxito:   " + contadorActualizaciones);
+			System.out.println("Número de tiempos importados:   " + numeroTiemposImportados);
 
-		db.selectInscripcion();
+			System.out.println("Número de tiempos registrados con éxito:   " + contadorActualizaciones);
 
-		// Categoria.calculaCategoria(inscripcionDto.getAtleta().getEdad(),
-		// inscripcionDto.getAtleta().getSexo()),
+			db.selectInscripcion();
 
-		JOptionPane.showConfirmDialog(this,
-				"La operación ha sido completada. \nEl número de tiempos importados es: " + numeroTiemposImportados
-						+ "\nEl número de tiempos registrados con éxito es: " + contadorActualizaciones,
-				"Importar tiempos carrera " + nombreCarrera, JOptionPane.DEFAULT_OPTION);
+			// Categoria.calculaCategoria(inscripcionDto.getAtleta().getEdad(),
+			// inscripcionDto.getAtleta().getSexo()),
+
+			JOptionPane.showConfirmDialog(this,
+					"La operación ha sido completada. \nEl número de tiempos importados es: " + numeroTiemposImportados
+							+ "\nEl número de tiempos registrados con éxito es: " + contadorActualizaciones,
+					"Importar tiempos carrera " + nombreCarrera, JOptionPane.DEFAULT_OPTION);
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecciona una carrera");
 		}
 	}
-
-//	private JButton getBtVerClasificacionesOrganizacion_1() {
-//		if (btVerClasificacionesOrganizacion == null) {
-//			btVerClasificacionesOrganizacion = new JButton("Ver Clasificaciones");
-//			btVerClasificacionesOrganizacion.addActionListener(new ActionListener() {
-//				public void actionPerformed(ActionEvent e) {
-//					
-//					accionClasificaciones();					
-//				}
-//			});
-//			btVerClasificacionesOrganizacion.setMnemonic('c');
-//			
-//			btVerClasificacionesOrganizacion.setFont(new Font("Arial", Font.PLAIN, 14));
-//			btVerClasificacionesOrganizacion.setBounds(283, 417, 435, 46);
-//		}
-//		return btVerClasificacionesOrganizacion;
-//	}
 
 	protected void accionClasificaciones() {
-		if(getTbVerCarreras().getSelectedRow() != -1) {
-		reset(tablaClasificaciones);
+		if (getTbVerCarreras().getSelectedRow() != -1) {
+			reset(tablaClasificaciones);
 
-		System.out.println("cosa del debug");
+			System.out.println("cosa del debug");
 
-		String nombreCarrera = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0)); // nombreCarrera
+			String nombreCarrera = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0)); // nombreCarrera
 
-		System.out.println(nombreCarrera);
+			System.out.println(nombreCarrera);
 
-		CarreraDto carrera = db.selectCarrerasNombre(nombreCarrera);// idCarrera
+			CarreraDto carrera = db.selectCarrerasNombre(nombreCarrera);// idCarrera
 
-		System.out.println(carrera.getIdCarrera() + "    " + carrera.getNombre());
+			System.out.println(carrera.getIdCarrera() + "    " + carrera.getNombre());
 
-		// ahora necesito una lista de inscripciones
-		// tengo el id de la carrera
-		// he de sacar todas las inscipciones con ese idCarrera
-		// Teniendo ya eso, qe me da la categoria, y demas es trabajar con esa lista de
-		// inscripciones
+			// ahora necesito una lista de inscripciones
+			// tengo el id de la carrera
+			// he de sacar todas las inscipciones con ese idCarrera
+			// Teniendo ya eso, qe me da la categoria, y demas es trabajar con esa lista de
+			// inscripciones
 
-		ArrayList<InscripcionDto> inscripciones = db.getArrayClasificaciones(carrera.getIdCarrera());
-		if (inscripciones.size() == 0) {
-			System.err.println("inscripciones vacias");
-		}
-
-		for (InscripcionDto inscripcionDto : inscripciones) {
-			System.out.println(inscripcionDto.getCategoria() + "             " + carrera.getNombre() + "            "
-					+ inscripcionDto.getAtleta().getSexo() + "          " + inscripcionDto.getAtleta().getNombre()
-					+ "               " + stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()));
-		}
-
-		int posicion = 1;
-		String categoria = "";
-
-		for (InscripcionDto inscripcionDto : inscripciones) {
-			AtletaDto atleta = new AtletaDto();
-
-			if (inscripcionDto.getCategoria() == null) {
-				inscripcionDto.setCategoria("SIN CATEGORIA");
-				System.err.println("\"SIN CATEGORIA\" por accionClasificaciones() - MainWindow linea 2156");
+			ArrayList<InscripcionDto> inscripciones = db.getArrayClasificaciones(carrera.getIdCarrera());
+			if (inscripciones.size() == 0) {
+				System.err.println("inscripciones vacias");
 			}
-			if (inscripcionDto.getCategoria().equals(categoria)) {
-				System.err.println("hasta aqui bien");
-				String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getDorsal(),
-						inscripcionDto.getCategoria(), inscripcionDto.getAtleta().getSexo(),
-						inscripcionDto.getAtleta().getNombre(),
-						stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
-				tablaClasificaciones.addRow(clasificacionesTabla);
-				posicion++;
 
-			} else {
-				categoria = inscripcionDto.getCategoria();
-
-				System.err.println("hasta aqui bien");
-
-				posicion = 1;
-				String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getDorsal(),
-						inscripcionDto.getCategoria(), inscripcionDto.getAtleta().getSexo(),
-						inscripcionDto.getAtleta().getNombre(),
-						stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
-				tablaClasificaciones.addRow(clasificacionesTabla);
-				posicion++;
+			for (InscripcionDto inscripcionDto : inscripciones) {
+				System.out.println(inscripcionDto.getCategoria() + "             " + carrera.getNombre()
+						+ "            " + inscripcionDto.getAtleta().getSexo() + "          "
+						+ inscripcionDto.getAtleta().getNombre() + "               "
+						+ stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()));
 			}
-		}
 
-		showCard(PANEL_VERCLASIFICACIONESORGANIZADOR);
+			int posicion = 1;
+			String categoria = "";
+
+			for (InscripcionDto inscripcionDto : inscripciones) {
+				AtletaDto atleta = new AtletaDto();
+
+				if (inscripcionDto.getCategoria() == null) {
+					inscripcionDto.setCategoria("SIN CATEGORIA");
+					System.err.println("\"SIN CATEGORIA\" por accionClasificaciones() - MainWindow linea 2156");
+				}
+				if (inscripcionDto.getCategoria().equals(categoria)) {
+					System.err.println("hasta aqui bien");
+					String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getDorsal(),
+							inscripcionDto.getCategoria(), inscripcionDto.getAtleta().getSexo(),
+							inscripcionDto.getAtleta().getNombre(),
+							stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
+					tablaClasificaciones.addRow(clasificacionesTabla);
+					posicion++;
+
+				} else {
+					categoria = inscripcionDto.getCategoria();
+
+					System.err.println("hasta aqui bien");
+
+					posicion = 1;
+					String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getDorsal(),
+							inscripcionDto.getCategoria(), inscripcionDto.getAtleta().getSexo(),
+							inscripcionDto.getAtleta().getNombre(),
+							stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
+					tablaClasificaciones.addRow(clasificacionesTabla);
+					posicion++;
+				}
+			}
+
+			showCard(PANEL_VERCLASIFICACIONESORGANIZADOR);
 		} else {
 			JOptionPane.showMessageDialog(this, "Selecciona una carrera");
 		}
 
-	}
-
-	private void generarDorsales() {
 	}
 
 	private JPanel getPnConfiguracionPlazos() {
@@ -2401,7 +2381,8 @@ public class MainWindow extends JFrame {
 			Date parsedFin = format.parse(fechaFin);
 			java.sql.Date fechaIniDate = new java.sql.Date(parsedIni.getTime());
 			java.sql.Date fechaFinDate = new java.sql.Date(parsedFin.getTime());
-			if (fechaIniDate.before(fechaFinDate) && fechaFinDate.before(creacionCarrera.getFecha())) {
+			if (fechaIniDate.before(fechaFinDate) && fechaFinDate.before(creacionCarrera.getFecha())
+					&& fechaIniDate.before(creacionCarrera.getFecha())) {
 
 				tablaPlazosInscripciones.addRow(new String[] { fechaIni, fechaFin, cuota });
 
@@ -2589,9 +2570,7 @@ public class MainWindow extends JFrame {
 			btGeneralDorsales.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
-					if (CheckVips()) {
-						GenerarDorsales();
-					}
+					GenerarDorsales();
 
 				}
 
@@ -2601,21 +2580,6 @@ public class MainWindow extends JFrame {
 			btGeneralDorsales.setBounds(325, 424, 213, 30);
 		}
 		return btGeneralDorsales;
-	}
-
-	protected boolean CheckVips() {
-
-		if (txVipsGeneralDorsales.getText().equals("")) {
-			return true;
-		}
-
-		if (Integer.parseInt(txVipsGeneralDorsales.getText()) > numeroGenteInscritaEnLaCarreraActual) {
-			JOptionPane.showConfirmDialog(btGeneralDorsales, "No puedes generar más Vips que corredos haya inscritos",
-					"Error", JOptionPane.DEFAULT_OPTION);
-			return false;
-		}
-		return true;
-
 	}
 
 	private void GenerarDorsales() {
@@ -2639,7 +2603,7 @@ public class MainWindow extends JFrame {
 
 		for (int i = 0; i < numeroGenteInscritaEnLaCarreraActual; i++) {
 
-			String dorsal = String.valueOf(i + vips);
+			String dorsal = String.valueOf(i + vips + 1);
 
 			String[] pizza = { dorsal, atletas.get(i).getDNI(), atletas.get(i).getNombre() };
 

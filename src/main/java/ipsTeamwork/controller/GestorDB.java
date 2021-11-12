@@ -250,7 +250,7 @@ public class GestorDB {
 			ps.execute();
 			ps.close();
 		} catch (SQLException e) {
-			System.out.println("Error de script de DB: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -265,7 +265,7 @@ public class GestorDB {
 			printResultSet(rs);
 
 		} catch (SQLException e) {
-			System.out.println("Error de script de DB: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -280,7 +280,7 @@ public class GestorDB {
 			printResultSet(rs);
 
 		} catch (SQLException e) {
-			System.out.println("Error de script de DB: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -295,7 +295,7 @@ public class GestorDB {
 			printResultSet(rs);
 
 		} catch (SQLException e) {
-			System.out.println("Error de script de DB: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -480,7 +480,7 @@ public class GestorDB {
 //			}
 
 		} catch (SQLException e) {
-			System.out.println("Error de script de DB: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
@@ -496,7 +496,7 @@ public class GestorDB {
 			printResultSet(rs);
 
 		} catch (SQLException e) {
-			System.out.println("Error de script de DB: " + e.getMessage());
+			e.printStackTrace();
 		} finally {
 			cerrar();
 		}
