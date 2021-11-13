@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -667,9 +668,9 @@ public class MainWindow extends JFrame {
 
 	private JLabel getLblRegistroRegistroEdad() {
 		if (lblRegistroRegistroEdad == null) {
-			lblRegistroRegistroEdad = new JLabel("Edad:");
+			lblRegistroRegistroEdad = new JLabel("Fecha nacimiento:");
 			lblRegistroRegistroEdad.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblRegistroRegistroEdad.setBounds(46, 223, 80, 20);
+			lblRegistroRegistroEdad.setBounds(46, 223, 120, 20);
 		}
 		return lblRegistroRegistroEdad;
 	}
@@ -698,10 +699,11 @@ public class MainWindow extends JFrame {
 			btnRegistroSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (checkFieldsRegisters()) {
-						if (Integer.parseInt(textRegistroEdad.getText()) >= 18) {
+						
+						if (getAge(textRegistroEdad.getText()) >= 18) {
 							setAtletaActual(new AtletaDto(textRegistroDNI.getText(),
 									textRegistroNombre.getText() + " " + textRegistroApellidos.getText(),
-									Integer.parseInt(textRegistroEdad.getText()),
+									getAge(textRegistroEdad.getText()),
 									("" + ((String) comboRegistroSexo.getSelectedItem()).charAt(0)),
 									chckbxRegistroDiscapacidad.isSelected() ? 1 : 0, textIngresoEmail.getText()));
 
@@ -724,6 +726,40 @@ public class MainWindow extends JFrame {
 		}
 		return btnRegistroSiguiente;
 	}
+	
+	public int getAge(String input){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar dob = Calendar.getInstance();
+        try {
+			dob.setTime(sdf.parse(input));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+        Calendar today = Calendar.getInstance();
+ 
+        int curYear = today.get(Calendar.YEAR);
+        int dobYear = dob.get(Calendar.YEAR);
+ 
+        int age = curYear - dobYear;
+ 
+        // if dob is month or day is behind today's month or day
+        // reduce age by 1
+        int curMonth = today.get(Calendar.MONTH);
+        int dobMonth = dob.get(Calendar.MONTH);
+        if (dobMonth > curMonth) { // this year can't be counted!
+            age--;
+        } else if (dobMonth == curMonth) { // same month? check for day
+            int curDay = today.get(Calendar.DAY_OF_MONTH);
+            int dobDay = dob.get(Calendar.DAY_OF_MONTH);
+            if (dobDay > curDay) { // this year can't be counted!
+                age--;
+            }
+        }
+ 
+        return age;
+    }
 
 	private void cleanRegistro() {
 		textRegistroDNI.setText("");
@@ -1993,6 +2029,10 @@ public class MainWindow extends JFrame {
 		for (CategoriaDto cat : categoriasCreacion) {
 			if (init >= cat.edadInic && fin <= cat.edadFin)
 				return false;
+			if(init >= cat.edadInic && init <= cat.edadFin)
+				return false;
+			if(fin >= cat.edadInic && fin <= cat.edadFin)
+				return false;				
 		}
 		return true;
 	}
