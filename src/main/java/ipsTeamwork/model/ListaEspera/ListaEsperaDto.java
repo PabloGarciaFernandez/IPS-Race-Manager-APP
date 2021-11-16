@@ -13,13 +13,13 @@ import ipsTeamwork.model.carrera.CarreraDto;
  */
 public class ListaEsperaDto {
 
-	private Date fechaInscripcion;
-	private AtletaDto atleta;
 	private String idAtleta;
 	private String idCarrera;
-	private CarreraDto carrera;
 	private String categoria;
+	private Date fechaInscripcion;
 	private int posicion;
+	private AtletaDto atleta;
+	private CarreraDto carrera;
 
 	/**
 	 * @return the idAtleta

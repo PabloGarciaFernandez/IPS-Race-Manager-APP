@@ -134,6 +134,7 @@ public class DtoBuilder {
 			dto.setIdAtleta(rs.getString("idAtleta"));
 			dto.setIdCarrera(rs.getString("idCarrera"));
 			dto.setFechaInscripcion(rs.getDate("fechaInscripcion"));
+			dto.setCategoria(rs.getString("categoria"));
 			dto.setPosicion(rs.getInt("posicion"));
 
 		} catch (SQLException e) {

@@ -61,6 +61,8 @@ public class SQLStrings {
 
 	public static String insertInscripcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
 
+	public static String insertListaEsperaValues = "insert into TListaEspera(idAtleta, idCarrera, fechaInscripcion, categoria, posicion) values (?, ?, ?, ?, ?)";
+
 	public static String insertCategoriaValues = "insert into categoria(idCarrera, nombreCategoria, edadInicio, edadFin) values (?, ?, ?, ?)";
 
 	// select

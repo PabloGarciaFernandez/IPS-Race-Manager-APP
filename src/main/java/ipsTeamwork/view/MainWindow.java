@@ -39,6 +39,7 @@ import javax.swing.table.DefaultTableModel;
 
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.model.ListaEspera.ListaEsperaDto;
+import ipsTeamwork.model.ListaEspera.crud.InscribirseListaEsperaAtleta;
 import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.atleta.crud.AddAtleta;
 import ipsTeamwork.model.atleta.crud.ExisteAtletaByEmail;
@@ -526,7 +527,8 @@ public class MainWindow extends JFrame {
 
 	/**
 	 * Metodo para comprobar si cumple los requisitos el atleta como para participar
-	 * en dicha carrera
+	 * en dicha carrera Añadido por si la carrera tiene o no lista de espera, de ser
+	 * asi se inscribe en la lista de espera
 	 * 
 	 * @return boolean
 	 */
@@ -540,11 +542,59 @@ public class MainWindow extends JFrame {
 		if (new MirarLimiteCarrera().execute(carreraActual.getIdCarrera())) {
 			res = true;
 		} else {
-			JOptionPane.showMessageDialog(null, "Error: La carrera actualmente no tiene mas plazas.");
+			// Añadido por si la carrera tiene o no lista de espera, de ser asi se inscribe
+			// en la lista de espera
+			if (carreraActual.isListaEspera()) {
+				InsertarEnListaEspera();
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"Error: La carrera actualmente no tiene mas plazas y no dispone de lista de espera.");
+			}
 			res = false;
 		}
 
 		return res;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo que inserta a un Atleta en una lista de espera de una carrera
+	 * 
+	 */
+	private void InsertarEnListaEspera() {
+		int siQuiero = JOptionPane.showConfirmDialog(btnListaInscribirse, "La carrera con nombre"
+				+ carreraActual.getNombre() + " a la que te vas a inscribir esta al maximo de su capacidad: "
+				+ carreraActual.getMaxPlazas()
+				+ ", si quieres puedes inscribirte en la lista de espera, te enviaremos un email si llega a haber algun hueco. Disculpe las molestias",
+				"Carera llena", JOptionPane.YES_NO_OPTION);
+
+		if (JOptionPane.YES_OPTION == siQuiero) {
+
+			ListaEsperaDto lista = new ListaEsperaDto();
+
+			lista.setIdAtleta(atletaActual.getIdAtleta());
+			lista.setIdCarrera(carreraActual.getIdCarrera());
+			int posicion = 0;
+			if (lista.getPosicion() == 0) {
+				posicion++;
+			} else {
+				posicion = lista.getPosicion();
+				posicion++;
+			}
+
+			lista.setPosicion(posicion);
+			String cate = Categoria.calculaCategoria(atletaActual, carreraActual);
+			lista.setCategoria(cate);
+
+			InscribirseListaEsperaAtleta.execute(lista);
+
+			JOptionPane.showMessageDialog(btnListaInscribirse,
+					"Gracias por inscribirse en la Lista de espera, de la carrera: " + carreraActual.getNombre()
+							+ ", su posicion dentro de esta lista es: " + posicion
+							+ " .Si tenemos alguna actualizacion te llegara un correo a tu email.\nOjala nos veamos en proximas carreras :)",
+					"Gracias :)", JOptionPane.DEFAULT_OPTION);
+		}
 	}
 
 	private boolean checkValidDate() {
@@ -750,7 +800,6 @@ public class MainWindow extends JFrame {
 		try {
 			dob.setTime(sdf.parse(input));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
