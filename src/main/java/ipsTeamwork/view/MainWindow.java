@@ -1741,6 +1741,11 @@ public class MainWindow extends JFrame {
 			pnCreacionCarrera.add(getLblCreacionCarrerasKm_1_1());
 			pnCreacionCarrera.add(getTxtPlazas());
 			pnCreacionCarrera.add(getScrollPaneCategorias());
+			
+			JLabel lblCreacionCarrerasCancelacion = new JLabel("Politica de cancelacion:");
+			lblCreacionCarrerasCancelacion.setFont(new Font("Arial", Font.PLAIN, 14));
+			lblCreacionCarrerasCancelacion.setBounds(47, 409, 165, 14);
+			pnCreacionCarrera.add(lblCreacionCarrerasCancelacion);
 		}
 		return pnCreacionCarrera;
 	}
@@ -1806,7 +1811,7 @@ public class MainWindow extends JFrame {
 		if (lblCreacionCarreraNombre == null) {
 			lblCreacionCarreraNombre = new JLabel("Nombre:");
 			lblCreacionCarreraNombre.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarreraNombre.setBounds(49, 192, 60, 17);
+			lblCreacionCarreraNombre.setBounds(47, 157, 60, 17);
 		}
 		return lblCreacionCarreraNombre;
 	}
@@ -1815,7 +1820,7 @@ public class MainWindow extends JFrame {
 		if (lblCreacionCarrerasDescripcion == null) {
 			lblCreacionCarrerasDescripcion = new JLabel("Descripción:");
 			lblCreacionCarrerasDescripcion.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarrerasDescripcion.setBounds(49, 233, 92, 14);
+			lblCreacionCarrerasDescripcion.setBounds(47, 198, 92, 14);
 		}
 		return lblCreacionCarrerasDescripcion;
 	}
@@ -1824,7 +1829,7 @@ public class MainWindow extends JFrame {
 		if (lblCreacionCarrerasFechaEjecucion == null) {
 			lblCreacionCarrerasFechaEjecucion = new JLabel("Fecha Ejecución:");
 			lblCreacionCarrerasFechaEjecucion.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarrerasFechaEjecucion.setBounds(49, 275, 121, 14);
+			lblCreacionCarrerasFechaEjecucion.setBounds(47, 240, 121, 14);
 		}
 		return lblCreacionCarrerasFechaEjecucion;
 	}
@@ -1833,7 +1838,7 @@ public class MainWindow extends JFrame {
 		if (lblCreacionCarrerasTipo == null) {
 			lblCreacionCarrerasTipo = new JLabel("Tipo:");
 			lblCreacionCarrerasTipo.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarrerasTipo.setBounds(49, 314, 46, 14);
+			lblCreacionCarrerasTipo.setBounds(47, 279, 46, 14);
 		}
 		return lblCreacionCarrerasTipo;
 	}
@@ -1891,7 +1896,7 @@ public class MainWindow extends JFrame {
 		if (txtDescripcion == null) {
 			txtDescripcion = new JTextField();
 			txtDescripcion.setColumns(10);
-			txtDescripcion.setBounds(170, 231, 172, 20);
+			txtDescripcion.setBounds(168, 196, 172, 20);
 		}
 		return txtDescripcion;
 	}
@@ -1900,7 +1905,7 @@ public class MainWindow extends JFrame {
 		if (txtNombreCarrera == null) {
 			txtNombreCarrera = new JTextField();
 			txtNombreCarrera.setColumns(10);
-			txtNombreCarrera.setBounds(170, 191, 172, 20);
+			txtNombreCarrera.setBounds(168, 156, 172, 20);
 		}
 		return txtNombreCarrera;
 	}
@@ -1911,7 +1916,7 @@ public class MainWindow extends JFrame {
 			cmbTipoCarrera.addItem("Asfalto");
 			cmbTipoCarrera.addItem("Montaña");
 			cmbTipoCarrera.setSelectedIndex(-1);
-			cmbTipoCarrera.setBounds(170, 311, 172, 22);
+			cmbTipoCarrera.setBounds(168, 276, 172, 22);
 		}
 		return cmbTipoCarrera;
 	}
@@ -1920,7 +1925,7 @@ public class MainWindow extends JFrame {
 		if (lblCreacionCarrerasKm == null) {
 			lblCreacionCarrerasKm = new JLabel("Kilometros:");
 			lblCreacionCarrerasKm.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarrerasKm.setBounds(49, 360, 92, 14);
+			lblCreacionCarrerasKm.setBounds(47, 325, 92, 14);
 		}
 		return lblCreacionCarrerasKm;
 	}
@@ -1929,7 +1934,7 @@ public class MainWindow extends JFrame {
 		if (txtFechaEjecucion == null) {
 			txtFechaEjecucion = new JTextField();
 			txtFechaEjecucion.setColumns(10);
-			txtFechaEjecucion.setBounds(170, 273, 172, 20);
+			txtFechaEjecucion.setBounds(168, 238, 172, 20);
 		}
 		return txtFechaEjecucion;
 	}
@@ -2108,7 +2113,7 @@ public class MainWindow extends JFrame {
 		if (txtKm == null) {
 			txtKm = new JTextField();
 			txtKm.setColumns(10);
-			txtKm.setBounds(170, 358, 172, 20);
+			txtKm.setBounds(168, 323, 172, 20);
 		}
 		return txtKm;
 	}
@@ -2126,7 +2131,7 @@ public class MainWindow extends JFrame {
 		if (lblCreacionCarrerasPlazas == null) {
 			lblCreacionCarrerasPlazas = new JLabel("Plazas:");
 			lblCreacionCarrerasPlazas.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarrerasPlazas.setBounds(49, 406, 92, 14);
+			lblCreacionCarrerasPlazas.setBounds(47, 371, 92, 14);
 		}
 		return lblCreacionCarrerasPlazas;
 	}
@@ -2135,7 +2140,7 @@ public class MainWindow extends JFrame {
 		if (txtPlazas == null) {
 			txtPlazas = new JTextField();
 			txtPlazas.setColumns(10);
-			txtPlazas.setBounds(170, 404, 172, 20);
+			txtPlazas.setBounds(168, 369, 172, 20);
 		}
 		return txtPlazas;
 	}
