@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ipsTeamwork.model.ListaEspera.ListaEsperaDto;
 import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.carrera.CarreraDto;
 import ipsTeamwork.model.categoria.CategoriaDto;
@@ -31,10 +32,11 @@ public class DtoBuilder {
 
 		return dto;
 	}
-	
+
 	public static AtletaDto toAtletaDtoNull(ResultSet rs) throws SQLException {
 		AtletaDto dto = new AtletaDto();
-		if (!rs.next()) return null;
+		if (!rs.next())
+			return null;
 		try {
 			dto.setSexo(rs.getString(5));
 			dto.setNombre(rs.getString(3));
@@ -49,7 +51,7 @@ public class DtoBuilder {
 
 		return dto;
 	}
-	
+
 	public static CategoriaDto toCategoriaDto(ResultSet rs) {
 		CategoriaDto dto = new CategoriaDto();
 
@@ -117,7 +119,30 @@ public class DtoBuilder {
 
 		return ret;
 	}
-	
+
+	/**
+	 * 
+	 * Metodo que pasa de ResultSet a objeto de Listas de Espera
+	 * 
+	 * @param rs
+	 * @return
+	 */
+	public static ListaEsperaDto toListaEsperaDtoList(ResultSet rs) {
+		ListaEsperaDto dto = null;
+		try {
+			dto = new ListaEsperaDto();
+			dto.setIdAtleta(rs.getString("idAtleta"));
+			dto.setIdCarrera(rs.getString("idCarrera"));
+			dto.setFechaInscripcion(rs.getDate("fechaInscripcion"));
+			dto.setPosicion(rs.getInt("posicion"));
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return dto;
+	}
+
 	public static List<CategoriaDto> toCategoriaDtoList(ResultSet rs) {
 		List<CategoriaDto> ret = new ArrayList<CategoriaDto>();
 		CategoriaDto dto = null;
@@ -176,12 +201,14 @@ public class DtoBuilder {
 				dto.setCuota(rs.getFloat("cuota"));
 				dto.setDistancia(rs.getDouble("distancia"));
 				dto.setFecha(rs.getDate("fecha"));
+				dto.setFechaInicioIns(rs.getDate("fechaInicioIns"));
 				dto.setFechaFin(rs.getDate("fechaFinInsc"));
 				dto.setIdCarrera(rs.getString("idCarrera"));
 				dto.setMaxPlazas(rs.getInt("maxPlazas"));
 				dto.setNombre(rs.getString("nombre"));
 				dto.setPlazasDisp(rs.getInt("plazasDisp"));
 				dto.setTipo(rs.getString("tipo"));
+				dto.setListaEspera(rs.getBoolean("listaDeEspera"));
 				ret.add(dto);
 			}
 		} catch (SQLException e) {
@@ -191,25 +218,48 @@ public class DtoBuilder {
 		return ret;
 	}
 
+	public static CarreraDto toCarreratoDto(ResultSet rs) {
+		CarreraDto dto = null;
+
+		try {
+			dto = new CarreraDto();
+			dto.setCuota(rs.getFloat("cuota"));
+			dto.setDistancia(rs.getDouble("distancia"));
+			dto.setFecha(rs.getDate("fecha"));
+			dto.setFechaInicioIns(rs.getDate("fechaInicioIns"));
+			dto.setFechaFin(rs.getDate("fechaFinInsc"));
+			dto.setIdCarrera(rs.getString("idCarrera"));
+			dto.setMaxPlazas(rs.getInt("maxPlazas"));
+			dto.setNombre(rs.getString("nombre"));
+			dto.setPlazasDisp(rs.getInt("plazasDisp"));
+			dto.setTipo(rs.getString("tipo"));
+			dto.setListaEspera(rs.getBoolean("listaDeEspera"));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return dto;
+	}
+
 	public static List<PagoDto> toPagoDtoList(ResultSet rs) {
 		List<PagoDto> pagos = new ArrayList<PagoDto>();
-		
+
 		try {
 			while (rs.next()) {
 				PagoDto p = new PagoDto();
-				
+
 				p.date = rs.getDate("date");
 				p.dni = rs.getString("dni");
 				p.id = rs.getString("id");
 				p.idCarrera = rs.getString("idCarrera");
 				p.importe = rs.getDouble("importe");
-				
+
 				pagos.add(p);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return pagos;
 	}
 }

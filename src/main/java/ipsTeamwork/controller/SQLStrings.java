@@ -12,11 +12,13 @@ public class SQLStrings {
 
 	public static String createInscripcion = "CREATE TABLE inscripcion (idAtleta varchar2 NOT NULL, idCarrera varchar NOT NULL, dorsal varchar2, fechaInscripcion date not null, estadoInscripcion varchar2 not null, formaDePago varchar2, tiempoCorriendo integer,  categoria varchar2, incidenciasPagos varchar2, CONSTRAINT CHK_Inscripcion CHECK ( (formaDePago='Transferencia' OR formaDePago='Tarjeta') AND (estadoInscripcion='Inscrito' OR estadoInscripcion='Pre-Inscrito' OR estadoInscripcion='Pendiente de Pago')), primary key (idAtleta, idCarrera, dorsal), CONSTRAINT FK_idAtleta FOREIGN KEY (idAtleta) REFERENCES atleta(idAtleta), CONSTRAINT FK_idCarrera FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera) )";
 
-	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2, nombre varchar2, fecha date, fechaInicioIns date, tipo varchar2, distancia number, cuota number, fechaFinInsc date, plazasDisp number, maxPlazas number not null, CONSTRAINT chk_tipo CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
+	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2, nombre varchar2, fecha date, fechaInicioIns date, tipo varchar2, distancia number, cuota number, fechaFinInsc date, plazasDisp number, maxPlazas number not null, listaDeEspera bit, CONSTRAINT chk_tipo CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
 
 	public static String createCategoria = "CREATE TABLE categoria (idCarrera varchar2, nombreCategoria varchar2, edadInicio integer, edadFin integer, primary key (idCarrera, nombreCategoria))";
 
 	public static String createPago = "create table pago (idPago varchar2, idCarrera varchar2, dniAtleta varchar2, fecha date, importe number, primary key (idPago))";
+
+	public static String createListaEspera = "CREATE TABLE TListaEspera (idAtleta varchar2 NOT NULL, idCarrera varchar NOT NULL, fechaInscripcion date not null, posicion number not null, categoria varchar2, primary key (idAtleta, idCarrera), CONSTRAINT FK_idAtleta FOREIGN KEY (idAtleta) REFERENCES atleta(idAtleta), CONSTRAINT FK_idCarrera FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera) )";
 
 	// inserts
 	public static String insertAtletaPredefinido = "Insert into atleta values ('idMariano', 'dniMariano', 'Mariano Rajoy', 60, 'M', 1, 'mariano@gmail.com');";
@@ -25,9 +27,8 @@ public class SQLStrings {
 	public static String insertAtletaPredefinido4 = "Insert into atleta values ('idPablo', 'dniPablo', 'Pablo Iglesias', 34, 'M', 1, 'Pablo@gmail.com');";
 	public static String insertAtletaPredefinido5 = "Insert into atleta values ('idCasado', 'dniCasado', 'Pablo Casado', 30, 'M', 1, 'Casado@gmail.com');";
 	public static String insertAtletaPredefinido6 = "Insert into atleta values ('idAyuso', 'dniAyuso', 'Isabel Diaz Ayuso', 65, 'F', 1, 'Ayuso@gmail.com');";
-	
-	
-	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?,?, 'Asfalto', 100, 20, ?, 6, 6);";
+
+	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?,?, 'Asfalto', 100, 20, ?, 6, 6, 1);";
 
 	public static String insertInscripcionPredefinida = "Insert into inscripcion values ('idMariano', 'idMaratonMadrid', '1', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '');";
 	public static String insertInscripcionPredefinida1 = "Insert into inscripcion values ('idPedro', 'idMaratonMadrid', '2', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '');";
@@ -38,7 +39,6 @@ public class SQLStrings {
 
 	public static String insertCategoriaPredefinida1 = "Insert into categoria values ('idMaratonMadrid', 'Junior', 18, 35);";
 	public static String insertCategoriaPredefinida2 = "Insert into categoria values ('idMaratonMadrid', 'Veterano', 36, 70);";
-
 
 	// inserts
 	public static String insertBolt = "Insert into atleta values('69','11122234A','Bolt',35,'F',0, 'manolo@mnaolo'); ";
@@ -63,8 +63,9 @@ public class SQLStrings {
 
 	public static String insertCategoriaValues = "insert into categoria(idCarrera, nombreCategoria, edadInicio, edadFin) values (?, ?, ?, ?)";
 
-	public static String selectAtletaById = "select * from atleta where idAtleta = ?";
 	// select
+
+	public static String selectAtletaById = "select * from atleta where idAtleta = ?";
 
 	public static String selectAllAtleta = "select * from atleta";
 
@@ -82,9 +83,16 @@ public class SQLStrings {
 
 	public static String categoriaParticipante = "select * from categoria where idCarrera = ?";
 
+	public static String selectCarreraById = "select * from carrera where idCarrera = ?";
+
+	// Consulta para el metodo listaEspera
+	protected static String estadoListaEspera = "select * from TListaEspera i where idCarrera = ? order by fechaInscripcion";
+
+	public static String findListaEspera = "select * from TListaEspera i where i.idAtleta = ? and i.idCarrera = ?";
+
 	// Consulta para el metodo estadoInscripcion
 	public static String inscripcionesPorCarrera = "select * from inscripcion i where idCarrera = ?";
-	
+
 	protected static String estadoInscripcion = "select * from inscripcion i where idCarrera = ? and estadoInscripcion = 'Inscrito' order by fechaInscripcion, estadoInscripcion";
 
 	protected static String estadoInscripcionAtleta = "select * from atleta where idAtleta = ?";

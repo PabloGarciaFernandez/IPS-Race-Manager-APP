@@ -38,6 +38,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import ipsTeamwork.controller.GestorDB;
+import ipsTeamwork.model.ListaEspera.ListaEsperaDto;
 import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.atleta.crud.AddAtleta;
 import ipsTeamwork.model.atleta.crud.ExisteAtletaByEmail;
@@ -77,6 +78,7 @@ public class MainWindow extends JFrame {
 	private static final String PANEL_PAGO_TARJETA = "panel_pago_tarjeta";
 	private static final String PANEL_CREACION_CARRERAS = "panel_creacion_carreras";
 	private static final String PANEL_GENERAL_DORSALES = "panel_generar_dorsales";
+	private static final String PANEL_INFORME_CARRERA = "panel_informe_carrera";
 
 	private JPanel contentPane;
 	private JPanel pnInicio;
@@ -140,6 +142,8 @@ public class MainWindow extends JFrame {
 	private DefaultTableModel tablaAtleta;
 	private DefaultTableModel tablaCategorias;
 	private DefaultTableModel tablaAtletasInscritosX;
+	private DefaultTableModel tablaInformeCarrera;
+	private DefaultTableModel tablaListaEsperaOrganizador;
 	private DefaultTableModel tablaPlazosInscripciones;
 	private DefaultTableModel tablaGenerarDorsales;
 
@@ -250,6 +254,16 @@ public class MainWindow extends JFrame {
 	private Map<String, String> diccionarioPlazos = new HashMap<String, String>();
 
 	private int numeroGenteInscritaEnLaCarreraActual;
+	private JButton btnInformeCarreraListaCarreras;
+	private JButton btnVerListaEsperaCarrerasOrganizador;
+	private JPanel pnInformeCarrera;
+	private JPanel pnPrincipalInformeCarreraOrganizador;
+	private JScrollPane scInformeCarreraOrganizador;
+	private JLabel lbInfoInformeCarreraOrganizador;
+	private JTable tbInformeCarreraOrganizador;
+	private JButton btnInformeCarreraOrganizador;
+	private JScrollPane scListaEsperaOrganizador;
+	private JTable tbListaEsperaOrganizador;
 
 	/**
 	 * Create the frame.
@@ -263,13 +277,15 @@ public class MainWindow extends JFrame {
 		tablaCategorias = (DefaultTableModel) getTableCategorias().getModel();
 		tablaAtletasInscritosX = (DefaultTableModel) getTbAtletasInscritosEnXCarrera().getModel();
 		tablaPlazosInscripciones = (DefaultTableModel) getTbConfiguracionPlazos().getModel();
+		tablaInformeCarrera = (DefaultTableModel) getTbInformeCarreraOrganizador().getModel();
+		tablaListaEsperaOrganizador = (DefaultTableModel) getTbListaEspertaOrganizador().getModel();
 		pnVistaInscripcionesAtleta = new PanelListarInscripciones(this, atletaActual);
 		// booleano para la historia 15297 :)
 		primera = true;
 		setResizable(false);
 		setTitle("Carreras");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 922, 538);
+		setBounds(100, 100, 1039, 676);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -288,6 +304,7 @@ public class MainWindow extends JFrame {
 		contentPane.add(getPnCreacionCarrera(), PANEL_CREACION_CARRERAS);
 		contentPane.add(getPnConfiguracionPlazos(), PANEL_CONFIGURAR_PLAZOS);
 		contentPane.add(getPnGeneralDorsales(), PANEL_GENERAL_DORSALES);
+		contentPane.add(getPnInformeCarrera(), PANEL_INFORME_CARRERA);
 		// Hardcode del texto, que aparecia siempre con un tab
 		getTxFechaInicioConfiguracionPlazos().setText("");
 		cargarTablaCarrerasOrganizador();
@@ -699,7 +716,7 @@ public class MainWindow extends JFrame {
 			btnRegistroSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (checkFieldsRegisters()) {
-						
+
 						if (getAge(textRegistroEdad.getText()) >= 18) {
 							setAtletaActual(new AtletaDto(textRegistroDNI.getText(),
 									textRegistroNombre.getText() + " " + textRegistroApellidos.getText(),
@@ -726,40 +743,40 @@ public class MainWindow extends JFrame {
 		}
 		return btnRegistroSiguiente;
 	}
-	
-	public int getAge(String input){
+
+	public int getAge(String input) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar dob = Calendar.getInstance();
-        try {
+		Calendar dob = Calendar.getInstance();
+		try {
 			dob.setTime(sdf.parse(input));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-        Calendar today = Calendar.getInstance();
- 
-        int curYear = today.get(Calendar.YEAR);
-        int dobYear = dob.get(Calendar.YEAR);
- 
-        int age = curYear - dobYear;
- 
-        // if dob is month or day is behind today's month or day
-        // reduce age by 1
-        int curMonth = today.get(Calendar.MONTH);
-        int dobMonth = dob.get(Calendar.MONTH);
-        if (dobMonth > curMonth) { // this year can't be counted!
-            age--;
-        } else if (dobMonth == curMonth) { // same month? check for day
-            int curDay = today.get(Calendar.DAY_OF_MONTH);
-            int dobDay = dob.get(Calendar.DAY_OF_MONTH);
-            if (dobDay > curDay) { // this year can't be counted!
-                age--;
-            }
-        }
- 
-        return age;
-    }
+
+		Calendar today = Calendar.getInstance();
+
+		int curYear = today.get(Calendar.YEAR);
+		int dobYear = dob.get(Calendar.YEAR);
+
+		int age = curYear - dobYear;
+
+		// if dob is month or day is behind today's month or day
+		// reduce age by 1
+		int curMonth = today.get(Calendar.MONTH);
+		int dobMonth = dob.get(Calendar.MONTH);
+		if (dobMonth > curMonth) { // this year can't be counted!
+			age--;
+		} else if (dobMonth == curMonth) { // same month? check for day
+			int curDay = today.get(Calendar.DAY_OF_MONTH);
+			int dobDay = dob.get(Calendar.DAY_OF_MONTH);
+			if (dobDay > curDay) { // this year can't be counted!
+				age--;
+			}
+		}
+
+		return age;
+	}
 
 	private void cleanRegistro() {
 		textRegistroDNI.setText("");
@@ -1098,9 +1115,12 @@ public class MainWindow extends JFrame {
 					cargarPagos();
 				}
 			});
-			btnCargarTransacciones.setBounds(767, 130, 97, 23);
+			btnCargarTransacciones.setBounds(767, 290, 206, 38);
 			pnPrincipalVerCarrerasOrganizador.add(btnCargarTransacciones);
 			pnPrincipalVerCarrerasOrganizador.add(getBtnGenerarDorsalesVistaOrganizador());
+			pnPrincipalVerCarrerasOrganizador.add(getBtnInformeCarreraListaCarreras());
+			pnPrincipalVerCarrerasOrganizador.add(getBtnVerListaEsperaCarrerasOrganizador());
+			pnPrincipalVerCarrerasOrganizador.add(getScListaEsperaOrganizador());
 
 		}
 		return pnPrincipalVerCarrerasOrganizador;
@@ -1392,7 +1412,7 @@ public class MainWindow extends JFrame {
 //					showCard(PANEL_PAGARINSCRIPCION);
 				}
 			});
-			btAtrasVerCarrerasOrganizador.setBounds(27, 430, 116, 34);
+			btAtrasVerCarrerasOrganizador.setBounds(10, 572, 116, 34);
 		}
 		return btAtrasVerCarrerasOrganizador;
 	}
@@ -1551,7 +1571,7 @@ public class MainWindow extends JFrame {
 			});
 			btVerClasificacionesOrganizacion.setMnemonic('c');
 
-			btVerClasificacionesOrganizacion.setBounds(215, 424, 435, 46);
+			btVerClasificacionesOrganizacion.setBounds(767, 363, 206, 44);
 
 		}
 		return btVerClasificacionesOrganizacion;
@@ -2029,10 +2049,10 @@ public class MainWindow extends JFrame {
 		for (CategoriaDto cat : categoriasCreacion) {
 			if (init >= cat.edadInic && fin <= cat.edadFin)
 				return false;
-			if(init >= cat.edadInic && init <= cat.edadFin)
+			if (init >= cat.edadInic && init <= cat.edadFin)
 				return false;
-			if(fin >= cat.edadInic && fin <= cat.edadFin)
-				return false;				
+			if (fin >= cat.edadInic && fin <= cat.edadFin)
+				return false;
 		}
 		return true;
 	}
@@ -2742,6 +2762,7 @@ public class MainWindow extends JFrame {
 	private JButton getBtnGenerarDorsalesVistaOrganizador() {
 		if (btnGenerarDorsalesVistaOrganizador == null) {
 			btnGenerarDorsalesVistaOrganizador = new JButton("Generar dorsales");
+			btnGenerarDorsalesVistaOrganizador.setFont(new Font("Arial", Font.PLAIN, 18));
 			btnGenerarDorsalesVistaOrganizador.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					showCard(PANEL_GENERAL_DORSALES);
@@ -2750,9 +2771,208 @@ public class MainWindow extends JFrame {
 				}
 			});
 
-			btnGenerarDorsalesVistaOrganizador.setBounds(767, 155, 121, 34);
+			btnGenerarDorsalesVistaOrganizador.setBounds(767, 322, 206, 44);
 
 		}
 		return btnGenerarDorsalesVistaOrganizador;
 	}
+
+	private JButton getBtnInformeCarreraListaCarreras() {
+		if (btnInformeCarreraListaCarreras == null) {
+			btnInformeCarreraListaCarreras = new JButton("Informe de la Carrera");
+			btnInformeCarreraListaCarreras.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (tb.getRowCount() != -1) {
+						imprimirLabelInforme();
+						mostrarInformeEnTabla();
+						showCard(PANEL_INFORME_CARRERA);
+					} else {
+						JOptionPane.showMessageDialog(getBtnInformeCarreraListaCarreras(), "Selecciona una carrera");
+					}
+				}
+			});
+			btnInformeCarreraListaCarreras.setMnemonic('I');
+			btnInformeCarreraListaCarreras.setFont(new Font("Arial", Font.PLAIN, 20));
+			btnInformeCarreraListaCarreras.setBounds(459, 417, 298, 34);
+		}
+		return btnInformeCarreraListaCarreras;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo que enseña por pantalla la informacion relacionada con la
+	 *         carrera selecionada
+	 * 
+	 * @return
+	 */
+	private void imprimirLabelInforme() {
+
+		String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
+
+		CarreraDto aux = db.selectCarrerasNombre(nombre);
+
+		String todo = "Este es el informe de la carrera  " + nombre + ", con fecha de inicio: " + aux.getFecha()
+				+ ", del tipo: " + aux.getTipo()
+				+ ".\nA continuación, proporcionare diversos datos sobre esta carrera, vease, ingresos, numero de Atletas inscritos, cantidad de dinero que se ha devuelto y el numero de atletas que se han desvinculado de esta carrera.\nLos ingresos recibidos hasta la fecha de esta carrera: ";
+
+		getLbInfoInformeCarreraOrganizador().setText(todo);
+	}
+
+	private void mostrarInformeEnTabla() {
+		String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
+
+		CarreraDto aux = db.selectCarrerasNombre(nombre);
+
+		String id = aux.getIdCarrera();
+
+		int numInscritos = db.numInscritosxCarrera(id);
+
+//		int numCancelados = db.numCanceladosxCarrera(id);
+
+		List<InscripcionDto> inscripciones = db.estadoInscripcion(id);
+		double ingresosTotales = 0;
+
+		for (InscripcionDto inscripcionDto : inscripciones) {
+//			ingresosTotales += inscripcionDto.getFormaDePago();
+		}
+		double DevolucionesTotales = 0;
+
+		for (InscripcionDto inscripcionDto : inscripciones) {
+//			ingresosTotales += inscripcionDto.getFormaDePago();
+		}
+
+		String[] albertoElReportero = { "Ingresos de " + nombre, };
+		tablaInformeCarrera.addRow(albertoElReportero);
+		String[] Sylvanas = { "Numero de Atletas Inscritos en " + nombre, String.valueOf(numInscritos) };
+		tablaInformeCarrera.addRow(Sylvanas);
+
+	}
+
+	private JButton getBtnVerListaEsperaCarrerasOrganizador() {
+		if (btnVerListaEsperaCarrerasOrganizador == null) {
+			btnVerListaEsperaCarrerasOrganizador = new JButton("Ver Lista de Espera");
+			btnVerListaEsperaCarrerasOrganizador.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					mostrarListaDeEspera();
+				}
+			});
+			btnVerListaEsperaCarrerasOrganizador.setFont(new Font("Arial", Font.PLAIN, 18));
+			btnVerListaEsperaCarrerasOrganizador.setMnemonic('L');
+			btnVerListaEsperaCarrerasOrganizador.setBounds(161, 417, 298, 34);
+		}
+		return btnVerListaEsperaCarrerasOrganizador;
+	}
+
+	private void mostrarListaDeEspera() {
+		if (getTbVerCarreras().getSelectedRow() != -1) {
+
+			String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
+
+			CarreraDto carreras = db.selectCarrerasNombre(nombre);
+
+			if (carreras.isListaEspera()) {
+				List<ListaEsperaDto> esperando = db.estadoListaEspera(carreras.getIdCarrera());
+
+				for (ListaEsperaDto lista : esperando) {
+
+					String[] uAreTheScrumMaster = { lista.getAtleta().getDNI(), lista.getAtleta().getEmail(),
+							lista.getAtleta().getNombre(),
+							Categoria.calculaCategoria(lista.getAtleta(), lista.getCarrera()),
+							String.valueOf(lista.getFechaInscripcion()), String.valueOf(lista.getPosicion()) };
+
+					tablaListaEsperaOrganizador.addRow(uAreTheScrumMaster);
+				}
+			} else {
+				JOptionPane.showMessageDialog(this, "Esta Carrera no permite Lista de Espera");
+			}
+
+		} else {
+			JOptionPane.showMessageDialog(this, "Selecciona una carrera");
+		}
+	}
+
+	private JPanel getPnInformeCarrera() {
+		if (pnInformeCarrera == null) {
+			pnInformeCarrera = new JPanel();
+			pnInformeCarrera.setLayout(new BorderLayout(0, 0));
+			pnInformeCarrera.add(getPnPrincipalInformeCarreraOrganizador(), BorderLayout.CENTER);
+		}
+		return pnInformeCarrera;
+	}
+
+	private JPanel getPnPrincipalInformeCarreraOrganizador() {
+		if (pnPrincipalInformeCarreraOrganizador == null) {
+			pnPrincipalInformeCarreraOrganizador = new JPanel();
+			pnPrincipalInformeCarreraOrganizador.setLayout(null);
+			pnPrincipalInformeCarreraOrganizador.add(getScInformeCarreraOrganizador());
+			pnPrincipalInformeCarreraOrganizador.add(getLbInfoInformeCarreraOrganizador());
+			pnPrincipalInformeCarreraOrganizador.add(getBtnInformeCarreraOrganizador());
+		}
+		return pnPrincipalInformeCarreraOrganizador;
+	}
+
+	private JScrollPane getScInformeCarreraOrganizador() {
+		if (scInformeCarreraOrganizador == null) {
+			scInformeCarreraOrganizador = new JScrollPane();
+			scInformeCarreraOrganizador.setBounds(215, 112, 443, 265);
+			scInformeCarreraOrganizador.setViewportView(getTbInformeCarreraOrganizador());
+		}
+		return scInformeCarreraOrganizador;
+	}
+
+	private JLabel getLbInfoInformeCarreraOrganizador() {
+		if (lbInfoInformeCarreraOrganizador == null) {
+			lbInfoInformeCarreraOrganizador = new JLabel("");
+			lbInfoInformeCarreraOrganizador.setBounds(62, 40, 806, 32);
+		}
+		return lbInfoInformeCarreraOrganizador;
+	}
+
+	private JTable getTbInformeCarreraOrganizador() {
+		if (tbInformeCarreraOrganizador == null) {
+			tbInformeCarreraOrganizador = new JTable();
+			tbInformeCarreraOrganizador
+					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Info", "Balance" }));
+
+			tbInformeCarreraOrganizador.setDefaultEditor(Object.class, null);
+		}
+		return tbInformeCarreraOrganizador;
+	}
+
+	private JButton getBtnInformeCarreraOrganizador() {
+		if (btnInformeCarreraOrganizador == null) {
+			btnInformeCarreraOrganizador = new JButton("Atras");
+			btnInformeCarreraOrganizador.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_VER_CARRERAS_ORGANIZADOR);
+				}
+			});
+			btnInformeCarreraOrganizador.setMnemonic('A');
+			btnInformeCarreraOrganizador.setFont(new Font("Arial", Font.BOLD, 20));
+			btnInformeCarreraOrganizador.setBounds(10, 424, 161, 38);
+		}
+		return btnInformeCarreraOrganizador;
+	}
+
+	private JScrollPane getScListaEsperaOrganizador() {
+		if (scListaEsperaOrganizador == null) {
+			scListaEsperaOrganizador = new JScrollPane();
+			scListaEsperaOrganizador.setBounds(161, 461, 596, 161);
+			scListaEsperaOrganizador.setViewportView(getTbListaEspertaOrganizador());
+		}
+		return scListaEsperaOrganizador;
+	}
+
+	private JTable getTbListaEspertaOrganizador() {
+		if (tbListaEsperaOrganizador == null) {
+			tbListaEsperaOrganizador = new JTable();
+			tbListaEsperaOrganizador.setModel(new DefaultTableModel(new Object[][] {},
+					new String[] { "DNI", "Email", "Nombre", "Fecha de Inscripcion", "Posicion lista" }));
+
+			tbListaEsperaOrganizador.setDefaultEditor(Object.class, null);
+		}
+		return tbListaEsperaOrganizador;
+	}
+
 }

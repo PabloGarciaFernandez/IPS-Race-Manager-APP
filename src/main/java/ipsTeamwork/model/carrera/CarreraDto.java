@@ -13,9 +13,10 @@ public class CarreraDto {
 	private Date fechaFin;
 	private int maxPlazas;
 	private int numInscritos;
+	private boolean listaEspera;
 
 	private String descripcion;
-	
+
 	public String getDescripcion() {
 		return descripcion;
 	}
@@ -178,6 +179,20 @@ public class CarreraDto {
 	 */
 	public void setMaxPlazas(int maxPlazas) {
 		this.maxPlazas = maxPlazas;
+	}
+
+	/**
+	 * @return the listaEspera
+	 */
+	public boolean isListaEspera() {
+		return listaEspera;
+	}
+
+	/**
+	 * @param listaEspera the listaEspera to set
+	 */
+	public void setListaEspera(boolean listaEspera) {
+		this.listaEspera = listaEspera;
 	}
 
 	@Override
