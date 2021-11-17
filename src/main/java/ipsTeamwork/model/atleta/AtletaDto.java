@@ -1,5 +1,10 @@
 package ipsTeamwork.model.atleta;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.util.Date;
+
 /**
  * Clase que sirve como entidad de Atleta
  * 
@@ -7,6 +12,7 @@ package ipsTeamwork.model.atleta;
  *
  */
 public class AtletaDto {
+	
 	private String DNI;
 	private String idAtleta;
 	private int edad;
@@ -14,28 +20,30 @@ public class AtletaDto {
 	private String sexo;
 	private boolean discapacitado;
 	private String email;
-	//private String categoria;
 	
-//	public String getCategoria() {
-//		return categoria;
-//	}
-
-	public AtletaDto() {
-		
-	}
+	public AtletaDto() {}
 	
 	public AtletaDto(String dni, String name, int edad, String sexo, int discapacitado, String email) {
 		this.DNI = dni;
 		this.nombre = name;
 		this.edad = edad;
 		this.sexo = sexo;
-		this.discapacitado = (discapacitado == 1 ? true : false);
+		this.discapacitado = discapacitado == 1;
 		this.email = email;
 	}
-
-//	public void setCategoria(String categoria) {
-//		this.categoria = categoria;
-//	}
+	
+	public AtletaDto(Date fechaNacimiento, String dni, String nombre, String email, boolean discapacitado, String sexo) {
+		
+		this.DNI = dni;
+		this.nombre = nombre;
+		
+		Period period = Period.between(LocalDate.ofInstant(fechaNacimiento.toInstant(), ZoneId.systemDefault()), LocalDate.now());
+		this.edad = period.getYears();
+		
+		this.sexo = sexo;
+		this.discapacitado = discapacitado;
+		this.email = email;
+	}
 
 	/**
 	 * @return the dNI
