@@ -31,7 +31,7 @@ public class AccionesClub {
 	}
 	
 	private static void dbIngresoAtleta(AtletaDto atletaActual, CarreraDto carreraActual) {
-		if (new FindAtletaInCarrera().execute(atletaActual.getIdAtleta(), carreraActual.getIdCarrera())) {
+		if (!new FindAtletaInCarrera().execute(atletaActual.getIdAtleta(), carreraActual.getIdCarrera())) {
 			
 			System.out.println("Inscribiendo en lote: " + atletaActual.toString());
 			
