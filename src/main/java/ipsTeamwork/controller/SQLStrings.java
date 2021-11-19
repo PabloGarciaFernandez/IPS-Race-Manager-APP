@@ -18,7 +18,7 @@ public class SQLStrings {
 
 	public static String createPago = "create table pago (idPago varchar2, idCarrera varchar2, dniAtleta varchar2, fecha date, importe number, primary key (idPago))";
 
-	public static String createListaEspera = "CREATE TABLE TListaEspera (idAtleta varchar2 NOT NULL, idCarrera varchar NOT NULL, fechaInscripcion date not null, posicion number not null, categoria varchar2, primary key (idAtleta, idCarrera), CONSTRAINT FK_idAtleta FOREIGN KEY (idAtleta) REFERENCES atleta(idAtleta), CONSTRAINT FK_idCarrera FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera) )";
+	public static String createListaEspera = "CREATE TABLE TListaEspera (idAtleta varchar2 NOT NULL, idCarrera varchar NOT NULL, fechaInscripcion date not null, posicion number not null, categoria varchar2, primary key (idAtleta,idCarrera), CONSTRAINT FK_idAtleta FOREIGN KEY (idAtleta) REFERENCES atleta(idAtleta), CONSTRAINT FK_idCarrera FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera) )";
 
 	// inserts
 	public static String insertAtletaPredefinido = "Insert into atleta values ('idMariano', 'dniMariano', 'Mariano Rajoy', 60, 'M', 1, 'mariano@gmail.com');";
@@ -28,7 +28,7 @@ public class SQLStrings {
 	public static String insertAtletaPredefinido5 = "Insert into atleta values ('idCasado', 'dniCasado', 'Pablo Casado', 30, 'M', 1, 'Casado@gmail.com');";
 	public static String insertAtletaPredefinido6 = "Insert into atleta values ('idAyuso', 'dniAyuso', 'Isabel Diaz Ayuso', 65, 'F', 1, 'Ayuso@gmail.com');";
 
-	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?,?, 'Asfalto', 100, 20, ?, 6, 6, 1);";
+	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?,?, 'Asfalto', 100, 20, ?, 0, 6, 1);";
 
 	public static String insertInscripcionPredefinida = "Insert into inscripcion values ('idMariano', 'idMaratonMadrid', '1', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '');";
 	public static String insertInscripcionPredefinida1 = "Insert into inscripcion values ('idPedro', 'idMaratonMadrid', '2', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '');";
@@ -53,7 +53,7 @@ public class SQLStrings {
 
 	public static String insterInscripcion2 = "Insert into inscripcion values('96','a0931d2e-cf27-4965-b395-a086aa0228a5','015','2021-05-01','Inscrito', 'Tarjeta'); ";
 
-	public static String insertCarreraValues = "insert into carrera(idCarrera, nombre, fecha, tipo, distancia, cuota, fechaFinInsc, plazasDisp, maxPlazas) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	public static String insertCarreraValues = "insert into carrera(idCarrera, nombre, fecha,fechaInicioIns, tipo, distancia, cuota, fechaFinInsc, plazasDisp, maxPlazas, listaDeEspera) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	public static String insertCarreraValuesNuevo = "insert into carrera(idCarrera, nombre, fecha,fechaInicioIns , tipo, distancia, cuota, fechaFinInsc, plazasDisp, maxPlazas) values (?, ?, ?, ?,?, ?, ?, ?, ?, ?)";
 
@@ -91,6 +91,8 @@ public class SQLStrings {
 	protected static String estadoListaEspera = "select * from TListaEspera i where idCarrera = ? order by fechaInscripcion";
 
 	public static String findListaEspera = "select * from TListaEspera i where i.idAtleta = ? and i.idCarrera = ?";
+
+	public static String findListaEsperaByCarrera = "select * from TListaEspera i where i.idCarrera = ?";
 
 	// Consulta para el metodo estadoInscripcion
 	public static String inscripcionesPorCarrera = "select * from inscripcion i where idCarrera = ?";

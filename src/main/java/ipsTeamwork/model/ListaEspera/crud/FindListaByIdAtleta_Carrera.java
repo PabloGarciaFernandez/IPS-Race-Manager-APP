@@ -6,6 +6,8 @@ package ipsTeamwork.model.ListaEspera.crud;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.controller.SQLStrings;
@@ -25,6 +27,30 @@ public class FindListaByIdAtleta_Carrera {
 	 * @param idCarrera
 	 * @return
 	 */
+	public static List<ListaEsperaDto> execute(String idCarrera) {
+		GestorDB gdb = new GestorDB();
+		Connection c = gdb.getConnection();
+		ResultSet rs = null;
+		List<ListaEsperaDto> lista = new ArrayList<ListaEsperaDto>();
+
+		try {
+			PreparedStatement pst = c.prepareStatement(SQLStrings.findListaEsperaByCarrera);
+			pst.setString(1, idCarrera);
+
+			rs = pst.executeQuery();
+
+			lista = DtoBuilder.toListaEsperaDtoList(rs);
+
+			rs.close();
+			pst.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			gdb.cerrarCon();
+		}
+		return lista;
+	}
+
 	public static ListaEsperaDto execute(String idAtleta, String idCarrera) {
 		GestorDB gdb = new GestorDB();
 		Connection c = gdb.getConnection();
@@ -38,7 +64,7 @@ public class FindListaByIdAtleta_Carrera {
 
 			rs = pst.executeQuery();
 
-			lista = DtoBuilder.toListaEsperaDtoList(rs);
+			lista = DtoBuilder.toListaEsperaDto(rs);
 
 			rs.close();
 			pst.close();

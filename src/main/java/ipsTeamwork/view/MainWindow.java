@@ -39,6 +39,7 @@ import javax.swing.table.DefaultTableModel;
 
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.model.ListaEspera.ListaEsperaDto;
+import ipsTeamwork.model.ListaEspera.crud.FindListaByIdAtleta_Carrera;
 import ipsTeamwork.model.ListaEspera.crud.InscribirseListaEsperaAtleta;
 import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.atleta.crud.AddAtleta;
@@ -266,6 +267,10 @@ public class MainWindow extends JFrame {
 	private JScrollPane scListaEsperaOrganizador;
 	private JTable tbListaEsperaOrganizador;
 
+	private boolean quiereListarse;
+	private JCheckBox chbxListaEsperaCreacionCarreras;
+	private JLabel lbListaEsperaCreacionCarrera;
+
 	/**
 	 * Create the frame.
 	 */
@@ -283,6 +288,8 @@ public class MainWindow extends JFrame {
 		pnVistaInscripcionesAtleta = new PanelListarInscripciones(this, atletaActual);
 		// booleano para la historia 15297 :)
 		primera = true;
+		// booleano para la historia 15935 :)
+		quiereListarse = false;
 		setResizable(false);
 		setTitle("Carreras");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -410,7 +417,7 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 
 //					DefaultTableModel tbVerAtletasMisCarreras = (DefaultTableModel) tb.getModel();
-//
+
 //					reset(tbVerAtletasMisCarreras);
 					misCarrerasMeth();
 
@@ -563,38 +570,65 @@ public class MainWindow extends JFrame {
 	 * 
 	 */
 	private void InsertarEnListaEspera() {
-		int siQuiero = JOptionPane.showConfirmDialog(btnListaInscribirse, "La carrera con nombre"
-				+ carreraActual.getNombre() + " a la que te vas a inscribir esta al maximo de su capacidad: "
-				+ carreraActual.getMaxPlazas()
+		int siQuiero = JOptionPane.showConfirmDialog(null, "La carrera con nombre" + carreraActual.getNombre()
+				+ " a la que te vas a inscribir esta al maximo de su capacidad: " + carreraActual.getMaxPlazas()
 				+ ", si quieres puedes inscribirte en la lista de espera, te enviaremos un email si llega a haber algun hueco. Disculpe las molestias",
 				"Carera llena", JOptionPane.YES_NO_OPTION);
 
 		if (JOptionPane.YES_OPTION == siQuiero) {
 
-			ListaEsperaDto lista = new ListaEsperaDto();
+			quiereListarse = true;
 
-			lista.setIdAtleta(atletaActual.getIdAtleta());
-			lista.setIdCarrera(carreraActual.getIdCarrera());
-			int posicion = 0;
-			if (lista.getPosicion() == 0) {
-				posicion++;
-			} else {
-				posicion = lista.getPosicion();
-				posicion++;
-			}
-
-			lista.setPosicion(posicion);
-			String cate = Categoria.calculaCategoria(atletaActual, carreraActual);
-			lista.setCategoria(cate);
-
-			InscribirseListaEsperaAtleta.execute(lista);
-
-			JOptionPane.showMessageDialog(btnListaInscribirse,
-					"Gracias por inscribirse en la Lista de espera, de la carrera: " + carreraActual.getNombre()
-							+ ", su posicion dentro de esta lista es: " + posicion
-							+ " .Si tenemos alguna actualizacion te llegara un correo a tu email.\nOjala nos veamos en proximas carreras :)",
-					"Gracias :)", JOptionPane.DEFAULT_OPTION);
 		}
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo que inscribe en una lista de espera
+	 * 
+	 */
+	private void MeterEnListaEspera() {
+
+		List<ListaEsperaDto> Thral = FindListaByIdAtleta_Carrera.execute(carreraActual.getIdCarrera());
+
+		int posicion = 0;
+		int maxPos = 0;
+
+		for (ListaEsperaDto listaEsperaDto : Thral) {
+			if (listaEsperaDto.getPosicion() > maxPos) {
+				maxPos = listaEsperaDto.getPosicion();
+			}
+		}
+
+		ListaEsperaDto lista = new ListaEsperaDto();
+
+		lista.setIdAtleta(atletaActual.getIdAtleta());
+		lista.setAtleta(atletaActual);
+		lista.setCarrera(carreraActual);
+		lista.setIdCarrera(carreraActual.getIdCarrera());
+
+		if (!Thral.isEmpty()) {
+			maxPos++;
+			posicion = maxPos;
+		} else {
+			posicion = 1;
+		}
+
+		lista.setPosicion(posicion);
+		String cate = Categoria.calculaCategoria(atletaActual, carreraActual);
+		lista.setCategoria(cate);
+
+		lista.setFechaInscripcion(new Date());
+
+		InscribirseListaEsperaAtleta.execute(lista);
+
+		JOptionPane.showMessageDialog(btnListaInscribirse,
+				"Gracias por inscribirse en la Lista de espera, de la carrera: " + carreraActual.getNombre()
+						+ ", su posicion dentro de esta lista es: " + posicion
+						+ " .Si tenemos alguna actualizacion te llegara un correo a tu email.\nOjala nos veamos en proximas carreras :)",
+				"Gracias :)", JOptionPane.DEFAULT_OPTION);
+
 	}
 
 	private boolean checkValidDate() {
@@ -779,19 +813,37 @@ public class MainWindow extends JFrame {
 							atletaActual.setIdAtleta(UUID.randomUUID().toString());
 							new AddAtleta(atletaActual).execute();
 							setAtletaActual(new ReadAtletaByEmail(textIngresoEmail.getText()).execute());
-							dbIngresoAtleta();
-							cleanRegistro();
+							if (quiereListarse) {
+								quiereListarse();
+							} else {
+								dbIngresoAtleta();
+								cleanRegistro();
+							}
 						} else {
 							JOptionPane.showMessageDialog(null, "No puedes participar siendo menor de edad");
 						}
 					}
 				}
+
 			});
 			btnRegistroSiguiente.setForeground(Color.BLACK);
 			btnRegistroSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnRegistroSiguiente.setBounds(742, 438, 132, 35);
 		}
 		return btnRegistroSiguiente;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo que defice si un atleta quiere o no listarse
+	 * 
+	 */
+	private void quiereListarse() {
+		quiereListarse = false;
+		MeterEnListaEspera();
+		cleanRegistro();
+		showCard(PANEL_ATLETA);
 	}
 
 	public int getAge(String input) {
@@ -1027,7 +1079,7 @@ public class MainWindow extends JFrame {
 	}
 
 	private void inscribirAtleta() {
-		if (checkCarreraRow() && checkIfParticipable()) {
+		if (checkCarreraRow() && (checkIfParticipable() || quiereListarse)) {
 			showCard(PANEL_INGRESO);
 		}
 	}
@@ -1064,7 +1116,13 @@ public class MainWindow extends JFrame {
 				setAtletaActual(new ReadAtletaByEmail(email).execute());
 				System.out.println(Categoria.calculaCategoria(atletaActual, carreraActual));
 
-				dbIngresoAtleta();
+				if (quiereListarse) {
+					quiereListarse();
+					showCard(PANEL_ATLETA);
+				} else {
+					dbIngresoAtleta();
+				}
+
 			} else {
 				showCard(PANEL_REGISTRO);
 			}
@@ -1810,6 +1868,8 @@ public class MainWindow extends JFrame {
 			pnCreacionCarrera.add(getLblCreacionCarrerasKm_1_1());
 			pnCreacionCarrera.add(getTxtPlazas());
 			pnCreacionCarrera.add(getScrollPaneCategorias());
+			pnCreacionCarrera.add(getChbxListaEsperaCreacionCarreras());
+			pnCreacionCarrera.add(getLbListaEsperaCreacionCarrera());
 		}
 		return pnCreacionCarrera;
 	}
@@ -1917,7 +1977,7 @@ public class MainWindow extends JFrame {
 				}
 			});
 			btnCreacionCarrerasAtras.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnCreacionCarrerasAtras.setBounds(21, 465, 89, 23);
+			btnCreacionCarrerasAtras.setBounds(10, 579, 110, 29);
 		}
 		return btnCreacionCarrerasAtras;
 	}
@@ -1935,7 +1995,7 @@ public class MainWindow extends JFrame {
 				}
 			});
 			btnCreacionCarrerasSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
-			btnCreacionCarrerasSiguiente.setBounds(786, 465, 110, 23);
+			btnCreacionCarrerasSiguiente.setBounds(765, 579, 121, 29);
 		}
 		return btnCreacionCarrerasSiguiente;
 	}
@@ -1951,6 +2011,7 @@ public class MainWindow extends JFrame {
 			creacionCarrera.setTipo(cmbTipoCarrera.getSelectedItem().toString());
 			creacionCarrera.setNombre(txtNombreCarrera.getText());
 			creacionCarrera.setDescripcion(txtDescripcion.getText());
+			creacionCarrera.setListaEspera(chbxListaEsperaCreacionCarreras.isSelected());
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
@@ -2903,6 +2964,7 @@ public class MainWindow extends JFrame {
 			btnVerListaEsperaCarrerasOrganizador = new JButton("Ver Lista de Espera");
 			btnVerListaEsperaCarrerasOrganizador.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					reset(tablaListaEsperaOrganizador);
 					mostrarListaDeEspera();
 				}
 			});
@@ -3017,11 +3079,31 @@ public class MainWindow extends JFrame {
 		if (tbListaEsperaOrganizador == null) {
 			tbListaEsperaOrganizador = new JTable();
 			tbListaEsperaOrganizador.setModel(new DefaultTableModel(new Object[][] {},
-					new String[] { "DNI", "Email", "Nombre", "Fecha de Inscripcion", "Posicion lista" }));
+					new String[] { "DNI", "Email", "Nombre", "Categoria", "Fecha de Inscripcion", "Posicion lista" }));
 
 			tbListaEsperaOrganizador.setDefaultEditor(Object.class, null);
 		}
 		return tbListaEsperaOrganizador;
 	}
 
+	private JCheckBox getChbxListaEsperaCreacionCarreras() {
+		if (chbxListaEsperaCreacionCarreras == null) {
+			chbxListaEsperaCreacionCarreras = new JCheckBox("Lista Espera");
+			chbxListaEsperaCreacionCarreras.setFont(new Font("Arial", Font.PLAIN, 17));
+			chbxListaEsperaCreacionCarreras.setMnemonic('c');
+			chbxListaEsperaCreacionCarreras.setBounds(211, 457, 131, 21);
+		}
+		return chbxListaEsperaCreacionCarreras;
+	}
+
+	private JLabel getLbListaEsperaCreacionCarrera() {
+		if (lbListaEsperaCreacionCarrera == null) {
+			lbListaEsperaCreacionCarrera = new JLabel("Activar Lista de Espera: ");
+			lbListaEsperaCreacionCarrera.setLabelFor(getChbxListaEsperaCreacionCarreras());
+			lbListaEsperaCreacionCarrera.setDisplayedMnemonic('E');
+			lbListaEsperaCreacionCarrera.setFont(new Font("Arial", Font.PLAIN, 14));
+			lbListaEsperaCreacionCarrera.setBounds(49, 459, 197, 14);
+		}
+		return lbListaEsperaCreacionCarrera;
+	}
 }

@@ -121,15 +121,46 @@ public class DtoBuilder {
 	}
 
 	/**
+	 * @author Sergio Arroni
 	 * 
-	 * Metodo que pasa de ResultSet a objeto de Listas de Espera
+	 *         Metodo que pasa de ResultSet a Lista de Listas de Espera
 	 * 
 	 * @param rs
 	 * @return
 	 */
-	public static ListaEsperaDto toListaEsperaDtoList(ResultSet rs) {
+	public static List<ListaEsperaDto> toListaEsperaDtoList(ResultSet rs) {
+		ListaEsperaDto dto = null;
+		List<ListaEsperaDto> ret = new ArrayList<ListaEsperaDto>();
+		try {
+			while (rs.next()) {
+				dto = new ListaEsperaDto();
+				dto.setIdAtleta(rs.getString("idAtleta"));
+				dto.setIdCarrera(rs.getString("idCarrera"));
+				dto.setFechaInscripcion(rs.getDate("fechaInscripcion"));
+				dto.setCategoria(rs.getString("categoria"));
+				dto.setPosicion(rs.getInt("posicion"));
+				ret.add(dto);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return ret;
+	}
+
+	/**
+	 * @author Sergio Arroni
+	 * 
+	 *         Metodo que pasa de ResultSet a objeto de Listas de Espera.
+	 * 
+	 * @param rs
+	 * @return
+	 */
+	public static ListaEsperaDto toListaEsperaDto(ResultSet rs) {
 		ListaEsperaDto dto = null;
 		try {
+
 			dto = new ListaEsperaDto();
 			dto.setIdAtleta(rs.getString("idAtleta"));
 			dto.setIdCarrera(rs.getString("idCarrera"));
