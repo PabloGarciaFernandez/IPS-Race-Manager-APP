@@ -436,7 +436,6 @@ public class GestorDB {
 		} finally {
 			cerrar();
 		}
-
 		return atletasEsperando;
 	}
 
