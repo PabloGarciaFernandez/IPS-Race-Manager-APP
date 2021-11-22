@@ -2817,7 +2817,8 @@ public class MainWindow extends JFrame {
 		dev = new DevolucionDto();
 		dev.porcentaje = conf.getPorcentaje();
 		dev.fechaLimite = conf.getDateADevolver();
-
+	}
+		
 	private JButton getBtnInscribirClubLote() {
 		if (btnInscribirClubLote == null) {
 			btnInscribirClubLote = new JButton("Inscribir lote de atletas");
