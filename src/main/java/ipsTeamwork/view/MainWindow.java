@@ -55,6 +55,7 @@ import ipsTeamwork.model.categoria.crud.AddCategoria;
 import ipsTeamwork.model.devolucion.DevolucionDto;
 import ipsTeamwork.model.devolucion.crud.AddDevolucion;
 import ipsTeamwork.model.devolucion.crud.FindDevolucionByCarreraID;
+import ipsTeamwork.model.club.AccionesClub;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
 import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtleta;
@@ -260,6 +261,10 @@ public class MainWindow extends JFrame {
 
 	private ConfigCancelacion conf;
 	private DevolucionDto dev;
+
+	private JButton btnInscribirClubLote;
+	private JButton btnInscribirClubUnoPorUno;
+
 
 	/**
 	 * Create the frame.
@@ -502,6 +507,8 @@ public class MainWindow extends JFrame {
 			pnListaNorth = new JPanel();
 			pnListaNorth.setBackground(Color.LIGHT_GRAY);
 			pnListaNorth.add(getBtnListaInscribirse());
+			pnListaNorth.add(getBtnInscribirClubLote());
+			pnListaNorth.add(getBtnInscribirClubUnoPorUno());
 		}
 		return pnListaNorth;
 	}
@@ -2777,6 +2784,7 @@ public class MainWindow extends JFrame {
 		}
 		return btnGenerarDorsalesVistaOrganizador;
 	}
+
 	private JLabel getLblCreacionCarrerasCancelacion() {
 		if (lblCreacionCarrerasCancelacion == null) {
 			lblCreacionCarrerasCancelacion = new JLabel("Politica de cancelacion:");
@@ -2809,5 +2817,42 @@ public class MainWindow extends JFrame {
 		dev = new DevolucionDto();
 		dev.porcentaje = conf.getPorcentaje();
 		dev.fechaLimite = conf.getDateADevolver();
+
+	private JButton getBtnInscribirClubLote() {
+		if (btnInscribirClubLote == null) {
+			btnInscribirClubLote = new JButton("Inscribir lote de atletas");
+			btnInscribirClubLote.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					inscribirLote();
+				}
+			});
+		}
+		return btnInscribirClubLote;
+	}
+	
+	private void inscribirLote() {
+		File file;
+		JFileChooser jfk = new JFileChooser();
+		int retVal = jfk.showOpenDialog(this);
+
+		if (retVal == JFileChooser.APPROVE_OPTION) {
+			file = jfk.getSelectedFile();
+		} else {
+			JOptionPane.showMessageDialog(this, "No se seleccionó ningún archivo.");
+			return;
+		}
+		
+		try {
+			AccionesClub.inscribirLote(file, carreraActual);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "No se pudo inscribir al club.\n\nRazón:\n"+e.getMessage());
+		}
+	}
+	
+	private JButton getBtnInscribirClubUnoPorUno() {
+		if (btnInscribirClubUnoPorUno == null) {
+			btnInscribirClubUnoPorUno = new JButton("Inscribir club uno por uno");
+		}
+		return btnInscribirClubUnoPorUno;
 	}
 }
