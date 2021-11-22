@@ -6,6 +6,7 @@ public class SQLStrings {
 	public static String dropCarrera = "drop table carrera";
 	public static String dropInscripcion = "drop table inscripcion";
 	public static String dropCategoria = "drop table categoria";
+	public static String dropDevolucion = "drop table devolucion";
 
 	// creates
 	public static String createAtleta = "CREATE TABLE atleta (idAtleta varchar2 NOT NULL, dni varchar2 not null, nombre varchar2 not null, edad integer not null, sexo varchar not null, discapacitado bit NOT NULL, email varchar2 not null, CONSTRAINT CHK_Atleta CHECK (edad >18 AND (sexo='M' OR sexo='F' OR sexo='NB')) , primary key (idAtleta), constraint unique_email UNIQUE (email))";
@@ -15,7 +16,9 @@ public class SQLStrings {
 	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2, nombre varchar2, fecha date, fechaInicioIns date, tipo varchar2, distancia number, cuota number, fechaFinInsc date, plazasDisp number, maxPlazas number not null, CONSTRAINT chk_tipo CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
 
 	public static String createCategoria = "CREATE TABLE categoria (idCarrera varchar2, nombreCategoria varchar2, edadInicio integer, edadFin integer, primary key (idCarrera, nombreCategoria))";
-
+	
+	public static String createDevolucion = "CREATE TABLE devolucion (idCarrera varchar2, porcentaje number, fechaFin date, primary key (idCarrera))";	
+	
 	public static String createPago = "create table pago (idPago varchar2, idCarrera varchar2, dniAtleta varchar2, fecha date, importe number, primary key (idPago))";
 
 	// inserts
@@ -62,6 +65,8 @@ public class SQLStrings {
 	public static String insertInscripcionValues = "insert into inscripcion(idAtleta, idCarrera, dorsal, fechaInscripcion, estadoInscripcion, formaDePago, tiempoCorriendo) values (?, ?, ?, ?, ?, ?, ?)";
 
 	public static String insertCategoriaValues = "insert into categoria(idCarrera, nombreCategoria, edadInicio, edadFin) values (?, ?, ?, ?)";
+	
+	public static String insertDevolucionValues = "insert into devolucion(idCarrera, porcentaje, fechaFin) values (?, ?, ?)";
 
 	public static String selectAtletaById = "select * from atleta where idAtleta = ?";
 	// select
@@ -81,6 +86,8 @@ public class SQLStrings {
 	public static String estaLlenaLaLista = "select count(*) from inscripcion i where i.idcarrera = ?";
 
 	public static String categoriaParticipante = "select * from categoria where idCarrera = ?";
+	
+	public static String devolucionFinder = "select * from devolucion where idCarrera = ?";
 
 	// Consulta para el metodo estadoInscripcion
 	public static String inscripcionesPorCarrera = "select * from inscripcion i where idCarrera = ?";

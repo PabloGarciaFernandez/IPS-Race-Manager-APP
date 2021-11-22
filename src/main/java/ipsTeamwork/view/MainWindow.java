@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -50,6 +52,9 @@ import ipsTeamwork.model.carrera.crud.UpdateCarrera;
 import ipsTeamwork.model.categoria.Categoria;
 import ipsTeamwork.model.categoria.CategoriaDto;
 import ipsTeamwork.model.categoria.crud.AddCategoria;
+import ipsTeamwork.model.devolucion.DevolucionDto;
+import ipsTeamwork.model.devolucion.crud.AddDevolucion;
+import ipsTeamwork.model.devolucion.crud.FindDevolucionByCarreraID;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
 import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtleta;
@@ -250,6 +255,11 @@ public class MainWindow extends JFrame {
 	private Map<String, String> diccionarioPlazos = new HashMap<String, String>();
 
 	private int numeroGenteInscritaEnLaCarreraActual;
+	private JLabel lblCreacionCarrerasCancelacion;
+	private JButton btnConfigCancelacion;
+
+	private ConfigCancelacion conf;
+	private DevolucionDto dev;
 
 	/**
 	 * Create the frame.
@@ -292,6 +302,8 @@ public class MainWindow extends JFrame {
 		getTxFechaInicioConfiguracionPlazos().setText("");
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 	}
 
 	public AtletaDto getAtletaActual() {
@@ -1020,6 +1032,8 @@ public class MainWindow extends JFrame {
 					categoriasCreacion = new ArrayList<CategoriaDto>();
 					categoriasFiltrado = new ArrayList<CategoriaDto>();
 					cleanCreacion();
+					conf = new ConfigCancelacion();
+					conf.setVisible(false);
 					showCard(PANEL_CREACION_CARRERAS);
 				}
 			});
@@ -1741,11 +1755,8 @@ public class MainWindow extends JFrame {
 			pnCreacionCarrera.add(getLblCreacionCarrerasKm_1_1());
 			pnCreacionCarrera.add(getTxtPlazas());
 			pnCreacionCarrera.add(getScrollPaneCategorias());
-			
-			JLabel lblCreacionCarrerasCancelacion = new JLabel("Politica de cancelacion:");
-			lblCreacionCarrerasCancelacion.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarrerasCancelacion.setBounds(47, 409, 165, 14);
-			pnCreacionCarrera.add(lblCreacionCarrerasCancelacion);
+			pnCreacionCarrera.add(getLblCreacionCarrerasCancelacion());
+			pnCreacionCarrera.add(getBtnConfigCancelacion());
 		}
 		return pnCreacionCarrera;
 	}
@@ -1865,6 +1876,7 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					if (checkeoCreacionCarreras()) {
 						assignacionValoresCarrera();
+						asignacionConfigDev();
 						showCard(PANEL_CONFIGURAR_PLAZOS);
 						printLabelPlazos();
 					}
@@ -1875,7 +1887,6 @@ public class MainWindow extends JFrame {
 		}
 		return btnCreacionCarrerasSiguiente;
 	}
-
 	private void assignacionValoresCarrera() {
 		creacionCarrera = new CarreraDto();
 		try {
@@ -2367,6 +2378,12 @@ public class MainWindow extends JFrame {
 						new AddCategoria(c).execute();
 
 					}
+					if(conf != null) {
+						dev.carrera_id = creacionCarrera.getIdCarrera();
+						new AddDevolucion(dev).execute();
+						conf.dispose();
+						System.out.println(new FindDevolucionByCarreraID(creacionCarrera.getIdCarrera()).execute().toString());
+					}
 					showCard(PANEL_ORGANIZADOR);
 					db.selectCarreras();
 					reset(tb);
@@ -2759,5 +2776,38 @@ public class MainWindow extends JFrame {
 
 		}
 		return btnGenerarDorsalesVistaOrganizador;
+	}
+	private JLabel getLblCreacionCarrerasCancelacion() {
+		if (lblCreacionCarrerasCancelacion == null) {
+			lblCreacionCarrerasCancelacion = new JLabel("Politica de cancelacion:");
+			lblCreacionCarrerasCancelacion.setFont(new Font("Arial", Font.PLAIN, 14));
+			lblCreacionCarrerasCancelacion.setBounds(47, 412, 155, 14);
+		}
+		return lblCreacionCarrerasCancelacion;
+	}
+	private JButton getBtnConfigCancelacion() {
+		if (btnConfigCancelacion == null) {
+			btnConfigCancelacion = new JButton("Configuracion");
+			btnConfigCancelacion.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						conf.setDateLimit(new SimpleDateFormat("yyyy-MM-dd").parse(txtFechaEjecucion.getText()));
+						conf.setVisible(true);	
+					} catch (ParseException e1) {
+						JOptionPane.showMessageDialog(null, "Error: Fecha sin formato yyyy-MM-dd");
+						e1.printStackTrace();
+					}
+				}
+			});
+			btnConfigCancelacion.setFont(new Font("Arial", Font.PLAIN, 14));
+			btnConfigCancelacion.setBounds(212, 405, 128, 23);
+		}
+		return btnConfigCancelacion;
+	}
+	
+	private void asignacionConfigDev() {
+		dev = new DevolucionDto();
+		dev.porcentaje = conf.getPorcentaje();
+		dev.fechaLimite = conf.getDateADevolver();
 	}
 }
