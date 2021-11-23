@@ -2824,6 +2824,7 @@ public class MainWindow extends JFrame {
 			btnInscribirClubLote = new JButton("Inscribir lote de atletas");
 			btnInscribirClubLote.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					checkCarreraRow();
 					inscribirLote();
 				}
 			});
@@ -2842,6 +2843,8 @@ public class MainWindow extends JFrame {
 			JOptionPane.showMessageDialog(this, "No se seleccionó ningún archivo.");
 			return;
 		}
+		
+		
 		
 		try {
 			AccionesClub.inscribirLote(file, carreraActual);

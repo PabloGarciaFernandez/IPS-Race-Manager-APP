@@ -51,7 +51,7 @@ public class Parser {
 		while(s.hasNextLine()) {
 			String line = s.nextLine();
 			
-			if (line.charAt(0) == '#' || line.trim().strip().length() == 0) continue; //comments y strings vacias
+			if (line.trim().strip().length() == 0 || line.charAt(0) == '#') continue; //comments y strings vacias
 			String[] tokens = line.split(" ");
 			
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

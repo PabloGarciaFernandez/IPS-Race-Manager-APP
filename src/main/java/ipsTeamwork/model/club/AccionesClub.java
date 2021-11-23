@@ -30,12 +30,12 @@ public class AccionesClub {
 		System.out.println("\t\tCLUB INSCRITO\n");
 	}
 	
-	private static void dbIngresoAtleta(AtletaDto atletaActual, CarreraDto carreraActual) {
-		if (!new FindAtletaInCarrera().execute(atletaActual.getIdAtleta(), carreraActual.getIdCarrera())) {
+	private static void dbIngresoAtleta(AtletaDto atletaSinId, CarreraDto carreraActual) {
+		if (new FindAtletaInCarrera().execute(atletaSinId.getIdAtleta(), carreraActual.getIdCarrera())) {
 			
-			System.out.println("Inscribiendo en lote: " + atletaActual.toString());
+			System.out.println("Inscribiendo en lote: " + atletaSinId.toString());
 			
-			InscripcionDto inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaActual, carreraActual,
+			InscripcionDto inscripcion = DtoBuilder.ParamsToInscripcionDto(atletaSinId, carreraActual,
 					UUID.randomUUID().toString().substring(0, 3), "Inscrito-Club", new Date(), null);
 			new InscribirseAtleta().execute(inscripcion);
 			
