@@ -27,6 +27,8 @@ public class SQLStrings {
 	public static String insertAtletaPredefinido4 = "Insert into atleta values ('idPablo', 'dniPablo', 'Pablo Iglesias', 34, 'M', 1, 'Pablo@gmail.com');";
 	public static String insertAtletaPredefinido5 = "Insert into atleta values ('idCasado', 'dniCasado', 'Pablo Casado', 30, 'M', 1, 'Casado@gmail.com');";
 	public static String insertAtletaPredefinido6 = "Insert into atleta values ('idAyuso', 'dniAyuso', 'Isabel Diaz Ayuso', 65, 'F', 1, 'Ayuso@gmail.com');";
+	public static String insertAtletaPredefinido7 = "Insert into atleta values ('idZapatero', 'dniZapatero', 'Jose Luis Zapatero', 45, 'M', 1, 'Zapatero@gmail.com');";
+	public static String insertAtletaPredefinido8 = "Insert into atleta values ('idThrall', 'dniThrall', 'Thrall', 30, 'M', 0, 'Thrall@gmail.com');";
 
 	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?,?, 'Asfalto', 100, 20, ?, 0, 6, 1);";
 
@@ -36,6 +38,9 @@ public class SQLStrings {
 	public static String insertInscripcionPredefinida3 = "Insert into inscripcion values ('idPablo', 'idMaratonMadrid', '4', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '');";
 	public static String insertInscripcionPredefinida4 = "Insert into inscripcion values ('idCasado', 'idMaratonMadrid', '5', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '');";
 	public static String insertInscripcionPredefinida5 = "Insert into inscripcion values ('idAyuso', 'idMaratonMadrid', '6', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '');";
+
+	public static String insertListaEsperaPredefinida = "Insert into TListaEspera values ('idZapatero', 'idMaratonMadrid', ?, 1, 'Veterano');";
+	public static String insertListaEsperaPredefinida1 = "Insert into TListaEspera values ('idThrall', 'idMaratonMadrid', ?, 2, 'Veterano');";
 
 	public static String insertCategoriaPredefinida1 = "Insert into categoria values ('idMaratonMadrid', 'Junior', 18, 35);";
 	public static String insertCategoriaPredefinida2 = "Insert into categoria values ('idMaratonMadrid', 'Veterano', 36, 70);";

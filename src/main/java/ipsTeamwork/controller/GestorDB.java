@@ -419,13 +419,11 @@ public class GestorDB {
 
 			while (rs.next()) {
 
-				String idAtleta = rs.getString("idAtleta");
-
 				List<ListaEsperaDto> Wacho = FindListaByIdAtleta_Carrera.execute(rs.getString("idCarrera"));
 
 				for (ListaEsperaDto listaEsperaDto : Wacho) {
-					listaEsperaDto.setAtleta(findAtletaById(idAtleta));
-					listaEsperaDto.setCarrera(finCarreraById(idCarrera));
+					listaEsperaDto.setAtleta(findAtletaById(listaEsperaDto.getIdAtleta()));
+					listaEsperaDto.setCarrera(finCarreraById(listaEsperaDto.getIdCarrera()));
 
 					atletasEsperando.add(listaEsperaDto);
 				}
@@ -969,7 +967,24 @@ public class GestorDB {
 		insertarAtletaPredefinido();
 		insertarInscripcionPredefinida();
 		insertarCategoriaPredefinida();
+		insertarListaEsperaPredefinida();
 
+	}
+
+	private void insertarListaEsperaPredefinida() {
+		conectar();
+		try {
+			pst = conn.prepareStatement(SQLStrings.insertListaEsperaPredefinida);
+			pst.setDate(1, new java.sql.Date(new Date().getTime()));
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertListaEsperaPredefinida1);
+			pst.setDate(1, new java.sql.Date(new Date().getTime()));
+			pst.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			cerrar();
+		}
 	}
 
 	private void insertarCategoriaPredefinida() {
@@ -977,10 +992,8 @@ public class GestorDB {
 		conectar();
 		try {
 			pst = conn.prepareStatement(SQLStrings.insertCategoriaPredefinida1);
-
 			pst.execute();
 			pst = conn.prepareStatement(SQLStrings.insertCategoriaPredefinida2);
-
 			pst.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1034,6 +1047,10 @@ public class GestorDB {
 			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido5);
 			pst.execute();
 			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido6);
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido7);
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido8);
 			pst.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();

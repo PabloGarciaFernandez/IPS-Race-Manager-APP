@@ -1991,6 +1991,7 @@ public class MainWindow extends JFrame {
 						assignacionValoresCarrera();
 						showCard(PANEL_CONFIGURAR_PLAZOS);
 						printLabelPlazos();
+						limpiarPlazas();
 					}
 				}
 			});
@@ -1998,6 +1999,15 @@ public class MainWindow extends JFrame {
 			btnCreacionCarrerasSiguiente.setBounds(765, 579, 121, 29);
 		}
 		return btnCreacionCarrerasSiguiente;
+	}
+
+	private void limpiarPlazas() {
+		getTxFechaInicioConfiguracionPlazos().setEditable(true);
+		getTxFechaInicioConfiguracionPlazos().setText("");
+		getTxFechaFinConfiguracionPlazos().setText("");
+		getTxCuotaConfiguracionPlazos().setText("");
+		reset(tablaPlazosInscripciones);
+		primera = true;
 	}
 
 	private void assignacionValoresCarrera() {
@@ -2954,8 +2964,8 @@ public class MainWindow extends JFrame {
 
 		String[] albertoElReportero = { "Ingresos de " + nombre, };
 		tablaInformeCarrera.addRow(albertoElReportero);
-		String[] Sylvanas = { "Numero de Atletas Inscritos en " + nombre, String.valueOf(numInscritos) };
-		tablaInformeCarrera.addRow(Sylvanas);
+		String[] Sylvannas = { "Numero de Atletas Inscritos en " + nombre, String.valueOf(numInscritos) };
+		tablaInformeCarrera.addRow(Sylvannas);
 
 	}
 
@@ -2987,12 +2997,12 @@ public class MainWindow extends JFrame {
 
 				for (ListaEsperaDto lista : esperando) {
 
-					String[] uAreTheScrumMaster = { lista.getAtleta().getDNI(), lista.getAtleta().getEmail(),
+					String[] Artas = { lista.getAtleta().getDNI(), lista.getAtleta().getEmail(),
 							lista.getAtleta().getNombre(),
 							Categoria.calculaCategoria(lista.getAtleta(), lista.getCarrera()),
 							String.valueOf(lista.getFechaInscripcion()), String.valueOf(lista.getPosicion()) };
 
-					tablaListaEsperaOrganizador.addRow(uAreTheScrumMaster);
+					tablaListaEsperaOrganizador.addRow(Artas);
 				}
 			} else {
 				JOptionPane.showMessageDialog(this, "Esta Carrera no permite Lista de Espera");
