@@ -90,6 +90,7 @@ public class GestorDB {
 			pst = conn.prepareStatement(SQLStrings.createPago);
 			pst.execute();
 			pst = conn.prepareStatement(SQLStrings.createListaEspera);
+			pst = conn.prepareStatement(SQLStrings.createDevolucion);
 			pst.execute();
 
 		} catch (SQLException e) {
@@ -120,6 +121,9 @@ public class GestorDB {
 			pst.execute();
 
 			pst = conn.prepareStatement("drop table pago");
+			pst.execute();
+			
+			pst = conn.prepareStatement("drop table devolucion");
 			pst.execute();
 
 			pst = conn.prepareStatement("drop table TListaEspera");

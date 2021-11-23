@@ -10,6 +10,7 @@ import ipsTeamwork.model.ListaEspera.ListaEsperaDto;
 import ipsTeamwork.model.atleta.AtletaDto;
 import ipsTeamwork.model.carrera.CarreraDto;
 import ipsTeamwork.model.categoria.CategoriaDto;
+import ipsTeamwork.model.devolucion.DevolucionDto;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.pago.PagoDto;
 
@@ -60,6 +61,20 @@ public class DtoBuilder {
 			dto.nombre = rs.getString(2);
 			dto.edadInic = rs.getInt(3);
 			dto.edadFin = rs.getInt(4);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return dto;
+	}
+	
+	public static DevolucionDto toDevolucionDto (ResultSet rs) {
+		DevolucionDto dto = new DevolucionDto();
+
+		try {
+			dto.carrera_id = rs.getString(1);
+			dto.porcentaje = rs.getInt(2);
+			dto.fechaLimite = rs.getDate(3);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

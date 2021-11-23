@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -53,6 +55,10 @@ import ipsTeamwork.model.carrera.crud.UpdateCarrera;
 import ipsTeamwork.model.categoria.Categoria;
 import ipsTeamwork.model.categoria.CategoriaDto;
 import ipsTeamwork.model.categoria.crud.AddCategoria;
+import ipsTeamwork.model.devolucion.DevolucionDto;
+import ipsTeamwork.model.devolucion.crud.AddDevolucion;
+import ipsTeamwork.model.devolucion.crud.FindDevolucionByCarreraID;
+import ipsTeamwork.model.club.AccionesClub;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.InscribirseAtleta;
 import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtleta;
@@ -270,6 +276,14 @@ public class MainWindow extends JFrame {
 	private boolean quiereListarse;
 	private JCheckBox chbxListaEsperaCreacionCarreras;
 	private JLabel lbListaEsperaCreacionCarrera;
+	private JLabel lblCreacionCarrerasCancelacion;
+	private JButton btnConfigCancelacion;
+
+	private ConfigCancelacion conf;
+	private DevolucionDto dev;
+
+	private JButton btnInscribirClubLote;
+	private JButton btnInscribirClubUnoPorUno;
 
 	/**
 	 * Create the frame.
@@ -317,6 +331,8 @@ public class MainWindow extends JFrame {
 		getTxFechaInicioConfiguracionPlazos().setText("");
 		cargarTablaCarrerasOrganizador();
 		cargarTablaCarrerasAtleta();
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
 	}
 
 	public AtletaDto getAtletaActual() {
@@ -515,6 +531,8 @@ public class MainWindow extends JFrame {
 			pnListaNorth = new JPanel();
 			pnListaNorth.setBackground(Color.LIGHT_GRAY);
 			pnListaNorth.add(getBtnListaInscribirse());
+			pnListaNorth.add(getBtnInscribirClubLote());
+			pnListaNorth.add(getBtnInscribirClubUnoPorUno());
 		}
 		return pnListaNorth;
 	}
@@ -1144,6 +1162,8 @@ public class MainWindow extends JFrame {
 					categoriasCreacion = new ArrayList<CategoriaDto>();
 					categoriasFiltrado = new ArrayList<CategoriaDto>();
 					cleanCreacion();
+					conf = new ConfigCancelacion();
+					conf.setVisible(false);
 					showCard(PANEL_CREACION_CARRERAS);
 				}
 			});
@@ -1870,6 +1890,8 @@ public class MainWindow extends JFrame {
 			pnCreacionCarrera.add(getScrollPaneCategorias());
 			pnCreacionCarrera.add(getChbxListaEsperaCreacionCarreras());
 			pnCreacionCarrera.add(getLbListaEsperaCreacionCarrera());
+			pnCreacionCarrera.add(getLblCreacionCarrerasCancelacion());
+			pnCreacionCarrera.add(getBtnConfigCancelacion());
 		}
 		return pnCreacionCarrera;
 	}
@@ -1935,7 +1957,7 @@ public class MainWindow extends JFrame {
 		if (lblCreacionCarreraNombre == null) {
 			lblCreacionCarreraNombre = new JLabel("Nombre:");
 			lblCreacionCarreraNombre.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarreraNombre.setBounds(49, 192, 60, 17);
+			lblCreacionCarreraNombre.setBounds(47, 157, 60, 17);
 		}
 		return lblCreacionCarreraNombre;
 	}
@@ -1944,7 +1966,7 @@ public class MainWindow extends JFrame {
 		if (lblCreacionCarrerasDescripcion == null) {
 			lblCreacionCarrerasDescripcion = new JLabel("Descripción:");
 			lblCreacionCarrerasDescripcion.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarrerasDescripcion.setBounds(49, 233, 92, 14);
+			lblCreacionCarrerasDescripcion.setBounds(47, 198, 92, 14);
 		}
 		return lblCreacionCarrerasDescripcion;
 	}
@@ -1953,7 +1975,7 @@ public class MainWindow extends JFrame {
 		if (lblCreacionCarrerasFechaEjecucion == null) {
 			lblCreacionCarrerasFechaEjecucion = new JLabel("Fecha Ejecución:");
 			lblCreacionCarrerasFechaEjecucion.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarrerasFechaEjecucion.setBounds(49, 275, 121, 14);
+			lblCreacionCarrerasFechaEjecucion.setBounds(47, 240, 121, 14);
 		}
 		return lblCreacionCarrerasFechaEjecucion;
 	}
@@ -1962,7 +1984,7 @@ public class MainWindow extends JFrame {
 		if (lblCreacionCarrerasTipo == null) {
 			lblCreacionCarrerasTipo = new JLabel("Tipo:");
 			lblCreacionCarrerasTipo.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarrerasTipo.setBounds(49, 314, 46, 14);
+			lblCreacionCarrerasTipo.setBounds(47, 279, 46, 14);
 		}
 		return lblCreacionCarrerasTipo;
 	}
@@ -1989,6 +2011,7 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					if (checkeoCreacionCarreras()) {
 						assignacionValoresCarrera();
+						asignacionConfigDev();
 						showCard(PANEL_CONFIGURAR_PLAZOS);
 						printLabelPlazos();
 						limpiarPlazas();
@@ -2031,7 +2054,7 @@ public class MainWindow extends JFrame {
 		if (txtDescripcion == null) {
 			txtDescripcion = new JTextField();
 			txtDescripcion.setColumns(10);
-			txtDescripcion.setBounds(170, 231, 172, 20);
+			txtDescripcion.setBounds(168, 196, 172, 20);
 		}
 		return txtDescripcion;
 	}
@@ -2040,7 +2063,7 @@ public class MainWindow extends JFrame {
 		if (txtNombreCarrera == null) {
 			txtNombreCarrera = new JTextField();
 			txtNombreCarrera.setColumns(10);
-			txtNombreCarrera.setBounds(170, 191, 172, 20);
+			txtNombreCarrera.setBounds(168, 156, 172, 20);
 		}
 		return txtNombreCarrera;
 	}
@@ -2051,7 +2074,7 @@ public class MainWindow extends JFrame {
 			cmbTipoCarrera.addItem("Asfalto");
 			cmbTipoCarrera.addItem("Montaña");
 			cmbTipoCarrera.setSelectedIndex(-1);
-			cmbTipoCarrera.setBounds(170, 311, 172, 22);
+			cmbTipoCarrera.setBounds(168, 276, 172, 22);
 		}
 		return cmbTipoCarrera;
 	}
@@ -2060,7 +2083,7 @@ public class MainWindow extends JFrame {
 		if (lblCreacionCarrerasKm == null) {
 			lblCreacionCarrerasKm = new JLabel("Kilometros:");
 			lblCreacionCarrerasKm.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarrerasKm.setBounds(49, 360, 92, 14);
+			lblCreacionCarrerasKm.setBounds(47, 325, 92, 14);
 		}
 		return lblCreacionCarrerasKm;
 	}
@@ -2069,7 +2092,7 @@ public class MainWindow extends JFrame {
 		if (txtFechaEjecucion == null) {
 			txtFechaEjecucion = new JTextField();
 			txtFechaEjecucion.setColumns(10);
-			txtFechaEjecucion.setBounds(170, 273, 172, 20);
+			txtFechaEjecucion.setBounds(168, 238, 172, 20);
 		}
 		return txtFechaEjecucion;
 	}
@@ -2248,7 +2271,7 @@ public class MainWindow extends JFrame {
 		if (txtKm == null) {
 			txtKm = new JTextField();
 			txtKm.setColumns(10);
-			txtKm.setBounds(170, 358, 172, 20);
+			txtKm.setBounds(168, 323, 172, 20);
 		}
 		return txtKm;
 	}
@@ -2266,7 +2289,7 @@ public class MainWindow extends JFrame {
 		if (lblCreacionCarrerasPlazas == null) {
 			lblCreacionCarrerasPlazas = new JLabel("Plazas:");
 			lblCreacionCarrerasPlazas.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarrerasPlazas.setBounds(49, 406, 92, 14);
+			lblCreacionCarrerasPlazas.setBounds(47, 371, 92, 14);
 		}
 		return lblCreacionCarrerasPlazas;
 	}
@@ -2275,7 +2298,7 @@ public class MainWindow extends JFrame {
 		if (txtPlazas == null) {
 			txtPlazas = new JTextField();
 			txtPlazas.setColumns(10);
-			txtPlazas.setBounds(170, 404, 172, 20);
+			txtPlazas.setBounds(168, 369, 172, 20);
 		}
 		return txtPlazas;
 	}
@@ -2501,6 +2524,12 @@ public class MainWindow extends JFrame {
 						c.carrera_id = creacionCarrera.getIdCarrera();
 						new AddCategoria(c).execute();
 
+					}
+					if(conf != null) {
+						dev.carrera_id = creacionCarrera.getIdCarrera();
+						new AddDevolucion(dev).execute();
+						conf.dispose();
+						System.out.println(new FindDevolucionByCarreraID(creacionCarrera.getIdCarrera()).execute().toString());
 					}
 					showCard(PANEL_ORGANIZADOR);
 					db.selectCarreras();
@@ -3115,5 +3144,78 @@ public class MainWindow extends JFrame {
 			lbListaEsperaCreacionCarrera.setBounds(49, 459, 197, 14);
 		}
 		return lbListaEsperaCreacionCarrera;
+	private JLabel getLblCreacionCarrerasCancelacion() {
+		if (lblCreacionCarrerasCancelacion == null) {
+			lblCreacionCarrerasCancelacion = new JLabel("Politica de cancelacion:");
+			lblCreacionCarrerasCancelacion.setFont(new Font("Arial", Font.PLAIN, 14));
+			lblCreacionCarrerasCancelacion.setBounds(47, 412, 155, 14);
+		}
+		return lblCreacionCarrerasCancelacion;
+	}
+	private JButton getBtnConfigCancelacion() {
+		if (btnConfigCancelacion == null) {
+			btnConfigCancelacion = new JButton("Configuracion");
+			btnConfigCancelacion.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						conf.setDateLimit(new SimpleDateFormat("yyyy-MM-dd").parse(txtFechaEjecucion.getText()));
+						conf.setVisible(true);	
+					} catch (ParseException e1) {
+						JOptionPane.showMessageDialog(null, "Error: Fecha sin formato yyyy-MM-dd");
+						e1.printStackTrace();
+					}
+				}
+			});
+			btnConfigCancelacion.setFont(new Font("Arial", Font.PLAIN, 14));
+			btnConfigCancelacion.setBounds(212, 405, 128, 23);
+		}
+		return btnConfigCancelacion;
+	}
+	
+	private void asignacionConfigDev() {
+		dev = new DevolucionDto();
+		dev.porcentaje = conf.getPorcentaje();
+		dev.fechaLimite = conf.getDateADevolver();
+	}
+		
+	private JButton getBtnInscribirClubLote() {
+		if (btnInscribirClubLote == null) {
+			btnInscribirClubLote = new JButton("Inscribir lote de atletas");
+			btnInscribirClubLote.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					checkCarreraRow();
+					inscribirLote();
+				}
+			});
+		}
+		return btnInscribirClubLote;
+	}
+	
+	private void inscribirLote() {
+		File file;
+		JFileChooser jfk = new JFileChooser();
+		int retVal = jfk.showOpenDialog(this);
+
+		if (retVal == JFileChooser.APPROVE_OPTION) {
+			file = jfk.getSelectedFile();
+		} else {
+			JOptionPane.showMessageDialog(this, "No se seleccionó ningún archivo.");
+			return;
+		}
+		
+		
+		
+		try {
+			AccionesClub.inscribirLote(file, carreraActual);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "No se pudo inscribir al club.\n\nRazón:\n"+e.getMessage());
+		}
+	}
+	
+	private JButton getBtnInscribirClubUnoPorUno() {
+		if (btnInscribirClubUnoPorUno == null) {
+			btnInscribirClubUnoPorUno = new JButton("Inscribir club uno por uno");
+		}
+		return btnInscribirClubUnoPorUno;
 	}
 }
