@@ -24,6 +24,7 @@ public class InscribirseListaEsperaAtleta {
 			pst.close();
 
 		} catch (Exception e) {
+			System.out.println("Manolo");
 			e.printStackTrace();
 		} finally {
 			gdb.cerrarCon();

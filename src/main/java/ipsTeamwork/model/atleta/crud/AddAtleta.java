@@ -10,11 +10,11 @@ import ipsTeamwork.model.atleta.AtletaDto;
 
 public class AddAtleta {
 	AtletaDto atleta;
-	
+
 	public AddAtleta(AtletaDto dto) {
 		this.atleta = dto;
 	}
-	
+
 	public void execute() {
 		GestorDB gdb = new GestorDB();
 		Connection con = gdb.getConnection();
@@ -31,10 +31,11 @@ public class AddAtleta {
 			pst.close();
 
 		} catch (Exception e) {
+			e.printStackTrace();
 
 		} finally {
 			gdb.cerrarCon();
 		}
-		
+
 	}
 }
