@@ -3103,7 +3103,6 @@ public class MainWindow extends JFrame {
 	    tbInformeCarreraOrganizador = new JTable();
 	    tbInformeCarreraOrganizador
 		    .setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Informacion", "Balance" }));
-
 	    tbInformeCarreraOrganizador.setDefaultEditor(Object.class, null);
 	}
 	return tbInformeCarreraOrganizador;
