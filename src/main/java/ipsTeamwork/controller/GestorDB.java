@@ -578,6 +578,15 @@ public class GestorDB {
 		inscripcion.setFormaDePago(rs.getString(6));
 		inscripcion.setTiempoCorriendo(rs.getString(7));
 		inscripcion.setCategoria(rs.getString(8));
+		inscripcion.setIncidenciasPago(rs.getString(9));
+		inscripcion.setClub(rs.getString(10));
+		
+		inscripcion.setTiempoPaso1(rs.getString(11));
+		inscripcion.setTiempoPaso2(rs.getString(12));
+		inscripcion.setTiempoPaso3(rs.getString(13));
+		inscripcion.setTiempoPaso4(rs.getString(14));
+		inscripcion.setTiempoPaso5(rs.getString(15));
+
 
 		inscripciones.add(inscripcion);
 	    }
@@ -1027,6 +1036,12 @@ public class GestorDB {
 	    pst.setDate(1, new java.sql.Date(new Date().getTime()));
 	    pst.execute();
 	    pst = conn.prepareStatement(SQLStrings.insertInscripcionPredefinida5);
+	    pst.setDate(1, new java.sql.Date(new Date().getTime()));
+	    pst.execute();
+	    pst = conn.prepareStatement(SQLStrings.insertInscripcionPredefinida6);
+	    pst.setDate(1, new java.sql.Date(new Date().getTime()));
+	    pst.execute();
+	    pst = conn.prepareStatement(SQLStrings.insertInscripcionPredefinida7);
 	    pst.setDate(1, new java.sql.Date(new Date().getTime()));
 	    pst.execute();
 	} catch (SQLException e) {

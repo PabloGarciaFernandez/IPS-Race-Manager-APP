@@ -26,6 +26,18 @@ public class InscripcionDto {
 	private String tiempoInicio;
 	private String tiempoFin;
 	private String categoria;
+	
+	private String incidenciasPago;
+	private String club;
+	
+	
+	private String tiempoPaso1;
+	private String tiempoPaso2;
+	private String tiempoPaso3;
+	private String tiempoPaso4;
+	private String tiempoPaso5;
+	
+	private String ritmo;
 
 	public String getTiempoCorriendo() {
 		return tiempoCorriendo;
@@ -148,6 +160,68 @@ public class InscripcionDto {
 
 	public void setCategoria(String categoria) {
 		this.categoria = categoria;
+	}
+
+	public void setIncidenciasPago(String incidenciasPago) {
+		this.incidenciasPago = incidenciasPago;
+		
+	}
+	
+	public void setClub(String club) {
+		this.club = club;
+		
+	}
+
+	public String getClub() {
+		return this.club;
+	}
+
+	public String getTiempoPaso1() {
+		return tiempoPaso1;
+	}
+
+	public void setTiempoPaso1(String tiempoPaso1) {
+		this.tiempoPaso1 = tiempoPaso1;
+	}
+
+	public String getTiempoPaso2() {
+		return tiempoPaso2;
+	}
+
+	public void setTiempoPaso2(String tiempoPaso2) {
+		this.tiempoPaso2 = tiempoPaso2;
+	}
+
+	public String getTiempoPaso3() {
+		return tiempoPaso3;
+	}
+
+	public void setTiempoPaso3(String tiempoPaso3) {
+		this.tiempoPaso3 = tiempoPaso3;
+	}
+
+	public String getTiempoPaso4() {
+		return tiempoPaso4;
+	}
+
+	public void setTiempoPaso4(String tiempoPaso4) {
+		this.tiempoPaso4 = tiempoPaso4;
+	}
+
+	public String getTiempoPaso5() {
+		return tiempoPaso5;
+	}
+
+	public void setTiempoPaso5(String tiempoPaso5) {
+		this.tiempoPaso5 = tiempoPaso5;
+	}
+
+	public String getRitmo() {
+		return ritmo;
+	}
+
+	public void setRitmo(String ritmo) {
+		this.ritmo = ritmo;
 	}
 
 }
