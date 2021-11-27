@@ -185,6 +185,12 @@ public class GestorDB {
 	    pst.setInt(9, carrera.getPlazasDisp());
 	    pst.setInt(10, carrera.getMaxPlazas());
 	    pst.setBoolean(11, carrera.isListaEspera());
+	    pst.setString(12, Integer.toString(carrera.getPtoCorte1()));
+	    pst.setString(13, Integer.toString(carrera.getPtoCorte2()));
+	    pst.setString(14, Integer.toString(carrera.getPtoCorte3()));
+	    pst.setString(15, Integer.toString(carrera.getPtoCorte4()));
+	    pst.setString(16, Integer.toString(carrera.getPtoCorte5()));
+
 	    pst.execute();
 	} catch (SQLException e) {
 	    e.printStackTrace();
@@ -864,6 +870,12 @@ public class GestorDB {
 		pst.setInt(9, plazas0);
 		pst.setInt(10, plazas0);
 		pst.setInt(11, (r.nextBoolean() ? 1 : 0));
+		pst.setString(12, "20");
+		pst.setString(13, "30");
+		pst.setString(14, "40");
+		pst.setString(15, "50");
+		pst.setString(16, "80");
+
 
 		pst.executeUpdate();
 		pst.close();
