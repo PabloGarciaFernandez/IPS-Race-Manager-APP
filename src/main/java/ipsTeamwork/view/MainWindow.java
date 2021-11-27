@@ -37,6 +37,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import ipsTeamwork.controller.GestorDB;
@@ -294,6 +295,7 @@ public class MainWindow extends JFrame {
 	db = new GestorDB();
 	tb = (DefaultTableModel) getTbVerCarreras().getModel();
 	tablaClasificaciones = (DefaultTableModel) getTbVerClasificaciones().getModel();
+	
 	tablaGenerarDorsales = (DefaultTableModel) getTbGeneralDorsales().getModel();
 	tablaAtleta = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
 	tablaCategorias = (DefaultTableModel) getTableCategorias().getModel();
@@ -335,6 +337,18 @@ public class MainWindow extends JFrame {
 	cargarTablaCarrerasAtleta();
 	Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 	this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+	
+	
+	
+	//CENTRAR TEXTO DE LAS COLUMNAS
+	
+	DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+	centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+	tbVerClasificaciones.setDefaultRenderer(String.class, centerRenderer);
+	tbVerClasificaciones.setDefaultRenderer(Integer.class, centerRenderer);
+
+	for(int i = 0; i < tbVerClasificaciones.getColumnCount(); i++)
+	tbVerClasificaciones.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
     }
 
     public AtletaDto getAtletaActual() {
@@ -515,18 +529,20 @@ public class MainWindow extends JFrame {
 
     public String stringFromNumberToDate(String numero) {
 
-	if (numero.equals("NF") || numero.equals("NP")) {
-	    return numero;
-	}
+    	if (numero.equals("NF") || numero.equals("NP")) {
+    	    return numero;
+    	}
 
-	int numeroInt = Integer.parseInt(numero);
+    	int numeroInt = Double.valueOf(numero).intValue();
 
-	int horas = numeroInt / 60;
-	int minutos = numeroInt - horas * 60;
+    	int horas = numeroInt / 60;
+    	int minutos = numeroInt - horas * 60;
 
-	return horas + ":" + minutos + "h";
+    	return horas + ":" + minutos + "h";
 
     }
+    
+
 
     private JPanel getPnListaNorth() {
 	if (pnListaNorth == null) {
@@ -1377,7 +1393,7 @@ public class MainWindow extends JFrame {
     private JScrollPane getScVerClasificaciones() {
 	if (scVerClasificaciones == null) {
 	    scVerClasificaciones = new JScrollPane();
-	    scVerClasificaciones.setBounds(43, 56, 713, 369);
+	    scVerClasificaciones.setBounds(43, 56, 917, 478);
 	    scVerClasificaciones.setViewportView(getTbVerClasificaciones());
 	}
 	return scVerClasificaciones;
@@ -1409,8 +1425,7 @@ public class MainWindow extends JFrame {
 	if (tbVerClasificaciones == null) {
 	    tbVerClasificaciones = new JTable();
 	    tbVerClasificaciones.setModel(new DefaultTableModel(new Object[][] {},
-		    new String[] { "Posición", "Dorsal", "Categoría", "Género", "Nombre", "Tiempo" }));
-
+		    new String[] { "Posición", "Categoría", "Dorsal", "Género", "Nombre", "Club", "Tiempo", "Spot 1", "Spot 2", "Spot 3", "Spot 4", "Spot 5", "Ritmo [km/h]", "Diferencia"}));
 	    tbVerClasificaciones.setDefaultEditor(Object.class, null);
 
 	}
@@ -1729,7 +1744,7 @@ public class MainWindow extends JFrame {
 		    showCard(PANEL_VER_CARRERAS_ORGANIZADOR);
 		}
 	    });
-	    btListaClasificacionesAtras.setBounds(30, 435, 136, 34);
+	    btListaClasificacionesAtras.setBounds(43, 565, 136, 34);
 	}
 	return btListaClasificacionesAtras;
     }
@@ -2438,36 +2453,94 @@ public class MainWindow extends JFrame {
 
 	    int posicion = 1;
 	    String categoria = "";
+	    
+	    double tiempoPrimero = 0.0;
+
 
 	    for (InscripcionDto inscripcionDto : inscripciones) {
-		AtletaDto atleta = new AtletaDto();
+	    
+			AtletaDto atleta = new AtletaDto();
+	
+			if (inscripcionDto.getCategoria() == null) {
+			    inscripcionDto.setCategoria("SIN CATEGORIA");
+			    System.err.println("\"SIN CATEGORIA\" por accionClasificaciones() - MainWindow linea 2156");
+			}
+			
+			   inscripcionDto.setCarrera(db.selectCarrerasNombre(nombreCarrera));
+			   String ritmo = "";
+			   String diferencia = "";
+			   
+			   if(!inscripcionDto.getTiempoCorriendo().equals("NP") && !inscripcionDto.getTiempoCorriendo().equals("NF")) {
+				   
+					
+					
+				   ritmo = Double.toString((inscripcionDto.getCarrera().getDistancia() / Double.valueOf(inscripcionDto.getTiempoCorriendo())) * 60);
+				 
+				   if(tiempoPrimero == 0.0) {
+					   diferencia = "+0:000";
+					   tiempoPrimero = Double.valueOf(inscripcionDto.getTiempoCorriendo());
 
-		if (inscripcionDto.getCategoria() == null) {
-		    inscripcionDto.setCategoria("SIN CATEGORIA");
-		    System.err.println("\"SIN CATEGORIA\" por accionClasificaciones() - MainWindow linea 2156");
-		}
-		if (inscripcionDto.getCategoria().equals(categoria)) {
-		    System.err.println("hasta aqui bien");
-		    String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getDorsal(),
-			    inscripcionDto.getCategoria(), inscripcionDto.getAtleta().getSexo(),
-			    inscripcionDto.getAtleta().getNombre(),
-			    stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
-		    tablaClasificaciones.addRow(clasificacionesTabla);
-		    posicion++;
+				   } else {
+					   diferencia = "+"+stringFromNumberToDate(Double.toString(Double.valueOf(inscripcionDto.getTiempoCorriendo()) - tiempoPrimero));
 
-		} else {
-		    categoria = inscripcionDto.getCategoria();
+				   }
+			
+			   } else {
+				   ritmo = "--";
+				   diferencia = "--";
+			   }
+			   
+			if (inscripcionDto.getCategoria().equals(categoria)) {
+			   System.out.println(inscripcionDto.getCarrera().getTipo());
+			   
+			   
+			    String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getCategoria(),
+				    inscripcionDto.getDorsal(), inscripcionDto.getAtleta().getSexo(),
+				    inscripcionDto.getAtleta().getNombre(),inscripcionDto.getClub(),
+				    stringFromNumberToDate(inscripcionDto.getTiempoCorriendo())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso1())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso2())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso3())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso4())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso5())
+				    ,ritmo
+				    ,diferencia
+				    };
+			    
+			    
+			    tablaClasificaciones.addRow(checkTiemposPaso(clasificacionesTabla));
+			    posicion++;
+	
+			} else {
+		
+				if(!diferencia.equals("--")){
+					diferencia = "+0:00";
+		
+					tiempoPrimero = Double.valueOf(inscripcionDto.getTiempoCorriendo());
+					
+				}
 
-		    System.err.println("hasta aqui bien");
-
-		    posicion = 1;
-		    String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getDorsal(),
-			    inscripcionDto.getCategoria(), inscripcionDto.getAtleta().getSexo(),
-			    inscripcionDto.getAtleta().getNombre(),
-			    stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
-		    tablaClasificaciones.addRow(clasificacionesTabla);
-		    posicion++;
-		}
+			    categoria = inscripcionDto.getCategoria();
+	
+			    System.err.println("hasta aqui bien");
+	
+			    posicion = 1;
+			    String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getCategoria(),
+				    inscripcionDto.getDorsal(), inscripcionDto.getAtleta().getSexo(),
+				    inscripcionDto.getAtleta().getNombre(),inscripcionDto.getClub(),
+				    stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) 
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso1())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso2())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso3())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso4())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso5())
+				    ,ritmo
+				    ,diferencia
+				    };
+			    tablaClasificaciones.addRow(checkTiemposPaso(clasificacionesTabla));
+			    
+			    posicion++;
+			}
 	    }
 
 	    showCard(PANEL_VERCLASIFICACIONESORGANIZADOR);
@@ -2477,7 +2550,32 @@ public class MainWindow extends JFrame {
 
     }
 
-    private JPanel getPnConfiguracionPlazos() {
+    private String[] checkTiemposPaso(String[] clasificacionesTabla) {
+//    	if(clasificacionesTabla[6].equals("NP")) {
+//    		for(int i = 7; i<12; i++){
+//    			clasificacionesTabla[i] = "NP";
+//    		}
+//    	
+//    	}
+//    	if(clasificacionesTabla[6].equals("NF")) {
+//    		for(int i = 7; i<12; i++){
+//    			clasificacionesTabla[i] = "NF";
+//    		}
+//    	
+//    	}
+    	// 7	8	9	10	11
+    	
+    	if(clasificacionesTabla[6].equals("NP") || clasificacionesTabla[6].equals("NF")) {
+    		for(int i = 7; i<12; i++){
+    			clasificacionesTabla[i] = "--";
+    		}
+    	
+    	}
+    
+		return clasificacionesTabla;
+	}
+
+	private JPanel getPnConfiguracionPlazos() {
 	if (pnConfiguracionPlazos == null) {
 	    pnConfiguracionPlazos = new JPanel();
 	    pnConfiguracionPlazos.setLayout(new BorderLayout(0, 0));
