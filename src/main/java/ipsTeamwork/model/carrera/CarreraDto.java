@@ -15,6 +15,13 @@ public class CarreraDto {
 	private int numInscritos;
 	private boolean listaEspera;
 
+	private int ptoCorte1 ;
+	private int ptoCorte2 ;
+	private int ptoCorte3 ;
+	private int ptoCorte4 ;
+	private int ptoCorte5 ;
+
+	
 	private String descripcion;
 
 	public String getDescripcion() {
@@ -199,6 +206,46 @@ public class CarreraDto {
 	public String toString() {
 		return nombre + " | " + tipo + " | " + fecha.toString() + " | " + distancia + " | " + cuota + " | "
 				+ fechaFin.toString() + " | " + plazasDisp;
+	}
+
+	public int getPtoCorte1() {
+		return ptoCorte1;
+	}
+
+	public void setPtoCorte1(int ptoCorte1) {
+		this.ptoCorte1 = ptoCorte1;
+	}
+
+	public int getPtoCorte2() {
+		return ptoCorte2;
+	}
+
+	public void setPtoCorte2(int ptoCorte2) {
+		this.ptoCorte2 = ptoCorte2;
+	}
+
+	public int getPtoCorte3() {
+		return ptoCorte3;
+	}
+
+	public void setPtoCorte3(int ptoCorte3) {
+		this.ptoCorte3 = ptoCorte3;
+	}
+
+	public int getPtoCorte4() {
+		return ptoCorte4;
+	}
+
+	public void setPtoCorte4(int ptoCorte4) {
+		this.ptoCorte4 = ptoCorte4;
+	}
+
+	public int getPtoCorte5() {
+		return ptoCorte5;
+	}
+
+	public void setPtoCorte5(int ptoCorte5) {
+		this.ptoCorte5 = ptoCorte5;
 	}
 
 }
