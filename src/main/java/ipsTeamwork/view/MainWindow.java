@@ -67,6 +67,7 @@ import ipsTeamwork.model.inscripcion.crud.UpdateInscribirseAtletaDorsal;
 import ipsTeamwork.model.pago.PagoDto;
 import ipsTeamwork.util.DtoBuilder;
 import ipsTeamwork.util.FileUtil;
+import ipsTeamwork.util.MiRenderer;
 import ipsTeamwork.util.Parser;
 
 public class MainWindow extends JFrame {
@@ -3160,6 +3161,7 @@ public class MainWindow extends JFrame {
 	    btnInformeCarreraListaCarreras.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 		    if (tb.getRowCount() != -1) {
+			reset(tablaInformeCarrera);
 			imprimirLabelInforme();
 			mostrarInformeEnTabla();
 			showCard(PANEL_INFORME_CARRERA);
@@ -3197,6 +3199,7 @@ public class MainWindow extends JFrame {
     }
 
     private void mostrarInformeEnTabla() {
+
 	String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
 
 	CarreraDto aux = db.selectCarrerasNombre(nombre);
@@ -3205,24 +3208,30 @@ public class MainWindow extends JFrame {
 
 	int numInscritos = db.numInscritosxCarrera(id);
 
-//		int numCancelados = db.numCanceladosxCarrera(id);
+//	int numCancelados = db.numCanceladosxCarrera(id);
 
 	List<InscripcionDto> inscripciones = db.estadoInscripcion(id);
 	double ingresosTotales = 0;
+	ingresosTotales = numInscritos * aux.getCuota();
+
+	double devolucionesTotales = 0;
 
 	for (InscripcionDto inscripcionDto : inscripciones) {
 //			ingresosTotales += inscripcionDto.getFormaDePago();
 	}
-	double DevolucionesTotales = 0;
 
-	for (InscripcionDto inscripcionDto : inscripciones) {
-//			ingresosTotales += inscripcionDto.getFormaDePago();
-	}
+	double total = ingresosTotales - devolucionesTotales;
 
-	String[] albertoElReportero = { "Ingresos de " + nombre, };
-	tablaInformeCarrera.addRow(albertoElReportero);
-	String[] Sylvannas = { "Numero de Atletas Inscritos en " + nombre, String.valueOf(numInscritos) };
+	String[] Illidan = { "Ingresos de la carrera " + nombre, String.valueOf(ingresosTotales) };
+	tablaInformeCarrera.addRow(Illidan);
+	String[] Vash = { "Devoluciones de la carrera " + nombre, "20" };
+	tablaInformeCarrera.addRow(Vash);
+	String[] Sylvannas = { "Numero de Atletas Inscritos en la carrera " + nombre, String.valueOf(numInscritos) };
 	tablaInformeCarrera.addRow(Sylvannas);
+	String[] Anduin = { "Numero de Atletas dados de baja en la carrera " + nombre, String.valueOf(numInscritos) };
+	tablaInformeCarrera.addRow(Anduin);
+	String[] Malfurion = { "Total de la carrera " + nombre, String.valueOf(total) };
+	tablaInformeCarrera.addRow(Malfurion);
 
     }
 
@@ -3286,8 +3295,6 @@ public class MainWindow extends JFrame {
 	    pnPrincipalInformeCarreraOrganizador.add(getScInformeCarreraOrganizador());
 	    pnPrincipalInformeCarreraOrganizador.add(getLbInfoInformeCarreraOrganizador());
 	    pnPrincipalInformeCarreraOrganizador.add(getBtnInformeCarreraOrganizador());
-	    pnPrincipalInformeCarreraOrganizador.add(getTxBalanceTotalCarreras());
-	    pnPrincipalInformeCarreraOrganizador.add(getLbBalanceCarrera());
 	}
 	return pnPrincipalInformeCarreraOrganizador;
     }
@@ -3315,6 +3322,8 @@ public class MainWindow extends JFrame {
 	    tbInformeCarreraOrganizador
 		    .setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Informacion", "Balance" }));
 	    tbInformeCarreraOrganizador.setDefaultEditor(Object.class, null);
+
+	    this.tbInformeCarreraOrganizador.setDefaultRenderer(Object.class, new MiRenderer());
 	}
 	return tbInformeCarreraOrganizador;
     }
