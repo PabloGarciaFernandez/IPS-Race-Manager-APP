@@ -146,5 +146,6 @@ public class SQLStrings {
 	public static String cancelarInscripcionAtletaCarrera = "update inscripcion set estadoInscripcion='Cancelado' where idAtleta = ? and idCarrera = ?";
 	public static String incidenciasDevolverCantidad = "update inscripcion set incidenciasPagos = ? where idAtleta = ? and idCarrera = ?";
 	public static String updatePlazasEnCarrera = "update carrera set plazasDisp = ? where idCarrera = ?";
+	public static String updateInscripcionStatusIncidencia = "update inscripcion set estadoInscripcion = ? incidenciasPagos = ? where idAtleta = ? and idCarrera = ?";
 
 }

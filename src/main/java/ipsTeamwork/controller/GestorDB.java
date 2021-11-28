@@ -1248,6 +1248,24 @@ public class GestorDB {
 		}
 	}
 
+	public void bajarPlazasPublic(CarreraDto carreraActual) {
+		conectar();
+
+		try {
+			pst = conn.prepareStatement(SQLStrings.updatePlazasEnCarrera);
+
+			pst.setInt(1, carreraActual.getPlazasDisp() - 1);
+			pst.setString(2, carreraActual.getIdCarrera());
+
+			pst.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			cerrar();
+		}
+	}
+
 	private void subirPlazas(CarreraDto carreraActual) {
 		conectar();
 
@@ -1276,6 +1294,27 @@ public class GestorDB {
 		devolverDinero(atleta, dev, carreraActual);
 
 		return 0;
+	}
+
+	public void updateInscripcionStatusIncidencia(AtletaDto atletaSinId, CarreraDto carreraActual, String status,
+			String incidencias) {
+		conectar();
+
+		try {
+			pst = conn.prepareStatement(SQLStrings.updateInscripcionStatusIncidencia);
+
+			pst.setString(1, status);
+			pst.setString(2, incidencias);
+			pst.setString(3, atletaSinId.getIdAtleta());
+			pst.setString(4, carreraActual.getIdCarrera());
+
+			pst.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			cerrar();
+		}
 	}
 
 }
