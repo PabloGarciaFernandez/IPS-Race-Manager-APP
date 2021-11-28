@@ -5,9 +5,11 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -15,9 +17,11 @@ import javax.swing.table.DefaultTableModel;
 
 import ipsTeamwork.controller.GestorDB;
 import ipsTeamwork.model.atleta.AtletaDto;
+import ipsTeamwork.model.carrera.CarreraDto;
 import ipsTeamwork.model.carrera.crud.GetNombreById;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.SelectAllInscripcionForAtleta;
+import javax.swing.SwingConstants;
 
 public class PanelListarInscripciones extends JPanel {
 
@@ -32,8 +36,12 @@ public class PanelListarInscripciones extends JPanel {
 	private DefaultTableModel dtm;
 	
 	private AtletaDto atleta;
+	private CarreraDto carreraActual;
+	private GestorDB db;
 	
 	private MainWindow parent;
+	private JButton btnCancelarInscripcion;
+	private Component horizontalStrut;
 
 	/**
 	 * Create the panel.
@@ -55,6 +63,8 @@ public class PanelListarInscripciones extends JPanel {
 		if (panelNorth == null) {
 			panelNorth = new JPanel();
 			panelNorth.add(getVerticalStrut());
+			panelNorth.add(getHorizontalStrut());
+			panelNorth.add(getBtnCancelarInscripcion());
 		}
 		return panelNorth;
 	}
@@ -144,5 +154,41 @@ public class PanelListarInscripciones extends JPanel {
 	
 	private void reset(DefaultTableModel francisco) {
 		francisco.setRowCount(0);
+	}
+	private JButton getBtnCancelarInscripcion() {
+		if (btnCancelarInscripcion == null) {
+			btnCancelarInscripcion = new JButton("Cancelar Inscripción");
+			btnCancelarInscripcion.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (checkCarreraRow()) {
+						int respuesta = JOptionPane.showConfirmDialog(null, "¿Estás seguro de que quieres cancelar?");
+						if (respuesta == JOptionPane.YES_OPTION) {
+							db.cancelarInscripcionEnCarrera(atleta, carreraActual);
+						}
+					}
+				}
+			});
+			btnCancelarInscripcion.setHorizontalAlignment(SwingConstants.RIGHT);
+		}
+		return btnCancelarInscripcion;
+	}
+	private Component getHorizontalStrut() {
+		if (horizontalStrut == null) {
+			horizontalStrut = Box.createHorizontalStrut(420);
+		}
+		return horizontalStrut;
+	}
+	
+	private boolean checkCarreraRow() {
+		try {
+			Vector vector = dtm.getDataVector().elementAt(tableInscripciones.getSelectedRow());
+			if (vector != null) {
+				carreraActual = db.selectCarrerasNombre((String) vector.get(0));
+				return true;
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "No has seleccionado ninguna carrera");
+		}
+		return false;
 	}
 }

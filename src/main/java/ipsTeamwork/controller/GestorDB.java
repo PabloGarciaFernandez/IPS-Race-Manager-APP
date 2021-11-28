@@ -1191,4 +1191,9 @@ public class GestorDB {
 
 	return ret;
     }
+
+	public void cancelarInscripcionEnCarrera(AtletaDto atleta, CarreraDto carreraActual) {
+		// TODO Auto-generated method stub
+		
+	}
 }
