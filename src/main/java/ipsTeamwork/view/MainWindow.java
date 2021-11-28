@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -290,6 +291,8 @@ public class MainWindow extends JFrame {
     private JLabel lbBalanceCarrera;
     private JLabel lblCreacionCarrerasPtosCorte;
     private JTextField txPuntosMedicion;
+    private JTextPane txPaneBalanceOrganizador;
+    private JScrollPane scBalanceInformacionOrganizador;
 
     /**
      * Create the frame.
@@ -298,7 +301,7 @@ public class MainWindow extends JFrame {
 	db = new GestorDB();
 	tb = (DefaultTableModel) getTbVerCarreras().getModel();
 	tablaClasificaciones = (DefaultTableModel) getTbVerClasificaciones().getModel();
-	
+
 	tablaGenerarDorsales = (DefaultTableModel) getTbGeneralDorsales().getModel();
 	tablaAtleta = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
 	tablaCategorias = (DefaultTableModel) getTableCategorias().getModel();
@@ -340,18 +343,16 @@ public class MainWindow extends JFrame {
 	cargarTablaCarrerasAtleta();
 	Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 	this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-	
-	
-	
-	//CENTRAR TEXTO DE LAS COLUMNAS
-	
+
+	// CENTRAR TEXTO DE LAS COLUMNAS
+
 	DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-	centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+	centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 	tbVerClasificaciones.setDefaultRenderer(String.class, centerRenderer);
 	tbVerClasificaciones.setDefaultRenderer(Integer.class, centerRenderer);
 
-	for(int i = 0; i < tbVerClasificaciones.getColumnCount(); i++)
-	tbVerClasificaciones.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+	for (int i = 0; i < tbVerClasificaciones.getColumnCount(); i++)
+	    tbVerClasificaciones.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
     }
 
     public AtletaDto getAtletaActual() {
@@ -532,20 +533,18 @@ public class MainWindow extends JFrame {
 
     public String stringFromNumberToDate(String numero) {
 
-    	if (numero.equals("NF") || numero.equals("NP")) {
-    	    return numero;
-    	}
+	if (numero.equals("NF") || numero.equals("NP")) {
+	    return numero;
+	}
 
-    	int numeroInt = Double.valueOf(numero).intValue();
+	int numeroInt = Double.valueOf(numero).intValue();
 
-    	int horas = numeroInt / 60;
-    	int minutos = numeroInt - horas * 60;
+	int horas = numeroInt / 60;
+	int minutos = numeroInt - horas * 60;
 
-    	return horas + ":" + minutos + "h";
+	return horas + ":" + minutos + "h";
 
     }
-    
-
 
     private JPanel getPnListaNorth() {
 	if (pnListaNorth == null) {
@@ -1429,7 +1428,8 @@ public class MainWindow extends JFrame {
 
 	    tbVerClasificaciones = new JTable();
 	    tbVerClasificaciones.setModel(new DefaultTableModel(new Object[][] {},
-		    new String[] { "Posición", "Categoría", "Dorsal", "Género", "Nombre", "Club", "Tiempo", "Spot 1", "Spot 2", "Spot 3", "Spot 4", "Spot 5", "Ritmo [km/h]", "Diferencia"}));
+		    new String[] { "Posición", "Categoría", "Dorsal", "Género", "Nombre", "Club", "Tiempo", "Spot 1",
+			    "Spot 2", "Spot 3", "Spot 4", "Spot 5", "Ritmo [km/h]", "Diferencia" }));
 	    tbVerClasificaciones.setDefaultEditor(Object.class, null);
 
 	}
@@ -1947,7 +1947,8 @@ public class MainWindow extends JFrame {
 	    return false;
 	}
 	if (checkPuntosMedicion()) {
-	    JOptionPane.showMessageDialog(this, "Los puntos de medicion han ser mayores que el punto anterior.\nTambién deben estar entre 0 y la longitud de la carrera.\nComo mucho se pueden introducir 5 puntos.");
+	    JOptionPane.showMessageDialog(this,
+		    "Los puntos de medicion han ser mayores que el punto anterior.\nTambién deben estar entre 0 y la longitud de la carrera.\nComo mucho se pueden introducir 5 puntos.");
 	    return false;
 	}
 	return true;
@@ -1957,35 +1958,36 @@ public class MainWindow extends JFrame {
 	String da = "yyyy-MM-dd";
 	return txtFechaEjecucion.getText().length() != da.length();
     }
-    private boolean checkPuntosMedicion() {
-    	boolean peta = false;
-    	try {
-    		
-        	String[] puntosMedicionString = txPuntosMedicion.getText().split(",");
-        	if(puntosMedicionString.length > 5) {
-        		return true;
-        	}
-        	int[] puntosMedicionInt = new int[puntosMedicionString.length];
-        	for(int i=0; i < puntosMedicionString.length; i++) {
-        		puntosMedicionInt[i] = Integer.valueOf(puntosMedicionString[i]);
-        	}
-        	
-        	for(int i=0; i < puntosMedicionInt.length; i++) {
-        		if(puntosMedicionInt[i] < 0 || puntosMedicionInt[i] > Integer.valueOf(txtKm.getText())) {
-        			peta = true;
-        		}
-        		if(i > 0) {
-        			if(puntosMedicionInt[i] < puntosMedicionInt[i-1]) {
-        				peta = true;
-        			}
-        		}
-        	}
 
-    	} catch (Exception e ) {
-    		return true;
-    	}
-    	return peta;
-     }
+    private boolean checkPuntosMedicion() {
+	boolean peta = false;
+	try {
+
+	    String[] puntosMedicionString = txPuntosMedicion.getText().split(",");
+	    if (puntosMedicionString.length > 5) {
+		return true;
+	    }
+	    int[] puntosMedicionInt = new int[puntosMedicionString.length];
+	    for (int i = 0; i < puntosMedicionString.length; i++) {
+		puntosMedicionInt[i] = Integer.valueOf(puntosMedicionString[i]);
+	    }
+
+	    for (int i = 0; i < puntosMedicionInt.length; i++) {
+		if (puntosMedicionInt[i] < 0 || puntosMedicionInt[i] > Integer.valueOf(txtKm.getText())) {
+		    peta = true;
+		}
+		if (i > 0) {
+		    if (puntosMedicionInt[i] < puntosMedicionInt[i - 1]) {
+			peta = true;
+		    }
+		}
+	    }
+
+	} catch (Exception e) {
+	    return true;
+	}
+	return peta;
+    }
 
     private boolean checkeoCantidadCategorías() {
 	return (tablaCategorias.getRowCount() == 0);
@@ -2108,19 +2110,16 @@ public class MainWindow extends JFrame {
 	String[] puntosMedicionString = txPuntosMedicion.getText().split(",");
 
 	int[] puntosMedicionInt = new int[puntosMedicionString.length];
-	
-	for(int i=0; i < puntosMedicionString.length; i++) {
-		puntosMedicionInt[i] = Integer.valueOf(puntosMedicionString[i]);
+
+	for (int i = 0; i < puntosMedicionString.length; i++) {
+	    puntosMedicionInt[i] = Integer.valueOf(puntosMedicionString[i]);
 	}
-	
+
 	int[] puntosFinal = new int[5];
-	for(int i=0; i < puntosMedicionInt.length;i++) {
-		puntosFinal[i] = puntosMedicionInt[i];
+	for (int i = 0; i < puntosMedicionInt.length; i++) {
+	    puntosFinal[i] = puntosMedicionInt[i];
 	}
-	
-	
-	
-	
+
 	try {
 	    creacionCarrera.setFecha(new SimpleDateFormat("yyyy-MM-dd").parse(txtFechaEjecucion.getText()));
 	    creacionCarrera.setDistancia(Integer.parseInt(txtKm.getText()));
@@ -2131,8 +2130,8 @@ public class MainWindow extends JFrame {
 	    creacionCarrera.setNombre(txtNombreCarrera.getText());
 	    creacionCarrera.setDescripcion(txtDescripcion.getText());
 	    creacionCarrera.setListaEspera(chbxListaEsperaCreacionCarreras.isSelected());
-	    
-		creacionCarrera.setPtoCorte1(puntosFinal[0]);
+
+	    creacionCarrera.setPtoCorte1(puntosFinal[0]);
 	    creacionCarrera.setPtoCorte2(puntosFinal[1]);
 	    creacionCarrera.setPtoCorte3(puntosFinal[2]);
 	    creacionCarrera.setPtoCorte4(puntosFinal[3]);
@@ -2484,9 +2483,8 @@ public class MainWindow extends JFrame {
     }
 
     protected void accionClasificaciones() {
-    
-    	
-    	if (getTbVerCarreras().getSelectedRow() != -1) {
+
+	if (getTbVerCarreras().getSelectedRow() != -1) {
 	    reset(tablaClasificaciones);
 
 	    System.out.println("cosa del debug");
@@ -2519,140 +2517,132 @@ public class MainWindow extends JFrame {
 
 	    int posicion = 1;
 	    String categoria = "";
-	    
+
 	    double tiempoPrimero = 0.0;
 
-
 	    for (InscripcionDto inscripcionDto : inscripciones) {
-	    
-			AtletaDto atleta = new AtletaDto();
-	
-			if (inscripcionDto.getCategoria() == null) {
-			    inscripcionDto.setCategoria("SIN CATEGORIA");
-			    System.err.println("\"SIN CATEGORIA\" por accionClasificaciones() - MainWindow linea 2156");
-			}
-			
-			   inscripcionDto.setCarrera(db.selectCarrerasNombre(nombreCarrera));
-			   String ritmo = "";
-			   String diferencia = "";
-			   
-			   int numeroPtosCorte = 5;
-			   if(inscripcionDto.getCarrera().getPtoCorte2() == 0) {
-				   numeroPtosCorte--;
-			   }
-			   if(inscripcionDto.getCarrera().getPtoCorte3() == 0) {
-				   numeroPtosCorte--;
-			   }
-			   if(inscripcionDto.getCarrera().getPtoCorte4() == 0) {
-				   numeroPtosCorte--;
-			   }
-			   if(inscripcionDto.getCarrera().getPtoCorte5() == 0) {
-				   numeroPtosCorte--;
-			   }
-			   
-			   if(!inscripcionDto.getTiempoCorriendo().equals("NP") && !inscripcionDto.getTiempoCorriendo().equals("NF")) {
-				   
-					
-					
-				   ritmo = Double.toString(Math.round(((inscripcionDto.getCarrera().getDistancia() / Double.valueOf(inscripcionDto.getTiempoCorriendo())) * 60)*100)/100);
-				 
-				   if(tiempoPrimero == 0.0) {
-					   diferencia = "+0:000";
-					   tiempoPrimero = Double.valueOf(inscripcionDto.getTiempoCorriendo());
 
-				   } else {
-					   diferencia = "+"+stringFromNumberToDate(Double.toString(Double.valueOf(inscripcionDto.getTiempoCorriendo()) - tiempoPrimero));
+		AtletaDto atleta = new AtletaDto();
 
-				   }
-			
-			   } else {
-				   ritmo = "--";
-				   diferencia = "--";
-			   }
-			   
-			if (inscripcionDto.getCategoria().equals(categoria)) {
-			   System.out.println(inscripcionDto.getCarrera().getTipo());
-			   
-			   
-			    String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getCategoria(),
-				    inscripcionDto.getDorsal(), inscripcionDto.getAtleta().getSexo(),
-				    inscripcionDto.getAtleta().getNombre(),inscripcionDto.getClub(),
-				    stringFromNumberToDate(inscripcionDto.getTiempoCorriendo())
-				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso1())
-				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso2())
-				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso3())
-				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso4())
-				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso5())
-				    ,ritmo
-				    ,diferencia
-				    };
-			    
-			    if(numeroPtosCorte == 1) {
-			    	clasificacionesTabla[8] = "No definido";
-			    	clasificacionesTabla[9] = "No definido";
-			    	clasificacionesTabla[10] = "No definido";
-			    	clasificacionesTabla[11] = "No definido";
-			    } else if(numeroPtosCorte == 2) {
-			    	clasificacionesTabla[9] = "No definido";
-			    	clasificacionesTabla[10] = "No definido";
-			    	clasificacionesTabla[11] = "No definido";
-			    } else if(numeroPtosCorte == 3) {
-			    	clasificacionesTabla[10] = "No definido";
-			    	clasificacionesTabla[11] = "No definido";
-			    } else if(numeroPtosCorte == 4) {
-			    	clasificacionesTabla[11] = "No definido";
-			    }
-			    
-			    tablaClasificaciones.addRow(checkTiemposPaso(clasificacionesTabla));
-			    posicion++;
-	
-			} else {
-		
-				if(!diferencia.equals("--")){
-					diferencia = "+0:00";
-		
-					tiempoPrimero = Double.valueOf(inscripcionDto.getTiempoCorriendo());
-					
-				}
+		if (inscripcionDto.getCategoria() == null) {
+		    inscripcionDto.setCategoria("SIN CATEGORIA");
+		    System.err.println("\"SIN CATEGORIA\" por accionClasificaciones() - MainWindow linea 2156");
+		}
 
-			    categoria = inscripcionDto.getCategoria();
-	
-			    System.err.println("hasta aqui bien");
-	
-			    posicion = 1;
-			    String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getCategoria(),
-				    inscripcionDto.getDorsal(), inscripcionDto.getAtleta().getSexo(),
-				    inscripcionDto.getAtleta().getNombre(),inscripcionDto.getClub(),
-				    stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) 
-				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso1())
-				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso2())
-				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso3())
-				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso4())
-				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso5())
-				    ,ritmo
-				    ,diferencia
-				    };
-			    
-			    
-			    if(numeroPtosCorte == 1) {
-			    	clasificacionesTabla[8] = "No definido";
-			    	clasificacionesTabla[9] = "No definido";
-			    	clasificacionesTabla[10] = "No definido";
-			    	clasificacionesTabla[11] = "No definido";
-			    } else if(numeroPtosCorte == 2) {
-			    	clasificacionesTabla[9] = "No definido";
-			    	clasificacionesTabla[10] = "No definido";
-			    	clasificacionesTabla[11] = "No definido";
-			    } else if(numeroPtosCorte == 3) {
-			    	clasificacionesTabla[10] = "No definido";
-			    	clasificacionesTabla[11] = "No definido";
-			    } else if(numeroPtosCorte == 4) {
-			    	clasificacionesTabla[11] = "No definido";
-			    }
-			    tablaClasificaciones.addRow(checkTiemposPaso(clasificacionesTabla));
-			    
-			    posicion++;
-			}
+		inscripcionDto.setCarrera(db.selectCarrerasNombre(nombreCarrera));
+		String ritmo = "";
+		String diferencia = "";
+
+		int numeroPtosCorte = 5;
+		if (inscripcionDto.getCarrera().getPtoCorte2() == 0) {
+		    numeroPtosCorte--;
+		}
+		if (inscripcionDto.getCarrera().getPtoCorte3() == 0) {
+		    numeroPtosCorte--;
+		}
+		if (inscripcionDto.getCarrera().getPtoCorte4() == 0) {
+		    numeroPtosCorte--;
+		}
+		if (inscripcionDto.getCarrera().getPtoCorte5() == 0) {
+		    numeroPtosCorte--;
+		}
+
+		if (!inscripcionDto.getTiempoCorriendo().equals("NP")
+			&& !inscripcionDto.getTiempoCorriendo().equals("NF")) {
+
+		    ritmo = Double.toString(Math.round(((inscripcionDto.getCarrera().getDistancia()
+			    / Double.valueOf(inscripcionDto.getTiempoCorriendo())) * 60) * 100) / 100);
+
+		    if (tiempoPrimero == 0.0) {
+			diferencia = "+0:000";
+			tiempoPrimero = Double.valueOf(inscripcionDto.getTiempoCorriendo());
+
+		    } else {
+			diferencia = "+" + stringFromNumberToDate(
+				Double.toString(Double.valueOf(inscripcionDto.getTiempoCorriendo()) - tiempoPrimero));
+
+		    }
+
+		} else {
+		    ritmo = "--";
+		    diferencia = "--";
+		}
+
+		if (inscripcionDto.getCategoria().equals(categoria)) {
+		    System.out.println(inscripcionDto.getCarrera().getTipo());
+
+		    String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getCategoria(),
+			    inscripcionDto.getDorsal(), inscripcionDto.getAtleta().getSexo(),
+			    inscripcionDto.getAtleta().getNombre(), inscripcionDto.getClub(),
+			    stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()),
+			    stringFromNumberToDate(inscripcionDto.getTiempoPaso1()),
+			    stringFromNumberToDate(inscripcionDto.getTiempoPaso2()),
+			    stringFromNumberToDate(inscripcionDto.getTiempoPaso3()),
+			    stringFromNumberToDate(inscripcionDto.getTiempoPaso4()),
+			    stringFromNumberToDate(inscripcionDto.getTiempoPaso5()), ritmo, diferencia };
+
+		    if (numeroPtosCorte == 1) {
+			clasificacionesTabla[8] = "No definido";
+			clasificacionesTabla[9] = "No definido";
+			clasificacionesTabla[10] = "No definido";
+			clasificacionesTabla[11] = "No definido";
+		    } else if (numeroPtosCorte == 2) {
+			clasificacionesTabla[9] = "No definido";
+			clasificacionesTabla[10] = "No definido";
+			clasificacionesTabla[11] = "No definido";
+		    } else if (numeroPtosCorte == 3) {
+			clasificacionesTabla[10] = "No definido";
+			clasificacionesTabla[11] = "No definido";
+		    } else if (numeroPtosCorte == 4) {
+			clasificacionesTabla[11] = "No definido";
+		    }
+
+		    tablaClasificaciones.addRow(checkTiemposPaso(clasificacionesTabla));
+		    posicion++;
+
+		} else {
+
+		    if (!diferencia.equals("--")) {
+			diferencia = "+0:00";
+
+			tiempoPrimero = Double.valueOf(inscripcionDto.getTiempoCorriendo());
+
+		    }
+
+		    categoria = inscripcionDto.getCategoria();
+
+		    System.err.println("hasta aqui bien");
+
+		    posicion = 1;
+		    String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getCategoria(),
+			    inscripcionDto.getDorsal(), inscripcionDto.getAtleta().getSexo(),
+			    inscripcionDto.getAtleta().getNombre(), inscripcionDto.getClub(),
+			    stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()),
+			    stringFromNumberToDate(inscripcionDto.getTiempoPaso1()),
+			    stringFromNumberToDate(inscripcionDto.getTiempoPaso2()),
+			    stringFromNumberToDate(inscripcionDto.getTiempoPaso3()),
+			    stringFromNumberToDate(inscripcionDto.getTiempoPaso4()),
+			    stringFromNumberToDate(inscripcionDto.getTiempoPaso5()), ritmo, diferencia };
+
+		    if (numeroPtosCorte == 1) {
+			clasificacionesTabla[8] = "No definido";
+			clasificacionesTabla[9] = "No definido";
+			clasificacionesTabla[10] = "No definido";
+			clasificacionesTabla[11] = "No definido";
+		    } else if (numeroPtosCorte == 2) {
+			clasificacionesTabla[9] = "No definido";
+			clasificacionesTabla[10] = "No definido";
+			clasificacionesTabla[11] = "No definido";
+		    } else if (numeroPtosCorte == 3) {
+			clasificacionesTabla[10] = "No definido";
+			clasificacionesTabla[11] = "No definido";
+		    } else if (numeroPtosCorte == 4) {
+			clasificacionesTabla[11] = "No definido";
+		    }
+		    tablaClasificaciones.addRow(checkTiemposPaso(clasificacionesTabla));
+
+		    posicion++;
+		}
 
 	    }
 
@@ -2676,19 +2666,19 @@ public class MainWindow extends JFrame {
 //    		}
 //    	
 //    	}
-    	// 7	8	9	10	11
-    	
-    	if(clasificacionesTabla[6].equals("NP") || clasificacionesTabla[6].equals("NF")) {
-    		for(int i = 7; i<12; i++){
-    			clasificacionesTabla[i] = "--";
-    		}
-    	
-    	}
-    
-		return clasificacionesTabla;
+	// 7 8 9 10 11
+
+	if (clasificacionesTabla[6].equals("NP") || clasificacionesTabla[6].equals("NF")) {
+	    for (int i = 7; i < 12; i++) {
+		clasificacionesTabla[i] = "--";
+	    }
+
 	}
 
-	private JPanel getPnConfiguracionPlazos() {
+	return clasificacionesTabla;
+    }
+
+    private JPanel getPnConfiguracionPlazos() {
 	if (pnConfiguracionPlazos == null) {
 	    pnConfiguracionPlazos = new JPanel();
 	    pnConfiguracionPlazos.setLayout(new BorderLayout(0, 0));
@@ -3096,8 +3086,7 @@ public class MainWindow extends JFrame {
     private void printLabelPlazos() {
 
 	txDatosCarreraConfiguracionPlazos.setText("Configurando los plazos de inscripcion de la carrera: "
-		+ creacionCarrera.getNombre() + 
-		", con fecha de inicio de la carrera: " + creacionCarrera.getFecha());
+		+ creacionCarrera.getNombre() + ", con fecha de inicio de la carrera: " + creacionCarrera.getFecha());
 
     }
 
@@ -3177,6 +3166,15 @@ public class MainWindow extends JFrame {
 	return btnInformeCarreraListaCarreras;
     }
 
+    private JPanel getPnInformeCarrera() {
+	if (pnInformeCarrera == null) {
+	    pnInformeCarrera = new JPanel();
+	    pnInformeCarrera.setLayout(new BorderLayout(0, 0));
+	    pnInformeCarrera.add(getPnPrincipalInformeCarreraOrganizador(), BorderLayout.CENTER);
+	}
+	return pnInformeCarrera;
+    }
+
     /**
      * @author Sergio Arroni
      * 
@@ -3191,13 +3189,19 @@ public class MainWindow extends JFrame {
 
 	CarreraDto aux = db.selectCarrerasNombre(nombre);
 
-	String todo = "Este es el informe de la carrera  " + nombre + ", con fecha de inicio: " + aux.getFecha()
-		+ ", del tipo: " + aux.getTipo()
-		+ ".\nA continuación, proporcionare diversos datos sobre esta carrera, vease, ingresos, numero de Atletas inscritos, cantidad de dinero que se ha devuelto y el numero de atletas que se han desvinculado de esta carrera.\nLos ingresos recibidos hasta la fecha de esta carrera: ";
+	String todo = "Este es el informe de la carrera  " + nombre + "\nCon fecha de inicio: " + aux.getFecha()
+		+ "\nDel tipo: " + aux.getTipo()
+		+ ".\nA continuación, proporcionare diversos datos sobre esta carrera vease:\nIngresos, numero de Atletas inscritos, cantidad de dinero que se ha devuelto y el numero de atletas que se han desvinculado de esta carrera.\n A su vez saldra calculado el balance total de los ingresos de esta carrera ";
 
-	getLbInfoInformeCarreraOrganizador().setText(todo);
+//	getLbInfoInformeCarreraOrganizador().setText(todo);
+	getTxPaneBalanceOrganizador().setText(todo);
     }
 
+    /**
+     * @author Sergio Arroni
+     * 
+     *         Metodo que inserta le valor del balance economico de cada carrera
+     */
     private void mostrarInformeEnTabla() {
 
 	String nombre = String.valueOf(tb.getValueAt(getTbVerCarreras().getSelectedRow(), 0));
@@ -3208,27 +3212,24 @@ public class MainWindow extends JFrame {
 
 	int numInscritos = db.numInscritosxCarrera(id);
 
-//	int numCancelados = db.numCanceladosxCarrera(id);
+	int numCancelados = db.numDevueltosxCarrera(id);
 
 	List<InscripcionDto> inscripciones = db.estadoInscripcion(id);
 	double ingresosTotales = 0;
 	ingresosTotales = numInscritos * aux.getCuota();
 
 	double devolucionesTotales = 0;
-
-	for (InscripcionDto inscripcionDto : inscripciones) {
-//			ingresosTotales += inscripcionDto.getFormaDePago();
-	}
+	devolucionesTotales = numCancelados * aux.getCuota();
 
 	double total = ingresosTotales - devolucionesTotales;
 
 	String[] Illidan = { "Ingresos de la carrera " + nombre, String.valueOf(ingresosTotales) };
 	tablaInformeCarrera.addRow(Illidan);
-	String[] Vash = { "Devoluciones de la carrera " + nombre, "20" };
+	String[] Vash = { "Devoluciones de la carrera " + nombre, String.valueOf(devolucionesTotales) };
 	tablaInformeCarrera.addRow(Vash);
 	String[] Sylvannas = { "Numero de Atletas Inscritos en la carrera " + nombre, String.valueOf(numInscritos) };
 	tablaInformeCarrera.addRow(Sylvannas);
-	String[] Anduin = { "Numero de Atletas dados de baja en la carrera " + nombre, String.valueOf(numInscritos) };
+	String[] Anduin = { "Numero de Atletas dados de baja en la carrera " + nombre, String.valueOf(numCancelados) };
 	tablaInformeCarrera.addRow(Anduin);
 	String[] Malfurion = { "Total de la carrera " + nombre, String.valueOf(total) };
 	tablaInformeCarrera.addRow(Malfurion);
@@ -3279,22 +3280,13 @@ public class MainWindow extends JFrame {
 	}
     }
 
-    private JPanel getPnInformeCarrera() {
-	if (pnInformeCarrera == null) {
-	    pnInformeCarrera = new JPanel();
-	    pnInformeCarrera.setLayout(new BorderLayout(0, 0));
-	    pnInformeCarrera.add(getPnPrincipalInformeCarreraOrganizador(), BorderLayout.CENTER);
-	}
-	return pnInformeCarrera;
-    }
-
     private JPanel getPnPrincipalInformeCarreraOrganizador() {
 	if (pnPrincipalInformeCarreraOrganizador == null) {
 	    pnPrincipalInformeCarreraOrganizador = new JPanel();
 	    pnPrincipalInformeCarreraOrganizador.setLayout(null);
 	    pnPrincipalInformeCarreraOrganizador.add(getScInformeCarreraOrganizador());
-	    pnPrincipalInformeCarreraOrganizador.add(getLbInfoInformeCarreraOrganizador());
 	    pnPrincipalInformeCarreraOrganizador.add(getBtnInformeCarreraOrganizador());
+	    pnPrincipalInformeCarreraOrganizador.add(getScBalanceInformacionOrganizador());
 	}
 	return pnPrincipalInformeCarreraOrganizador;
     }
@@ -3308,14 +3300,6 @@ public class MainWindow extends JFrame {
 	return scInformeCarreraOrganizador;
     }
 
-    private JLabel getLbInfoInformeCarreraOrganizador() {
-	if (lbInfoInformeCarreraOrganizador == null) {
-	    lbInfoInformeCarreraOrganizador = new JLabel("");
-	    lbInfoInformeCarreraOrganizador.setBounds(10, 40, 995, 32);
-	}
-	return lbInfoInformeCarreraOrganizador;
-    }
-
     private JTable getTbInformeCarreraOrganizador() {
 	if (tbInformeCarreraOrganizador == null) {
 	    tbInformeCarreraOrganizador = new JTable();
@@ -3326,6 +3310,24 @@ public class MainWindow extends JFrame {
 	    this.tbInformeCarreraOrganizador.setDefaultRenderer(Object.class, new MiRenderer());
 	}
 	return tbInformeCarreraOrganizador;
+    }
+
+    private JTextPane getTxPaneBalanceOrganizador() {
+	if (txPaneBalanceOrganizador == null) {
+	    txPaneBalanceOrganizador = new JTextPane();
+	    txPaneBalanceOrganizador.setFont(new Font("Arial", Font.PLAIN, 15));
+	    txPaneBalanceOrganizador.setEditable(false);
+	}
+	return txPaneBalanceOrganizador;
+    }
+
+    private JScrollPane getScBalanceInformacionOrganizador() {
+	if (scBalanceInformacionOrganizador == null) {
+	    scBalanceInformacionOrganizador = new JScrollPane();
+	    scBalanceInformacionOrganizador.setBounds(215, 10, 443, 80);
+	    scBalanceInformacionOrganizador.setViewportView(getTxPaneBalanceOrganizador());
+	}
+	return scBalanceInformacionOrganizador;
     }
 
     private JButton getBtnInformeCarreraOrganizador() {
@@ -3478,22 +3480,24 @@ public class MainWindow extends JFrame {
 	}
 	return lbBalanceCarrera;
     }
-	private JLabel getLblCreacionCarrerasKm_1_2() {
-		if (lblCreacionCarrerasPtosCorte == null) {
-			lblCreacionCarrerasPtosCorte = new JLabel("Puntos Medicion:");
-			lblCreacionCarrerasPtosCorte.setFont(new Font("Arial", Font.PLAIN, 14));
-			lblCreacionCarrerasPtosCorte.setBounds(47, 376, 110, 14);
-		}
-		return lblCreacionCarrerasPtosCorte;
+
+    private JLabel getLblCreacionCarrerasKm_1_2() {
+	if (lblCreacionCarrerasPtosCorte == null) {
+	    lblCreacionCarrerasPtosCorte = new JLabel("Puntos Medicion:");
+	    lblCreacionCarrerasPtosCorte.setFont(new Font("Arial", Font.PLAIN, 14));
+	    lblCreacionCarrerasPtosCorte.setBounds(47, 376, 110, 14);
 	}
-	private JTextField getTxPuntosMedicion() {
-		if (txPuntosMedicion == null) {
-			txPuntosMedicion = new JTextField();
-			txPuntosMedicion.setFont(new Font("Arial", Font.PLAIN, 14));
-			txPuntosMedicion.setText("Ej: 10,30,50,70,80");
-			txPuntosMedicion.setColumns(10);
-			txPuntosMedicion.setBounds(168, 373, 172, 20);
-		}
-		return txPuntosMedicion;
+	return lblCreacionCarrerasPtosCorte;
+    }
+
+    private JTextField getTxPuntosMedicion() {
+	if (txPuntosMedicion == null) {
+	    txPuntosMedicion = new JTextField();
+	    txPuntosMedicion.setFont(new Font("Arial", Font.PLAIN, 14));
+	    txPuntosMedicion.setText("Ej: 10,30,50,70,80");
+	    txPuntosMedicion.setColumns(10);
+	    txPuntosMedicion.setBounds(168, 373, 172, 20);
 	}
+	return txPuntosMedicion;
+    }
 }
