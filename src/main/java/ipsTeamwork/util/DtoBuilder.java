@@ -67,8 +67,8 @@ public class DtoBuilder {
 
 		return dto;
 	}
-	
-	public static DevolucionDto toDevolucionDto (ResultSet rs) {
+
+	public static DevolucionDto toDevolucionDto(ResultSet rs) {
 		DevolucionDto dto = new DevolucionDto();
 
 		try {
@@ -76,7 +76,7 @@ public class DtoBuilder {
 			dto.porcentaje = rs.getInt(2);
 			dto.fechaLimite = rs.getDate(3);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 
 		return dto;

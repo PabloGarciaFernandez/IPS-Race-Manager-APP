@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
 import ipsTeamwork.controller.GestorDB;
@@ -21,7 +22,6 @@ import ipsTeamwork.model.carrera.CarreraDto;
 import ipsTeamwork.model.carrera.crud.GetNombreById;
 import ipsTeamwork.model.inscripcion.InscripcionDto;
 import ipsTeamwork.model.inscripcion.crud.SelectAllInscripcionForAtleta;
-import javax.swing.SwingConstants;
 
 public class PanelListarInscripciones extends JPanel {
 
@@ -34,11 +34,11 @@ public class PanelListarInscripciones extends JPanel {
 	private JButton btnAtras;
 	private JTable tableInscripciones;
 	private DefaultTableModel dtm;
-	
+
 	private AtletaDto atleta;
 	private CarreraDto carreraActual;
 	private GestorDB db;
-	
+
 	private MainWindow parent;
 	private JButton btnCancelarInscripcion;
 	private Component horizontalStrut;
@@ -52,13 +52,13 @@ public class PanelListarInscripciones extends JPanel {
 		add(getPanelNorth(), BorderLayout.NORTH);
 		add(getPanelSouth(), BorderLayout.SOUTH);
 		add(getScrollPane(), BorderLayout.CENTER);
-		
+
 		dtm = (DefaultTableModel) getTableInscripciones().getModel();
-		
+
 		this.atleta = atleta;
 		this.parent = parent;
 	}
-	
+
 	private JPanel getPanelNorth() {
 		if (panelNorth == null) {
 			panelNorth = new JPanel();
@@ -68,6 +68,7 @@ public class PanelListarInscripciones extends JPanel {
 		}
 		return panelNorth;
 	}
+
 	private JPanel getPanelSouth() {
 		if (panelSouth == null) {
 			panelSouth = new JPanel();
@@ -76,6 +77,7 @@ public class PanelListarInscripciones extends JPanel {
 		}
 		return panelSouth;
 	}
+
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane();
@@ -83,18 +85,21 @@ public class PanelListarInscripciones extends JPanel {
 		}
 		return scrollPane;
 	}
+
 	private Component getVerticalStrut() {
 		if (verticalStrut == null) {
 			verticalStrut = Box.createVerticalStrut(40);
 		}
 		return verticalStrut;
 	}
+
 	private Component getVerticalStrut_1() {
 		if (verticalStrut_1 == null) {
 			verticalStrut_1 = Box.createVerticalStrut(40);
 		}
 		return verticalStrut_1;
 	}
+
 	private JButton getBtnAtras() {
 		if (btnAtras == null) {
 			btnAtras = new JButton("Atrás");
@@ -106,19 +111,14 @@ public class PanelListarInscripciones extends JPanel {
 		}
 		return btnAtras;
 	}
-	
+
 	private JTable getTableInscripciones() {
 		if (tableInscripciones == null) {
 			tableInscripciones = new JTable();
-			tableInscripciones.setModel(new DefaultTableModel(
-				new Object[][] {
-				},
-				new String[] {
-					"Nombre", "Estado", "Desde"
-				}
-			));
+			tableInscripciones
+					.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Nombre", "Estado", "Desde" }));
 		}
-		
+
 		return tableInscripciones;
 	}
 
@@ -126,35 +126,36 @@ public class PanelListarInscripciones extends JPanel {
 		this.atleta = atletaActual;
 		cargarInscripcionesEnTabla();
 	}
-	
+
 	public void cargarInscripcionesEnTabla() {
 		if (dtm.getRowCount() > 0) {
 			reset(dtm);
 		}
-		
+
 		List<InscripcionDto> insc = new SelectAllInscripcionForAtleta(atleta.getIdAtleta()).execute();
 		System.out.println("\n\n\nCargando inscripciones en tabla:\n");
 		for (InscripcionDto dto : insc) {
-			String[] inscRow = { new GetNombreById(dto.getIdCarrera()).execute(), dto.getEstadoInscripcion(), dto.getFechaInscripcion().toString()};
+			String[] inscRow = { new GetNombreById(dto.getIdCarrera()).execute(), dto.getEstadoInscripcion(),
+					dto.getFechaInscripcion().toString() };
 
 			System.out.println(inscRow);
 			dtm.addRow(inscRow);
 		}
-		
-		
+
 		System.out.println("\n\n\nInscripciones en select:\n");
 		new GestorDB().selectInscripcion();
 		getTableInscripciones().setModel(dtm);
 	}
-	
+
 	public void atras() {
 		parent.showCard(MainWindow.PANEL_ATLETA);
-		//this.setVisible(false);
+		// this.setVisible(false);
 	}
-	
+
 	private void reset(DefaultTableModel francisco) {
 		francisco.setRowCount(0);
 	}
+
 	private JButton getBtnCancelarInscripcion() {
 		if (btnCancelarInscripcion == null) {
 			btnCancelarInscripcion = new JButton("Cancelar Inscripción");
@@ -163,7 +164,16 @@ public class PanelListarInscripciones extends JPanel {
 					if (checkCarreraRow()) {
 						int respuesta = JOptionPane.showConfirmDialog(null, "¿Estás seguro de que quieres cancelar?");
 						if (respuesta == JOptionPane.YES_OPTION) {
-							db.cancelarInscripcionEnCarrera(atleta, carreraActual);
+							int result = db.cancelarInscripcionEnCarrera(atleta, carreraActual);
+							switch (result) {
+							case -1:
+								JOptionPane.showMessageDialog(null,
+										"La carrera no dispone de una política de cancelación.");
+								break;
+							case 0:
+								JOptionPane.showMessageDialog(null, "Inscripción cancelada.");
+								break;
+							}
 						}
 					}
 				}
@@ -172,17 +182,19 @@ public class PanelListarInscripciones extends JPanel {
 		}
 		return btnCancelarInscripcion;
 	}
+
 	private Component getHorizontalStrut() {
 		if (horizontalStrut == null) {
 			horizontalStrut = Box.createHorizontalStrut(420);
 		}
 		return horizontalStrut;
 	}
-	
+
 	private boolean checkCarreraRow() {
 		try {
 			Vector vector = dtm.getDataVector().elementAt(tableInscripciones.getSelectedRow());
 			if (vector != null) {
+				this.db = new GestorDB();
 				carreraActual = db.selectCarrerasNombre((String) vector.get(0));
 				return true;
 			}
