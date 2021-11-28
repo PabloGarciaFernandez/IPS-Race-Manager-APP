@@ -11,9 +11,9 @@ public class SQLStrings {
 	// creates
 	public static String createAtleta = "CREATE TABLE atleta (idAtleta varchar2 NOT NULL, dni varchar2 not null, nombre varchar2 not null, edad integer not null, sexo varchar not null, discapacitado bit NOT NULL, email varchar2 not null, CONSTRAINT CHK_Atleta CHECK (edad >18 AND (sexo='M' OR sexo='F' OR sexo='NB')) , primary key (idAtleta), constraint unique_email UNIQUE (email))";
 
-	public static String createInscripcion = "CREATE TABLE inscripcion (idAtleta varchar2 NOT NULL, idCarrera varchar NOT NULL, dorsal varchar2, fechaInscripcion date not null, estadoInscripcion varchar2 not null, formaDePago varchar2, tiempoCorriendo integer,  categoria varchar2, incidenciasPagos varchar2, CONSTRAINT CHK_Inscripcion CHECK ( (formaDePago='Transferencia' OR formaDePago='Tarjeta') AND (estadoInscripcion='Inscrito' OR estadoInscripcion='Pre-Inscrito' OR estadoInscripcion='Pendiente de Pago')), primary key (idAtleta, idCarrera, dorsal), CONSTRAINT FK_idAtleta FOREIGN KEY (idAtleta) REFERENCES atleta(idAtleta), CONSTRAINT FK_idCarrera FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera) )";
+	public static String createInscripcion = "CREATE TABLE inscripcion (idAtleta varchar2 NOT NULL, idCarrera varchar NOT NULL, dorsal varchar2, fechaInscripcion date not null, estadoInscripcion varchar2 not null, formaDePago varchar2, tiempoCorriendo integer,  categoria varchar2, incidenciasPagos varchar2, club varchar2, tiempoPaso1 varchar2, tiempoPaso2 varchar2, tiempoPaso3 varchar2, tiempoPaso4 varchar2, tiempoPaso5 varchar2 CONSTRAINT CHK_Inscripcion CHECK ( (formaDePago='Transferencia' OR formaDePago='Tarjeta') AND (estadoInscripcion='Inscrito' OR estadoInscripcion='Pre-Inscrito' OR estadoInscripcion='Pendiente de Pago')), primary key (idAtleta, idCarrera, dorsal), CONSTRAINT FK_idAtleta FOREIGN KEY (idAtleta) REFERENCES atleta(idAtleta), CONSTRAINT FK_idCarrera FOREIGN KEY (idCarrera) REFERENCES carrera(idCarrera) )";
 
-	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2, nombre varchar2, fecha date, fechaInicioIns date, tipo varchar2, distancia number, cuota number, fechaFinInsc date, plazasDisp number, maxPlazas number not null, listaDeEspera bit, CONSTRAINT chk_tipo CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
+	public static String createCarrera = "CREATE TABLE carrera (idCarrera varchar2, nombre varchar2, fecha date, fechaInicioIns date, tipo varchar2, distancia number, cuota number, fechaFinInsc date, plazasDisp number, maxPlazas number not null, listaDeEspera bit, ptoCorte1 varchar2, ptoCorte2 varchar2, ptoCorte3 varchar2, ptoCorte4 varchar2, ptoCorte5 varchar2 CONSTRAINT chk_tipo CHECK (tipo = 'Asfalto' OR tipo = 'Montaña' ) , primary key (idCarrera))";
 
 	public static String createCategoria = "CREATE TABLE categoria (idCarrera varchar2, nombreCategoria varchar2, edadInicio integer, edadFin integer, primary key (idCarrera, nombreCategoria))";
 	
@@ -33,14 +33,16 @@ public class SQLStrings {
 	public static String insertAtletaPredefinido7 = "Insert into atleta values ('idZapatero', 'dniZapatero', 'Jose Luis Zapatero', 45, 'M', 1, 'Zapatero@gmail.com');";
 	public static String insertAtletaPredefinido8 = "Insert into atleta values ('idThrall', 'dniThrall', 'Thrall', 30, 'M', 0, 'Thrall@gmail.com');";
 
-	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?,?, 'Asfalto', 100, 20, ?, 0, 6, 1);";
+	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?,?, 'Asfalto', 100, 20, ?, 0, 6, 1, '10','30','50','0','0');";
 
-	public static String insertInscripcionPredefinida = "Insert into inscripcion values ('idMariano', 'idMaratonMadrid', '1', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '');";
-	public static String insertInscripcionPredefinida1 = "Insert into inscripcion values ('idPedro', 'idMaratonMadrid', '2', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '');";
-	public static String insertInscripcionPredefinida2 = "Insert into inscripcion values ('idSantiago', 'idMaratonMadrid', '3', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '');";
-	public static String insertInscripcionPredefinida3 = "Insert into inscripcion values ('idPablo', 'idMaratonMadrid', '4', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '');";
-	public static String insertInscripcionPredefinida4 = "Insert into inscripcion values ('idCasado', 'idMaratonMadrid', '5', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '');";
-	public static String insertInscripcionPredefinida5 = "Insert into inscripcion values ('idAyuso', 'idMaratonMadrid', '6', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '');";
+	public static String insertInscripcionPredefinida = "Insert into inscripcion values ('idMariano', 'idMaratonMadrid', '1', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '', 'PP','10','20','30','40','50');";
+	public static String insertInscripcionPredefinida1 = "Insert into inscripcion values ('idPedro', 'idMaratonMadrid', '2', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '', 'PSOE','12','22','32','42','52');";
+	public static String insertInscripcionPredefinida2 = "Insert into inscripcion values ('idSantiago', 'idMaratonMadrid', '3', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '', 'VOX','14','24','34','44','54');";
+	public static String insertInscripcionPredefinida3 = "Insert into inscripcion values ('idPablo', 'idMaratonMadrid', '4', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '', 'PODEMOS','16','26','36','46','56');";
+	public static String insertInscripcionPredefinida4 = "Insert into inscripcion values ('idCasado', 'idMaratonMadrid', '5', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '', 'PP','18','28','38','48','58');";
+	public static String insertInscripcionPredefinida5 = "Insert into inscripcion values ('idAyuso', 'idMaratonMadrid', '6', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '', 'PP','20','30','40','50','60');";
+	public static String insertInscripcionPredefinida6 = "Insert into inscripcion values ('idZapatero', 'idMaratonMadrid', '7', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '', 'PSOE','22','32','42','52','62');";
+	public static String insertInscripcionPredefinida7 = "Insert into inscripcion values ('idThrall', 'idMaratonMadrid', '8', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '', 'HORDA','24','34','44','54','64');";
 
 	public static String insertListaEsperaPredefinida = "Insert into TListaEspera values ('idZapatero', 'idMaratonMadrid', ?, 1, 'Veterano');";
 	public static String insertListaEsperaPredefinida1 = "Insert into TListaEspera values ('idThrall', 'idMaratonMadrid', ?, 2, 'Veterano');";
@@ -61,7 +63,7 @@ public class SQLStrings {
 
 	public static String insterInscripcion2 = "Insert into inscripcion values('96','a0931d2e-cf27-4965-b395-a086aa0228a5','015','2021-05-01','Inscrito', 'Tarjeta'); ";
 
-	public static String insertCarreraValues = "insert into carrera(idCarrera, nombre, fecha,fechaInicioIns, tipo, distancia, cuota, fechaFinInsc, plazasDisp, maxPlazas, listaDeEspera) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	public static String insertCarreraValues = "insert into carrera(idCarrera, nombre, fecha,fechaInicioIns, tipo, distancia, cuota, fechaFinInsc, plazasDisp, maxPlazas, listaDeEspera, ptoCorte1, ptoCorte2, ptoCorte3, ptoCorte4, ptoCorte5) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	public static String insertCarreraValuesNuevo = "insert into carrera(idCarrera, nombre, fecha,fechaInicioIns , tipo, distancia, cuota, fechaFinInsc, plazasDisp, maxPlazas) values (?, ?, ?, ?,?, ?, ?, ?, ?, ?)";
 

@@ -37,6 +37,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import ipsTeamwork.controller.GestorDB;
@@ -285,6 +286,10 @@ public class MainWindow extends JFrame {
 
     private JButton btnInscribirClubLote;
     private JButton btnInscribirClubUnoPorUno;
+    private JTextField txBalanceTotalCarreras;
+    private JLabel lbBalanceCarrera;
+    private JLabel lblCreacionCarrerasPtosCorte;
+    private JTextField txPuntosMedicion;
 
     /**
      * Create the frame.
@@ -293,6 +298,7 @@ public class MainWindow extends JFrame {
 	db = new GestorDB();
 	tb = (DefaultTableModel) getTbVerCarreras().getModel();
 	tablaClasificaciones = (DefaultTableModel) getTbVerClasificaciones().getModel();
+	
 	tablaGenerarDorsales = (DefaultTableModel) getTbGeneralDorsales().getModel();
 	tablaAtleta = (DefaultTableModel) getTablaCarrerasParaAtleta().getModel();
 	tablaCategorias = (DefaultTableModel) getTableCategorias().getModel();
@@ -329,11 +335,23 @@ public class MainWindow extends JFrame {
 	contentPane.add(getPnGeneralDorsales(), PANEL_GENERAL_DORSALES);
 	contentPane.add(getPnInformeCarrera(), PANEL_INFORME_CARRERA);
 	// Hardcode del texto, que aparecia siempre con un tab
-	getTxFechaInicioConfiguracionPlazos().setText("");
+	getTxFechaInicioConfiguracionPlazos().setText("yyyy-MM-dd");
 	cargarTablaCarrerasOrganizador();
 	cargarTablaCarrerasAtleta();
 	Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 	this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+	
+	
+	
+	//CENTRAR TEXTO DE LAS COLUMNAS
+	
+	DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+	centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+	tbVerClasificaciones.setDefaultRenderer(String.class, centerRenderer);
+	tbVerClasificaciones.setDefaultRenderer(Integer.class, centerRenderer);
+
+	for(int i = 0; i < tbVerClasificaciones.getColumnCount(); i++)
+	tbVerClasificaciones.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
     }
 
     public AtletaDto getAtletaActual() {
@@ -514,18 +532,20 @@ public class MainWindow extends JFrame {
 
     public String stringFromNumberToDate(String numero) {
 
-	if (numero.equals("NF") || numero.equals("NP")) {
-	    return numero;
-	}
+    	if (numero.equals("NF") || numero.equals("NP")) {
+    	    return numero;
+    	}
 
-	int numeroInt = Integer.parseInt(numero);
+    	int numeroInt = Double.valueOf(numero).intValue();
 
-	int horas = numeroInt / 60;
-	int minutos = numeroInt - horas * 60;
+    	int horas = numeroInt / 60;
+    	int minutos = numeroInt - horas * 60;
 
-	return horas + ":" + minutos + "h";
+    	return horas + ":" + minutos + "h";
 
     }
+    
+
 
     private JPanel getPnListaNorth() {
 	if (pnListaNorth == null) {
@@ -1376,7 +1396,7 @@ public class MainWindow extends JFrame {
     private JScrollPane getScVerClasificaciones() {
 	if (scVerClasificaciones == null) {
 	    scVerClasificaciones = new JScrollPane();
-	    scVerClasificaciones.setBounds(43, 56, 713, 369);
+	    scVerClasificaciones.setBounds(43, 56, 917, 478);
 	    scVerClasificaciones.setViewportView(getTbVerClasificaciones());
 	}
 	return scVerClasificaciones;
@@ -1406,10 +1426,10 @@ public class MainWindow extends JFrame {
 
     public JTable getTbVerClasificaciones() {
 	if (tbVerClasificaciones == null) {
+
 	    tbVerClasificaciones = new JTable();
 	    tbVerClasificaciones.setModel(new DefaultTableModel(new Object[][] {},
-		    new String[] { "Posición", "Dorsal", "Categoría", "Género", "Nombre", "Tiempo" }));
-
+		    new String[] { "Posición", "Categoría", "Dorsal", "Género", "Nombre", "Club", "Tiempo", "Spot 1", "Spot 2", "Spot 3", "Spot 4", "Spot 5", "Ritmo [km/h]", "Diferencia"}));
 	    tbVerClasificaciones.setDefaultEditor(Object.class, null);
 
 	}
@@ -1728,7 +1748,7 @@ public class MainWindow extends JFrame {
 		    showCard(PANEL_VER_CARRERAS_ORGANIZADOR);
 		}
 	    });
-	    btListaClasificacionesAtras.setBounds(30, 435, 136, 34);
+	    btListaClasificacionesAtras.setBounds(43, 565, 136, 34);
 	}
 	return btListaClasificacionesAtras;
     }
@@ -1907,6 +1927,8 @@ public class MainWindow extends JFrame {
 	    pnCreacionCarrera.add(getLbListaEsperaCreacionCarrera());
 	    pnCreacionCarrera.add(getLblCreacionCarrerasCancelacion());
 	    pnCreacionCarrera.add(getBtnConfigCancelacion());
+	    pnCreacionCarrera.add(getLblCreacionCarrerasKm_1_2());
+	    pnCreacionCarrera.add(getTxPuntosMedicion());
 	}
 	return pnCreacionCarrera;
     }
@@ -1924,6 +1946,10 @@ public class MainWindow extends JFrame {
 	    JOptionPane.showMessageDialog(this, "La fecha debe tener el formato yyyy-mm-dd");
 	    return false;
 	}
+	if (checkPuntosMedicion()) {
+	    JOptionPane.showMessageDialog(this, "Los puntos de medicion han ser mayores que el punto anterior.\nTambién deben estar entre 0 y la longitud de la carrera.\nComo mucho se pueden introducir 5 puntos.");
+	    return false;
+	}
 	return true;
     }
 
@@ -1931,6 +1957,35 @@ public class MainWindow extends JFrame {
 	String da = "yyyy-MM-dd";
 	return txtFechaEjecucion.getText().length() != da.length();
     }
+    private boolean checkPuntosMedicion() {
+    	boolean peta = false;
+    	try {
+    		
+        	String[] puntosMedicionString = txPuntosMedicion.getText().split(",");
+        	if(puntosMedicionString.length > 5) {
+        		return true;
+        	}
+        	int[] puntosMedicionInt = new int[puntosMedicionString.length];
+        	for(int i=0; i < puntosMedicionString.length; i++) {
+        		puntosMedicionInt[i] = Integer.valueOf(puntosMedicionString[i]);
+        	}
+        	
+        	for(int i=0; i < puntosMedicionInt.length; i++) {
+        		if(puntosMedicionInt[i] < 0 || puntosMedicionInt[i] > Integer.valueOf(txtKm.getText())) {
+        			peta = true;
+        		}
+        		if(i > 0) {
+        			if(puntosMedicionInt[i] < puntosMedicionInt[i-1]) {
+        				peta = true;
+        			}
+        		}
+        	}
+
+    	} catch (Exception e ) {
+    		return true;
+    	}
+    	return peta;
+     }
 
     private boolean checkeoCantidadCategorías() {
 	return (tablaCategorias.getRowCount() == 0);
@@ -2050,6 +2105,22 @@ public class MainWindow extends JFrame {
 
     private void assignacionValoresCarrera() {
 	creacionCarrera = new CarreraDto();
+	String[] puntosMedicionString = txPuntosMedicion.getText().split(",");
+
+	int[] puntosMedicionInt = new int[puntosMedicionString.length];
+	
+	for(int i=0; i < puntosMedicionString.length; i++) {
+		puntosMedicionInt[i] = Integer.valueOf(puntosMedicionString[i]);
+	}
+	
+	int[] puntosFinal = new int[5];
+	for(int i=0; i < puntosMedicionInt.length;i++) {
+		puntosFinal[i] = puntosMedicionInt[i];
+	}
+	
+	
+	
+	
 	try {
 	    creacionCarrera.setFecha(new SimpleDateFormat("yyyy-MM-dd").parse(txtFechaEjecucion.getText()));
 	    creacionCarrera.setDistancia(Integer.parseInt(txtKm.getText()));
@@ -2060,6 +2131,13 @@ public class MainWindow extends JFrame {
 	    creacionCarrera.setNombre(txtNombreCarrera.getText());
 	    creacionCarrera.setDescripcion(txtDescripcion.getText());
 	    creacionCarrera.setListaEspera(chbxListaEsperaCreacionCarreras.isSelected());
+	    
+		creacionCarrera.setPtoCorte1(puntosFinal[0]);
+	    creacionCarrera.setPtoCorte2(puntosFinal[1]);
+	    creacionCarrera.setPtoCorte3(puntosFinal[2]);
+	    creacionCarrera.setPtoCorte4(puntosFinal[3]);
+	    creacionCarrera.setPtoCorte5(puntosFinal[4]);
+
 	} catch (ParseException e1) {
 	    e1.printStackTrace();
 	}
@@ -2106,6 +2184,8 @@ public class MainWindow extends JFrame {
     private JTextField getTxtFechaEjecucion() {
 	if (txtFechaEjecucion == null) {
 	    txtFechaEjecucion = new JTextField();
+	    txtFechaEjecucion.setFont(new Font("Arial", Font.PLAIN, 14));
+	    txtFechaEjecucion.setText("yyyy-MM-dd");
 	    txtFechaEjecucion.setColumns(10);
 	    txtFechaEjecucion.setBounds(168, 238, 172, 20);
 	}
@@ -2304,7 +2384,7 @@ public class MainWindow extends JFrame {
 	if (lblCreacionCarrerasPlazas == null) {
 	    lblCreacionCarrerasPlazas = new JLabel("Plazas:");
 	    lblCreacionCarrerasPlazas.setFont(new Font("Arial", Font.PLAIN, 14));
-	    lblCreacionCarrerasPlazas.setBounds(47, 371, 92, 14);
+	    lblCreacionCarrerasPlazas.setBounds(47, 420, 92, 14);
 	}
 	return lblCreacionCarrerasPlazas;
     }
@@ -2313,7 +2393,7 @@ public class MainWindow extends JFrame {
 	if (txtPlazas == null) {
 	    txtPlazas = new JTextField();
 	    txtPlazas.setColumns(10);
-	    txtPlazas.setBounds(168, 369, 172, 20);
+	    txtPlazas.setBounds(168, 418, 172, 20);
 	}
 	return txtPlazas;
     }
@@ -2404,7 +2484,9 @@ public class MainWindow extends JFrame {
     }
 
     protected void accionClasificaciones() {
-	if (getTbVerCarreras().getSelectedRow() != -1) {
+    
+    	
+    	if (getTbVerCarreras().getSelectedRow() != -1) {
 	    reset(tablaClasificaciones);
 
 	    System.out.println("cosa del debug");
@@ -2437,36 +2519,141 @@ public class MainWindow extends JFrame {
 
 	    int posicion = 1;
 	    String categoria = "";
+	    
+	    double tiempoPrimero = 0.0;
+
 
 	    for (InscripcionDto inscripcionDto : inscripciones) {
-		AtletaDto atleta = new AtletaDto();
+	    
+			AtletaDto atleta = new AtletaDto();
+	
+			if (inscripcionDto.getCategoria() == null) {
+			    inscripcionDto.setCategoria("SIN CATEGORIA");
+			    System.err.println("\"SIN CATEGORIA\" por accionClasificaciones() - MainWindow linea 2156");
+			}
+			
+			   inscripcionDto.setCarrera(db.selectCarrerasNombre(nombreCarrera));
+			   String ritmo = "";
+			   String diferencia = "";
+			   
+			   int numeroPtosCorte = 5;
+			   if(inscripcionDto.getCarrera().getPtoCorte2() == 0) {
+				   numeroPtosCorte--;
+			   }
+			   if(inscripcionDto.getCarrera().getPtoCorte3() == 0) {
+				   numeroPtosCorte--;
+			   }
+			   if(inscripcionDto.getCarrera().getPtoCorte4() == 0) {
+				   numeroPtosCorte--;
+			   }
+			   if(inscripcionDto.getCarrera().getPtoCorte5() == 0) {
+				   numeroPtosCorte--;
+			   }
+			   
+			   if(!inscripcionDto.getTiempoCorriendo().equals("NP") && !inscripcionDto.getTiempoCorriendo().equals("NF")) {
+				   
+					
+					
+				   ritmo = Double.toString(Math.round(((inscripcionDto.getCarrera().getDistancia() / Double.valueOf(inscripcionDto.getTiempoCorriendo())) * 60)*100)/100);
+				 
+				   if(tiempoPrimero == 0.0) {
+					   diferencia = "+0:000";
+					   tiempoPrimero = Double.valueOf(inscripcionDto.getTiempoCorriendo());
 
-		if (inscripcionDto.getCategoria() == null) {
-		    inscripcionDto.setCategoria("SIN CATEGORIA");
-		    System.err.println("\"SIN CATEGORIA\" por accionClasificaciones() - MainWindow linea 2156");
-		}
-		if (inscripcionDto.getCategoria().equals(categoria)) {
-		    System.err.println("hasta aqui bien");
-		    String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getDorsal(),
-			    inscripcionDto.getCategoria(), inscripcionDto.getAtleta().getSexo(),
-			    inscripcionDto.getAtleta().getNombre(),
-			    stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
-		    tablaClasificaciones.addRow(clasificacionesTabla);
-		    posicion++;
+				   } else {
+					   diferencia = "+"+stringFromNumberToDate(Double.toString(Double.valueOf(inscripcionDto.getTiempoCorriendo()) - tiempoPrimero));
 
-		} else {
-		    categoria = inscripcionDto.getCategoria();
+				   }
+			
+			   } else {
+				   ritmo = "--";
+				   diferencia = "--";
+			   }
+			   
+			if (inscripcionDto.getCategoria().equals(categoria)) {
+			   System.out.println(inscripcionDto.getCarrera().getTipo());
+			   
+			   
+			    String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getCategoria(),
+				    inscripcionDto.getDorsal(), inscripcionDto.getAtleta().getSexo(),
+				    inscripcionDto.getAtleta().getNombre(),inscripcionDto.getClub(),
+				    stringFromNumberToDate(inscripcionDto.getTiempoCorriendo())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso1())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso2())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso3())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso4())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso5())
+				    ,ritmo
+				    ,diferencia
+				    };
+			    
+			    if(numeroPtosCorte == 1) {
+			    	clasificacionesTabla[8] = "No definido";
+			    	clasificacionesTabla[9] = "No definido";
+			    	clasificacionesTabla[10] = "No definido";
+			    	clasificacionesTabla[11] = "No definido";
+			    } else if(numeroPtosCorte == 2) {
+			    	clasificacionesTabla[9] = "No definido";
+			    	clasificacionesTabla[10] = "No definido";
+			    	clasificacionesTabla[11] = "No definido";
+			    } else if(numeroPtosCorte == 3) {
+			    	clasificacionesTabla[10] = "No definido";
+			    	clasificacionesTabla[11] = "No definido";
+			    } else if(numeroPtosCorte == 4) {
+			    	clasificacionesTabla[11] = "No definido";
+			    }
+			    
+			    tablaClasificaciones.addRow(checkTiemposPaso(clasificacionesTabla));
+			    posicion++;
+	
+			} else {
+		
+				if(!diferencia.equals("--")){
+					diferencia = "+0:00";
+		
+					tiempoPrimero = Double.valueOf(inscripcionDto.getTiempoCorriendo());
+					
+				}
 
-		    System.err.println("hasta aqui bien");
+			    categoria = inscripcionDto.getCategoria();
+	
+			    System.err.println("hasta aqui bien");
+	
+			    posicion = 1;
+			    String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getCategoria(),
+				    inscripcionDto.getDorsal(), inscripcionDto.getAtleta().getSexo(),
+				    inscripcionDto.getAtleta().getNombre(),inscripcionDto.getClub(),
+				    stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) 
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso1())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso2())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso3())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso4())
+				    ,stringFromNumberToDate(inscripcionDto.getTiempoPaso5())
+				    ,ritmo
+				    ,diferencia
+				    };
+			    
+			    
+			    if(numeroPtosCorte == 1) {
+			    	clasificacionesTabla[8] = "No definido";
+			    	clasificacionesTabla[9] = "No definido";
+			    	clasificacionesTabla[10] = "No definido";
+			    	clasificacionesTabla[11] = "No definido";
+			    } else if(numeroPtosCorte == 2) {
+			    	clasificacionesTabla[9] = "No definido";
+			    	clasificacionesTabla[10] = "No definido";
+			    	clasificacionesTabla[11] = "No definido";
+			    } else if(numeroPtosCorte == 3) {
+			    	clasificacionesTabla[10] = "No definido";
+			    	clasificacionesTabla[11] = "No definido";
+			    } else if(numeroPtosCorte == 4) {
+			    	clasificacionesTabla[11] = "No definido";
+			    }
+			    tablaClasificaciones.addRow(checkTiemposPaso(clasificacionesTabla));
+			    
+			    posicion++;
+			}
 
-		    posicion = 1;
-		    String[] clasificacionesTabla = { Integer.toString(posicion) + "º", inscripcionDto.getDorsal(),
-			    inscripcionDto.getCategoria(), inscripcionDto.getAtleta().getSexo(),
-			    inscripcionDto.getAtleta().getNombre(),
-			    stringFromNumberToDate(inscripcionDto.getTiempoCorriendo()) };
-		    tablaClasificaciones.addRow(clasificacionesTabla);
-		    posicion++;
-		}
 	    }
 
 	    showCard(PANEL_VERCLASIFICACIONESORGANIZADOR);
@@ -2476,7 +2663,32 @@ public class MainWindow extends JFrame {
 
     }
 
-    private JPanel getPnConfiguracionPlazos() {
+    private String[] checkTiemposPaso(String[] clasificacionesTabla) {
+//    	if(clasificacionesTabla[6].equals("NP")) {
+//    		for(int i = 7; i<12; i++){
+//    			clasificacionesTabla[i] = "NP";
+//    		}
+//    	
+//    	}
+//    	if(clasificacionesTabla[6].equals("NF")) {
+//    		for(int i = 7; i<12; i++){
+//    			clasificacionesTabla[i] = "NF";
+//    		}
+//    	
+//    	}
+    	// 7	8	9	10	11
+    	
+    	if(clasificacionesTabla[6].equals("NP") || clasificacionesTabla[6].equals("NF")) {
+    		for(int i = 7; i<12; i++){
+    			clasificacionesTabla[i] = "--";
+    		}
+    	
+    	}
+    
+		return clasificacionesTabla;
+	}
+
+	private JPanel getPnConfiguracionPlazos() {
 	if (pnConfiguracionPlazos == null) {
 	    pnConfiguracionPlazos = new JPanel();
 	    pnConfiguracionPlazos.setLayout(new BorderLayout(0, 0));
@@ -2672,7 +2884,6 @@ public class MainWindow extends JFrame {
     private JTextField getTxFechaInicioConfiguracionPlazos() {
 	if (txFechaInicioConfiguracionPlazos == null) {
 	    txFechaInicioConfiguracionPlazos = new JTextField();
-	    txFechaInicioConfiguracionPlazos.setText("       ");
 	    txFechaInicioConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
 	    txFechaInicioConfiguracionPlazos.setColumns(10);
 	    txFechaInicioConfiguracionPlazos.setBounds(161, 302, 96, 37);
@@ -2694,6 +2905,7 @@ public class MainWindow extends JFrame {
     private JTextField getTxFechaFinConfiguracionPlazos() {
 	if (txFechaFinConfiguracionPlazos == null) {
 	    txFechaFinConfiguracionPlazos = new JTextField();
+	    txFechaFinConfiguracionPlazos.setText("yyyy-MM-dd");
 	    txFechaFinConfiguracionPlazos.setFont(new Font("Arial", Font.PLAIN, 20));
 	    txFechaFinConfiguracionPlazos.setColumns(10);
 	    txFechaFinConfiguracionPlazos.setBounds(403, 302, 96, 37);
@@ -2884,7 +3096,8 @@ public class MainWindow extends JFrame {
     private void printLabelPlazos() {
 
 	txDatosCarreraConfiguracionPlazos.setText("Configurando los plazos de inscripcion de la carrera: "
-		+ creacionCarrera.getNombre() + ", con fecha de inicio de la carrera: " + creacionCarrera.getFecha());
+		+ creacionCarrera.getNombre() + 
+		", con fecha de inicio de la carrera: " + creacionCarrera.getFecha());
 
     }
 
@@ -3155,7 +3368,7 @@ public class MainWindow extends JFrame {
 	    chbxListaEsperaCreacionCarreras = new JCheckBox("Lista Espera");
 	    chbxListaEsperaCreacionCarreras.setFont(new Font("Arial", Font.PLAIN, 17));
 	    chbxListaEsperaCreacionCarreras.setMnemonic('c');
-	    chbxListaEsperaCreacionCarreras.setBounds(211, 457, 131, 21);
+	    chbxListaEsperaCreacionCarreras.setBounds(211, 506, 131, 21);
 	}
 	return chbxListaEsperaCreacionCarreras;
     }
@@ -3166,7 +3379,7 @@ public class MainWindow extends JFrame {
 	    lbListaEsperaCreacionCarrera.setLabelFor(getChbxListaEsperaCreacionCarreras());
 	    lbListaEsperaCreacionCarrera.setDisplayedMnemonic('E');
 	    lbListaEsperaCreacionCarrera.setFont(new Font("Arial", Font.PLAIN, 14));
-	    lbListaEsperaCreacionCarrera.setBounds(49, 459, 197, 14);
+	    lbListaEsperaCreacionCarrera.setBounds(49, 508, 197, 14);
 	}
 	return lbListaEsperaCreacionCarrera;
     }
@@ -3175,7 +3388,7 @@ public class MainWindow extends JFrame {
 	if (lblCreacionCarrerasCancelacion == null) {
 	    lblCreacionCarrerasCancelacion = new JLabel("Politica de cancelacion:");
 	    lblCreacionCarrerasCancelacion.setFont(new Font("Arial", Font.PLAIN, 14));
-	    lblCreacionCarrerasCancelacion.setBounds(47, 412, 155, 14);
+	    lblCreacionCarrerasCancelacion.setBounds(47, 461, 155, 14);
 	}
 	return lblCreacionCarrerasCancelacion;
     }
@@ -3195,7 +3408,7 @@ public class MainWindow extends JFrame {
 		}
 	    });
 	    btnConfigCancelacion.setFont(new Font("Arial", Font.PLAIN, 14));
-	    btnConfigCancelacion.setBounds(212, 405, 128, 23);
+	    btnConfigCancelacion.setBounds(212, 454, 128, 23);
 	}
 	return btnConfigCancelacion;
     }
@@ -3244,4 +3457,43 @@ public class MainWindow extends JFrame {
 	}
 	return btnInscribirClubUnoPorUno;
     }
+
+    private JTextField getTxBalanceTotalCarreras() {
+	if (txBalanceTotalCarreras == null) {
+	    txBalanceTotalCarreras = new JTextField();
+	    txBalanceTotalCarreras.setFont(new Font("Arial", Font.PLAIN, 20));
+	    txBalanceTotalCarreras.setEditable(false);
+	    txBalanceTotalCarreras.setBounds(456, 394, 205, 54);
+	    txBalanceTotalCarreras.setColumns(10);
+	}
+	return txBalanceTotalCarreras;
+    }
+
+    private JLabel getLbBalanceCarrera() {
+	if (lbBalanceCarrera == null) {
+	    lbBalanceCarrera = new JLabel("Total:");
+	    lbBalanceCarrera.setFont(new Font("Arial", Font.BOLD, 20));
+	    lbBalanceCarrera.setLabelFor(getTxBalanceTotalCarreras());
+	    lbBalanceCarrera.setBounds(373, 394, 73, 54);
+	}
+	return lbBalanceCarrera;
+    }
+	private JLabel getLblCreacionCarrerasKm_1_2() {
+		if (lblCreacionCarrerasPtosCorte == null) {
+			lblCreacionCarrerasPtosCorte = new JLabel("Puntos Medicion:");
+			lblCreacionCarrerasPtosCorte.setFont(new Font("Arial", Font.PLAIN, 14));
+			lblCreacionCarrerasPtosCorte.setBounds(47, 376, 110, 14);
+		}
+		return lblCreacionCarrerasPtosCorte;
+	}
+	private JTextField getTxPuntosMedicion() {
+		if (txPuntosMedicion == null) {
+			txPuntosMedicion = new JTextField();
+			txPuntosMedicion.setFont(new Font("Arial", Font.PLAIN, 14));
+			txPuntosMedicion.setText("Ej: 10,30,50,70,80");
+			txPuntosMedicion.setColumns(10);
+			txPuntosMedicion.setBounds(168, 373, 172, 20);
+		}
+		return txPuntosMedicion;
+	}
 }

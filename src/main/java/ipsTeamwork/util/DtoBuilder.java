@@ -256,6 +256,12 @@ public class DtoBuilder {
 				dto.setPlazasDisp(rs.getInt("plazasDisp"));
 				dto.setTipo(rs.getString("tipo"));
 				dto.setListaEspera(rs.getBoolean("listaDeEspera"));
+				dto.setPtoCorte1(Integer.valueOf(rs.getString(12)));
+				dto.setPtoCorte2(Integer.valueOf(rs.getString(13)));
+				dto.setPtoCorte3(Integer.valueOf(rs.getString(14)));
+				dto.setPtoCorte4(Integer.valueOf(rs.getString(15)));
+				dto.setPtoCorte5(Integer.valueOf(rs.getString(16)));
+
 				ret.add(dto);
 			}
 		} catch (SQLException e) {
