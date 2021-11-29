@@ -12,7 +12,7 @@ import java.util.Date;
  *
  */
 public class AtletaDto {
-	
+
 	private String DNI;
 	private String idAtleta;
 	private int edad;
@@ -20,9 +20,11 @@ public class AtletaDto {
 	private String sexo;
 	private boolean discapacitado;
 	private String email;
-	
-	public AtletaDto() {}
-	
+	private String fechitaDoNazemento;
+
+	public AtletaDto() {
+	}
+
 	public AtletaDto(String dni, String name, int edad, String sexo, int discapacitado, String email) {
 		this.DNI = dni;
 		this.nombre = name;
@@ -31,15 +33,17 @@ public class AtletaDto {
 		this.discapacitado = discapacitado == 1;
 		this.email = email;
 	}
-	
-	public AtletaDto(Date fechaNacimiento, String dni, String nombre, String email, boolean discapacitado, String sexo) {
-		
+
+	public AtletaDto(Date fechaNacimiento, String dni, String nombre, String email, boolean discapacitado,
+			String sexo) {
+
 		this.DNI = dni;
 		this.nombre = nombre;
-		
-		Period period = Period.between(LocalDate.ofInstant(fechaNacimiento.toInstant(), ZoneId.systemDefault()), LocalDate.now());
+
+		Period period = Period.between(LocalDate.ofInstant(fechaNacimiento.toInstant(), ZoneId.systemDefault()),
+				LocalDate.now());
 		this.edad = period.getYears();
-		
+
 		this.sexo = sexo;
 		this.discapacitado = discapacitado;
 		this.email = email;
@@ -147,6 +151,14 @@ public class AtletaDto {
 	public String toString() {
 		return "Atleta [DNI=" + DNI + ", idAtleta=" + idAtleta + ", edad=" + edad + ", nombre=" + nombre + ", sexo="
 				+ sexo + ", discapacitado=" + discapacitado + ", email=" + email + "]";
+	}
+
+	public void setFechitaDoNacimiento(String text) {
+		this.fechitaDoNazemento = text;
+	}
+
+	public String getFechitaDoNacimiento() {
+		return this.fechitaDoNazemento;
 	}
 
 }

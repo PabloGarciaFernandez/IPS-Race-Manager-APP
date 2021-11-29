@@ -353,6 +353,9 @@ public class MainWindow extends JFrame {
 
 		for (int i = 0; i < tbVerClasificaciones.getColumnCount(); i++)
 			tbVerClasificaciones.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+
+		// TODO
+		constructorCosasDePablo();
 	}
 
 	public AtletaDto getAtletaActual() {
@@ -3466,12 +3469,12 @@ public class MainWindow extends JFrame {
 		}
 	}
 
-	private JButton getBtnInscribirClubUnoPorUno() {
-		if (btnInscribirClubUnoPorUno == null) {
-			btnInscribirClubUnoPorUno = new JButton("Inscribir club uno por uno");
-		}
-		return btnInscribirClubUnoPorUno;
-	}
+//	private JButton getBtnInscribirClubUnoPorUno() {
+//		if (btnInscribirClubUnoPorUno == null) {
+//			btnInscribirClubUnoPorUno = new JButton("Inscribir club uno por uno");
+//		}
+//		return btnInscribirClubUnoPorUno;
+//	}
 
 	private JTextField getTxBalanceTotalCarreras() {
 		if (txBalanceTotalCarreras == null) {
@@ -3513,4 +3516,434 @@ public class MainWindow extends JFrame {
 		}
 		return txPuntosMedicion;
 	}
+
+	/**
+	 * TODO lo nuevo de pablo desde aqui
+	 */
+
+	private static final String PANEL_INSCRIPCION_LOTE_MANUAL = "panel_inscripcion_lote_manual";
+
+	private JPanel pnInscripcionesLoteManual;
+	private JLabel lblRegistroLoteManual;
+	private JLabel lblNombreClub;
+	private JTextField txtLoteClub;
+	private JScrollPane scrollPaneInscripcionesLote;
+	private JButton btnLoteBorrar;
+	private JButton btnLoteAñadir;
+	private JButton btnLoteManualSiguiente;
+	private JButton btnLoteManualAtras;
+	private JTextField txtLoteEmail;
+	private JLabel lblLoteEmail;
+	private JLabel lblLoteNombre;
+	private JTextField txtLoteNombre;
+	private JLabel lblLoteApellidos;
+	private JTextField txtLoteApellidos;
+	private JLabel lblLoteSexo;
+	private JComboBox comboLoteSexo;
+	private JLabel lblLoteFecha;
+	private JTextField txtLoteFecha;
+	private JTextField txtLoteDni;
+	private JLabel lblLoteDni;
+	private JTable tablaLote;
+
+	private List<AtletaDto> atletasCreacion = null;
+
+	private DefaultTableModel tablaLoteando;
+
+	private void constructorCosasDePablo() {
+		contentPane.add(getPnInscripcionesLoteManual(), PANEL_INSCRIPCION_LOTE_MANUAL);
+		tablaLoteando = (DefaultTableModel) getTablaLote().getModel();
+	}
+
+	private JButton getBtnInscribirClubUnoPorUno() {
+		if (btnInscribirClubUnoPorUno == null) {
+			btnInscribirClubUnoPorUno = new JButton("Inscribir club uno por uno");
+			btnInscribirClubUnoPorUno.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (checkCarreraRow()) {
+						resetLotes();
+						showCard(PANEL_INSCRIPCION_LOTE_MANUAL);
+					}
+				}
+			});
+		}
+		return btnInscribirClubUnoPorUno;
+	}
+
+	private JPanel getPnInscripcionesLoteManual() {
+		if (pnInscripcionesLoteManual == null) {
+			pnInscripcionesLoteManual = new JPanel();
+			pnInscripcionesLoteManual.setLayout(null);
+			pnInscripcionesLoteManual.add(getLblRegistroLoteManual());
+			pnInscripcionesLoteManual.add(getLblNombreClub());
+			pnInscripcionesLoteManual.add(getTxtLoteClub());
+			pnInscripcionesLoteManual.add(getScrollPaneInscripcionesLote());
+			pnInscripcionesLoteManual.add(getBtnLoteBorrar_1());
+			pnInscripcionesLoteManual.add(getBtnLoteAñadir_1());
+			pnInscripcionesLoteManual.add(getBtnLoteManualSiguiente());
+			pnInscripcionesLoteManual.add(getBtnLoteManualAtras());
+			pnInscripcionesLoteManual.add(getTxtLoteEmail());
+			pnInscripcionesLoteManual.add(getLblLoteEmail());
+			pnInscripcionesLoteManual.add(getLblLoteNombre());
+			pnInscripcionesLoteManual.add(getTxtLoteNombre());
+			pnInscripcionesLoteManual.add(getLblLoteApellidos());
+			pnInscripcionesLoteManual.add(getTxtLoteApellidos());
+			pnInscripcionesLoteManual.add(getLblLoteSexo());
+			pnInscripcionesLoteManual.add(getComboLoteSexo());
+			pnInscripcionesLoteManual.add(getLblLoteFecha());
+			pnInscripcionesLoteManual.add(getTxtLoteFecha());
+			pnInscripcionesLoteManual.add(getTxtLoteDni());
+			pnInscripcionesLoteManual.add(getLblLoteDni());
+		}
+		return pnInscripcionesLoteManual;
+	}
+
+	private JLabel getLblRegistroLoteManual() {
+		if (lblRegistroLoteManual == null) {
+			lblRegistroLoteManual = new JLabel("REGISTRO POR CLUB MANUAL ");
+			lblRegistroLoteManual.setFont(new Font("Arial", Font.BOLD, 25));
+			lblRegistroLoteManual.setBounds(26, 7, 555, 60);
+		}
+		return lblRegistroLoteManual;
+	}
+
+	private JLabel getLblNombreClub() {
+		if (lblNombreClub == null) {
+			lblNombreClub = new JLabel("Nombre del Club:");
+			lblNombreClub.setFont(new Font("Arial", Font.PLAIN, 14));
+			lblNombreClub.setBounds(26, 78, 151, 14);
+		}
+		return lblNombreClub;
+	}
+
+	private JTextField getTxtLoteClub() {
+		if (txtLoteClub == null) {
+			txtLoteClub = new JTextField();
+			txtLoteClub.setFont(new Font("Arial", Font.PLAIN, 14));
+			txtLoteClub.setColumns(10);
+			txtLoteClub.setBounds(142, 76, 189, 20);
+		}
+		return txtLoteClub;
+	}
+
+	private JScrollPane getScrollPaneInscripcionesLote() {
+		if (scrollPaneInscripcionesLote == null) {
+			scrollPaneInscripcionesLote = new JScrollPane();
+			scrollPaneInscripcionesLote.setBounds(26, 107, 714, 208);
+			scrollPaneInscripcionesLote.setViewportView(getTablaLote());
+		}
+		return scrollPaneInscripcionesLote;
+	}
+
+	private JButton getBtnLoteBorrar_1() {
+		if (btnLoteBorrar == null) {
+			btnLoteBorrar = new JButton("Borrar");
+			btnLoteBorrar.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (checkIfSelectedLote()) {
+						reset(tablaLoteando);
+						cargarTablaLoteManual();
+						if (atletasCreacion.isEmpty()) {
+							txtLoteClub.setEditable(true);
+						}
+					}
+				}
+			});
+			btnLoteBorrar.setFont(new Font("Arial", Font.PLAIN, 14));
+			btnLoteBorrar.setBounds(766, 202, 111, 32);
+		}
+		return btnLoteBorrar;
+	}
+
+	private boolean checkIfSelectedLote() {
+		try {
+			Vector vector = tablaLoteando.getDataVector().elementAt(tablaLote.getSelectedRow());
+			if (vector != null) {
+				AtletaDto at = new AtletaDto();
+				at.setDNI((String) vector.get(2));
+				atletasCreacion.remove(at);
+				return true;
+			}
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "No has seleccionado ningun atleta");
+		}
+		return false;
+	}
+
+	private JButton getBtnLoteAñadir_1() {
+		if (btnLoteAñadir == null) {
+			btnLoteAñadir = new JButton("Añadir");
+			btnLoteAñadir.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (checkLoteManual()) {
+						AtletaDto dto = new AtletaDto(txtLoteDni.getText(),
+								txtLoteNombre.getText() + " " + txtLoteApellidos.getText(),
+								getAge(txtLoteFecha.getText()), comboLoteSexo.getSelectedItem().toString(), 0,
+								txtLoteEmail.getText());
+						dto.setFechitaDoNacimiento(txtLoteFecha.getText());
+						checkNoAtletaListaRepetido(dto);
+						cargarTablaLoteManual();
+					}
+					if (!atletasCreacion.isEmpty()) {
+						txtLoteClub.setEditable(false);
+					}
+				}
+			});
+			btnLoteAñadir.setFont(new Font("Arial", Font.PLAIN, 14));
+			btnLoteAñadir.setBounds(766, 341, 111, 32);
+		}
+		return btnLoteAñadir;
+	}
+
+	private void checkNoAtletaListaRepetido(AtletaDto dto) {
+		if (!atletasCreacion.contains(dto)) {
+			atletasCreacion.add(dto);
+		} else {
+			JOptionPane.showMessageDialog(null, "Ese atleta ya ha sido introducido en la tabla");
+		}
+	}
+
+	private JButton getBtnLoteManualSiguiente() {
+		if (btnLoteManualSiguiente == null) {
+			btnLoteManualSiguiente = new JButton("Siguiente");
+			btnLoteManualSiguiente.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					meterLoteManualMethod();
+				}
+			});
+			btnLoteManualSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
+			btnLoteManualSiguiente.setBounds(766, 456, 111, 32);
+		}
+		return btnLoteManualSiguiente;
+	}
+
+	private void meterLoteManualMethod() {
+		if (!atletasCreacion.isEmpty()) {
+
+			try {
+				List<AtletaDto> noInsc = AccionesClub.inscribirLote(atletasCreacion, carreraActual,
+						txtLoteClub.getText());
+
+				if (noInsc.size() == 0) {
+					JOptionPane.showMessageDialog(null, "Todos los atletas inscritos con éxito");
+				} else {
+					StringBuilder str = new StringBuilder("Estos atletas no han sido inscritos: ");
+
+					for (AtletaDto a : noInsc) {
+						str.append("\t" + a.getNombre() + "\n");
+					}
+				}
+
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(null, "No se pudo inscribir al club.\n\nRazón:\n" + ex.getMessage());
+			}
+
+			showCard(PANEL_ATLETA);
+		} else {
+			JOptionPane.showMessageDialog(null, "Cuidado, no estás inscribiendo a nadie");
+		}
+	}
+
+	private boolean checkLoteManual() {
+		if (txtLoteNombre.getText().isEmpty() || txtLoteApellidos.getText().isEmpty()
+				|| txtLoteEmail.getText().isEmpty() || txtLoteDni.getText().isEmpty()
+				|| comboLoteSexo.getSelectedIndex() == -1 || txtLoteFecha.getText().isEmpty()
+				|| txtLoteClub.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(null, "No puedes dejar nada vacio");
+			return false;
+		}
+
+		return true;
+	}
+
+	private void resetLotes() {
+		txtLoteNombre.setText("");
+		txtLoteApellidos.setText("");
+		txtLoteEmail.setText("");
+		txtLoteDni.setText("");
+		comboLoteSexo.setSelectedIndex(-1);
+		txtLoteFecha.setText("");
+		atletasCreacion = new ArrayList<AtletaDto>();
+		reset(tablaLoteando);
+	}
+
+	public void cargarTablaLoteManual() {
+		reset(tablaLoteando);
+		int i = 1;
+		for (AtletaDto dto : atletasCreacion) {
+			String[] atletasTabla = { String.valueOf(i), dto.getNombre(), dto.getDNI(), dto.getEmail(), dto.getSexo(),
+					dto.getFechitaDoNacimiento() };
+			tablaLoteando.addRow(atletasTabla);
+			i++;
+		}
+	}
+
+	private JButton getBtnLoteManualAtras() {
+		if (btnLoteManualAtras == null) {
+			btnLoteManualAtras = new JButton("Atras");
+			btnLoteManualAtras.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					showCard(PANEL_LISTA_CARRERAS);
+				}
+			});
+			btnLoteManualAtras.setFont(new Font("Arial", Font.PLAIN, 14));
+			btnLoteManualAtras.setBounds(26, 456, 111, 32);
+		}
+		return btnLoteManualAtras;
+	}
+
+	private JTextField getTxtLoteEmail() {
+		if (txtLoteEmail == null) {
+			txtLoteEmail = new JTextField();
+			txtLoteEmail.setFont(new Font("Arial", Font.PLAIN, 14));
+			txtLoteEmail.setColumns(10);
+			txtLoteEmail.setBounds(72, 367, 128, 20);
+		}
+		return txtLoteEmail;
+	}
+
+	private JLabel getLblLoteEmail() {
+		if (lblLoteEmail == null) {
+			lblLoteEmail = new JLabel("Email:");
+			lblLoteEmail.setFont(new Font("Arial", Font.PLAIN, 14));
+			lblLoteEmail.setBounds(26, 370, 45, 14);
+		}
+		return lblLoteEmail;
+	}
+
+	private JLabel getLblLoteNombre() {
+		if (lblLoteNombre == null) {
+			lblLoteNombre = new JLabel("Nombre:");
+			lblLoteNombre.setFont(new Font("Arial", Font.PLAIN, 14));
+			lblLoteNombre.setBounds(26, 328, 64, 14);
+		}
+		return lblLoteNombre;
+	}
+
+	private JTextField getTxtLoteNombre() {
+		if (txtLoteNombre == null) {
+			txtLoteNombre = new JTextField();
+			txtLoteNombre.setFont(new Font("Arial", Font.PLAIN, 14));
+			txtLoteNombre.setColumns(10);
+			txtLoteNombre.setBounds(88, 326, 111, 20);
+		}
+		return txtLoteNombre;
+	}
+
+	private JLabel getLblLoteApellidos() {
+		if (lblLoteApellidos == null) {
+			lblLoteApellidos = new JLabel("Apellidos:");
+			lblLoteApellidos.setFont(new Font("Arial", Font.PLAIN, 14));
+			lblLoteApellidos.setBounds(224, 328, 64, 14);
+		}
+		return lblLoteApellidos;
+	}
+
+	private JTextField getTxtLoteApellidos() {
+		if (txtLoteApellidos == null) {
+			txtLoteApellidos = new JTextField();
+			txtLoteApellidos.setFont(new Font("Arial", Font.PLAIN, 14));
+			txtLoteApellidos.setColumns(10);
+			txtLoteApellidos.setBounds(298, 326, 135, 20);
+		}
+		return txtLoteApellidos;
+	}
+
+	private JLabel getLblLoteSexo() {
+		if (lblLoteSexo == null) {
+			lblLoteSexo = new JLabel("Sexo:");
+			lblLoteSexo.setFont(new Font("Arial", Font.PLAIN, 14));
+			lblLoteSexo.setBounds(224, 367, 45, 20);
+		}
+		return lblLoteSexo;
+	}
+
+	private JComboBox getComboLoteSexo() {
+		if (comboLoteSexo == null) {
+			comboLoteSexo = new JComboBox();
+			comboLoteSexo.addItem("Masculino");
+			comboLoteSexo.addItem("Femenino");
+			comboLoteSexo.addItem("Otro");
+			comboLoteSexo.setSelectedIndex(-1);
+			comboLoteSexo.setSelectedIndex(-1);
+			comboLoteSexo.setFont(new Font("Arial", Font.PLAIN, 14));
+			comboLoteSexo.setBounds(272, 366, 161, 22);
+		}
+		return comboLoteSexo;
+	}
+
+	private JLabel getLblLoteFecha() {
+		if (lblLoteFecha == null) {
+			lblLoteFecha = new JLabel("Fecha de nacimiento:");
+			lblLoteFecha.setFont(new Font("Arial", Font.PLAIN, 14));
+			lblLoteFecha.setBounds(456, 370, 152, 14);
+		}
+		return lblLoteFecha;
+	}
+
+	private JTextField getTxtLoteFecha() {
+		if (txtLoteFecha == null) {
+			txtLoteFecha = new JTextField();
+			txtLoteFecha.setToolTipText("yyyy-MM-dd");
+			txtLoteFecha.setFont(new Font("Arial", Font.PLAIN, 14));
+			txtLoteFecha.setColumns(10);
+			txtLoteFecha.setBounds(605, 367, 135, 20);
+		}
+		return txtLoteFecha;
+	}
+
+	private JTextField getTxtLoteDni() {
+		if (txtLoteDni == null) {
+			txtLoteDni = new JTextField();
+			txtLoteDni.setFont(new Font("Arial", Font.PLAIN, 14));
+			txtLoteDni.setColumns(10);
+			txtLoteDni.setBounds(488, 326, 252, 20);
+		}
+		return txtLoteDni;
+	}
+
+	private JLabel getLblLoteDni() {
+		if (lblLoteDni == null) {
+			lblLoteDni = new JLabel("DNI:");
+			lblLoteDni.setFont(new Font("Arial", Font.PLAIN, 14));
+			lblLoteDni.setBounds(452, 326, 26, 14);
+		}
+		return lblLoteDni;
+	}
+
+	private JTable getTablaLote() {
+		if (tablaLote == null) {
+			tablaLote = new JTable();
+			tablaLote.setModel(new DefaultTableModel(new Object[][] {},
+					new String[] { "N\u00BA", "Nombre", "DNI", "Email", "Sexo", "Fecha de Nacimiento" }) {
+				Class[] columnTypes = new Class[] { Object.class, Object.class, String.class, String.class,
+						String.class, String.class };
+
+				public Class getColumnClass(int columnIndex) {
+					return columnTypes[columnIndex];
+				}
+
+				boolean[] columnEditables = new boolean[] { true, true, false, false, false, false };
+
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+			});
+			tablaLote.getColumnModel().getColumn(0).setPreferredWidth(25);
+			tablaLote.getColumnModel().getColumn(1).setPreferredWidth(90);
+			tablaLote.getColumnModel().getColumn(2).setResizable(false);
+			tablaLote.getColumnModel().getColumn(2).setPreferredWidth(90);
+			tablaLote.getColumnModel().getColumn(3).setResizable(false);
+			tablaLote.getColumnModel().getColumn(3).setPreferredWidth(90);
+			tablaLote.getColumnModel().getColumn(4).setResizable(false);
+			tablaLote.getColumnModel().getColumn(4).setPreferredWidth(90);
+			tablaLote.getColumnModel().getColumn(5).setResizable(false);
+			tablaLote.getColumnModel().getColumn(5).setPreferredWidth(110);
+		}
+		return tablaLote;
+	}
+
+	/**
+	 * hasta aqui
+	 */
 }
