@@ -38,4 +38,28 @@ public class AddAtleta {
 		}
 
 	}
+
+	public void execute2() {
+		GestorDB gdb = new GestorDB();
+		Connection con = gdb.getConnection();
+		try {
+			PreparedStatement pst = con.prepareStatement(SQLStrings.insertAtletaValues);
+			pst.setString(1, atleta.getIdAtleta());
+			pst.setString(2, atleta.getDNI());
+			pst.setString(3, atleta.getNombre());
+			pst.setInt(4, atleta.getEdad());
+			pst.setString(5, atleta.getSexo());
+			pst.setInt(6, (atleta.isDiscapacitado() ? 1 : 0));
+			pst.setString(7, atleta.getEmail());
+			pst.executeUpdate();
+			pst.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			gdb.cerrarCon();
+		}
+
+	}
 }
