@@ -1,6 +1,7 @@
 package ipsTeamwork.model.club;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -18,27 +19,36 @@ import ipsTeamwork.util.DtoBuilder;
 import ipsTeamwork.util.Parser;
 
 public class AccionesClub {
-	public static void inscribirLote(File f, CarreraDto carrera, String nombreClub) throws Exception {
+	public static List<AtletaDto> inscribirLote(File f, CarreraDto carrera, String nombreClub) throws Exception {
 		List<AtletaDto> atletas = Parser.parseListaAtletas(f, true);
+		return inscribirLote(atletas, carrera, nombreClub);
+	}
 
-		if (atletas.size() > carrera.getPlazasDisp()) {
-			throw new Exception("Sólo hay " + carrera.getPlazasDisp() + " plazas, por lo que no caben los "
-					+ atletas.size() + " atletas.");
-		}
+	public static List<AtletaDto> inscribirLote(List<AtletaDto> atletas, CarreraDto carrera, String nombreClub)
+			throws Exception {
 
 		System.out.println("\n\n\t\tINSCRIBIENDO CLUB " + nombreClub + " EN LA CARRERA " + carrera.getNombre() + "\n");
 
+		List<AtletaDto> noInscritos = new ArrayList<AtletaDto>();
+
 		for (int i = 0; i < atletas.size(); i++) {
-			dbIngresoAtleta(atletas.get(i), carrera, nombreClub);
+			AtletaDto a = dbIngresoAtleta(atletas.get(i), carrera, nombreClub);
+			if (a != null)
+				noInscritos.add(a);
 		}
 
 		System.out.println("\n\t\tCLUB INSCRITO\n\n");
 
 		new GestorDB().selectAtletas();
 		new GestorDB().selectInscripcion();
+
+		return noInscritos;
 	}
 
-	private static void dbIngresoAtleta(AtletaDto atleta, CarreraDto carreraActual, String nombreClub) {
+	private static AtletaDto dbIngresoAtleta(AtletaDto atleta, CarreraDto carreraActual, String nombreClub) {
+		if (carreraActual.getPlazasDisp() == 0)
+			return atleta;
+
 		AtletaDto encontrado = new FindAtletaByEmail().execute(atleta.getEmail());
 
 		if (encontrado == null) { // si el atleta directamente no existe
@@ -53,8 +63,9 @@ public class AccionesClub {
 			inscripcion.setClub(nombreClub);
 
 			new InscribirseAtleta().execute(inscripcion);
-			new GestorDB().bajarPlazasPublic(carreraActual);
+			carreraActual.setPlazasDisp(carreraActual.getPlazasDisp() - 1);
 			new UpdateCarrera().execute(carreraActual);
+
 		} else { // si sí existe en la base de datos
 			if (new FindAtletaInCarrera().execute(encontrado.getIdAtleta(), carreraActual.getIdCarrera())) { // y no
 																												// está
@@ -72,6 +83,8 @@ public class AccionesClub {
 				cambiarInscripcionAInscritoClub(encontrado, carreraActual);
 			}
 		}
+
+		return null;
 	}
 
 	private static void cambiarInscripcionAInscritoClub(AtletaDto atletaSinId, CarreraDto carreraActual) {

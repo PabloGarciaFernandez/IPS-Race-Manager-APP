@@ -3449,7 +3449,18 @@ public class MainWindow extends JFrame {
 		}
 
 		try {
-			AccionesClub.inscribirLote(file, carreraActual, nombreClub);
+			List<AtletaDto> noInsc = AccionesClub.inscribirLote(file, carreraActual, nombreClub);
+
+			if (noInsc.size() == 0) {
+				JOptionPane.showConfirmDialog(null, "Todos los atletas inscritos con éxito");
+			} else {
+				StringBuilder str = new StringBuilder("Estos atletas no han sido inscritos: ");
+
+				for (AtletaDto a : noInsc) {
+					str.append("\t" + a.getNombre() + "\n");
+				}
+			}
+
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, "No se pudo inscribir al club.\n\nRazón:\n" + e.getMessage());
 		}
