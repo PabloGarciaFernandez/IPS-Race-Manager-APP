@@ -22,7 +22,7 @@ public class UpdateCarrera {
 			pst.setString(2, carrera.getIdCarrera());
 
 			pst.executeUpdate();
-			pst.close();
+			//pst.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();

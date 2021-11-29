@@ -1112,6 +1112,10 @@ public class GestorDB {
 			pst.execute();
 			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido8);
 			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido9);
+			pst.execute();
+			pst = conn.prepareStatement(SQLStrings.insertAtletaPredefinido10);
+			pst.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {

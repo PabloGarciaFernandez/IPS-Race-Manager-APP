@@ -380,7 +380,7 @@ public class MainWindow extends JFrame {
 
 	private JButton getBtnAtleta() {
 		if (btnAtleta == null) {
-			btnAtleta = new JButton("Soy atleta");
+			btnAtleta = new JButton("Participante(s)");
 			btnAtleta.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnAtleta.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -394,7 +394,7 @@ public class MainWindow extends JFrame {
 
 	private JButton getBtnOrganiz() {
 		if (btnOrganiz == null) {
-			btnOrganiz = new JButton("Soy organizador");
+			btnOrganiz = new JButton("Organizador");
 			btnOrganiz.setFont(new Font("Arial", Font.PLAIN, 14));
 			btnOrganiz.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -514,8 +514,6 @@ public class MainWindow extends JFrame {
 			String[] carrerasTabla = { dto.getNombre(), dto.getFecha().toString(), dto.getTipo(),
 					String.valueOf(dto.getDistancia()), String.valueOf(dto.getCuota()), dto.getFechaFin().toString(),
 					String.valueOf(dto.getPlazasDisp()) };
-			// "Nombre", "Fecha", "Tipo", "Distancia", "Cuota", "Fecha l\u00EDm. insc.",
-			// "Plazas disponibles"
 			tablaAtleta.addRow(carrerasTabla);
 		}
 	}
@@ -671,7 +669,7 @@ public class MainWindow extends JFrame {
 				+ "\nLa carrera se efectuara el " + carreraActual.getFecha() + "\nDel tipo " + carreraActual.getTipo()
 				+ "\nCon una distancia real de " + carreraActual.getDistancia() + "km"
 				+ "\nSu posicion dentro de esta lista es: " + posicion
-				+ ".\n\nSi tenemos alguna actualizacion te llegara un correo a tu email.\\nOjala nos veamos en proximas carreras :)";
+				+ ".\n\nSi tenemos alguna actualizacion te llegara un correo a tu email.\nOjala nos veamos en proximas carreras :)";
 
 		JOptionPane.showMessageDialog(btnListaInscribirse, todo, "Gracias :)", JOptionPane.DEFAULT_OPTION);
 
@@ -3408,7 +3406,6 @@ public class MainWindow extends JFrame {
 						conf.setVisible(true);
 					} catch (ParseException e1) {
 						JOptionPane.showMessageDialog(null, "Error: Fecha sin formato yyyy-MM-dd");
-						e1.printStackTrace();
 					}
 				}
 			});
@@ -3578,8 +3575,8 @@ public class MainWindow extends JFrame {
 			pnInscripcionesLoteManual.add(getLblNombreClub());
 			pnInscripcionesLoteManual.add(getTxtLoteClub());
 			pnInscripcionesLoteManual.add(getScrollPaneInscripcionesLote());
-			pnInscripcionesLoteManual.add(getBtnLoteBorrar_1());
-			pnInscripcionesLoteManual.add(getBtnLoteAñadir_1());
+			pnInscripcionesLoteManual.add(getBtnLoteBorrar());
+			pnInscripcionesLoteManual.add(getBtnLoteAñadir());
 			pnInscripcionesLoteManual.add(getBtnLoteManualSiguiente());
 			pnInscripcionesLoteManual.add(getBtnLoteManualAtras());
 			pnInscripcionesLoteManual.add(getTxtLoteEmail());
@@ -3635,7 +3632,7 @@ public class MainWindow extends JFrame {
 		return scrollPaneInscripcionesLote;
 	}
 
-	private JButton getBtnLoteBorrar_1() {
+	private JButton getBtnLoteBorrar() {
 		if (btnLoteBorrar == null) {
 			btnLoteBorrar = new JButton("Borrar");
 			btnLoteBorrar.addActionListener(new ActionListener() {
@@ -3670,7 +3667,7 @@ public class MainWindow extends JFrame {
 		return false;
 	}
 
-	private JButton getBtnLoteAñadir_1() {
+	private JButton getBtnLoteAñadir() {
 		if (btnLoteAñadir == null) {
 			btnLoteAñadir = new JButton("Añadir");
 			btnLoteAñadir.addActionListener(new ActionListener() {
@@ -3678,7 +3675,8 @@ public class MainWindow extends JFrame {
 					if (checkLoteManual()) {
 						AtletaDto dto = new AtletaDto(txtLoteDni.getText(),
 								txtLoteNombre.getText() + " " + txtLoteApellidos.getText(),
-								getAge(txtLoteFecha.getText()), comboLoteSexo.getSelectedItem().toString(), 0,
+								getAge(txtLoteFecha.getText()),
+								"" + ((comboLoteSexo.getSelectedItem().toString()).charAt(0)), 0,
 								txtLoteEmail.getText());
 						dto.setFechitaDoNacimiento(txtLoteFecha.getText());
 						checkNoAtletaListaRepetido(dto);
@@ -3709,6 +3707,11 @@ public class MainWindow extends JFrame {
 			btnLoteManualSiguiente.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					meterLoteManualMethod();
+					resetLotes();
+					reset(tablaAtleta);
+					reset(tb);
+					cargarTablaCarrerasOrganizador();
+					cargarTablaCarrerasAtleta();
 				}
 			});
 			btnLoteManualSiguiente.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -3727,11 +3730,12 @@ public class MainWindow extends JFrame {
 				if (noInsc.size() == 0) {
 					JOptionPane.showMessageDialog(null, "Todos los atletas inscritos con éxito");
 				} else {
-					StringBuilder str = new StringBuilder("Estos atletas no han sido inscritos: ");
+					StringBuilder str = new StringBuilder("Estos atletas no han sido inscritos: \n");
 
 					for (AtletaDto a : noInsc) {
-						str.append("\t" + a.getNombre() + "\n");
+						str.append("\t-" + a.getNombre() + "\n");
 					}
+					JOptionPane.showMessageDialog(null, str);
 				}
 
 			} catch (Exception ex) {
@@ -3752,6 +3756,10 @@ public class MainWindow extends JFrame {
 			JOptionPane.showMessageDialog(null, "No puedes dejar nada vacio");
 			return false;
 		}
+		if (getAge(txtLoteFecha.getText()) <= 18) {
+			JOptionPane.showMessageDialog(null, "No se puede inscribir a un menor de edad");
+			return false;
+		}
 
 		return true;
 	}
@@ -3764,6 +3772,8 @@ public class MainWindow extends JFrame {
 		comboLoteSexo.setSelectedIndex(-1);
 		txtLoteFecha.setText("");
 		atletasCreacion = new ArrayList<AtletaDto>();
+		txtLoteClub.setEditable(true);
+		txtLoteClub.setText("");
 		reset(tablaLoteando);
 	}
 
@@ -3783,6 +3793,7 @@ public class MainWindow extends JFrame {
 			btnLoteManualAtras = new JButton("Atras");
 			btnLoteManualAtras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					resetLotes();
 					showCard(PANEL_LISTA_CARRERAS);
 				}
 			});

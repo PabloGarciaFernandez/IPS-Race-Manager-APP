@@ -106,7 +106,10 @@ public class SQLStrings {
 	public static String insertAtletaPredefinido6 = "Insert into atleta values ('idAyuso', 'dniAyuso', 'Isabel Diaz Ayuso', 65, 'F', 1, 'Ayuso@gmail.com');";
 	public static String insertAtletaPredefinido7 = "Insert into atleta values ('idZapatero', 'dniZapatero', 'Jose Luis Zapatero', 45, 'M', 1, 'Zapatero@gmail.com');";
 	public static String insertAtletaPredefinido8 = "Insert into atleta values ('idThrall', 'dniThrall', 'Thrall', 30, 'M', 0, 'Thrall@gmail.com');";
+	public static String insertAtletaPredefinido9 = "Insert into atleta values ('idIllidan', 'dniIllidan', 'Illidan Tempestira', 45, 'M', 1, 'Illidan@gmail.com');";
+	public static String insertAtletaPredefinido10 = "Insert into atleta values ('idJaina', 'dniJaina', 'Jaina', 30, 'F', 0, 'Jaina@gmail.com');";
 
+	
 	public static String insertCarreraPredefinida = "Insert into carrera values ('idMaratonMadrid', 'MaratonMadrid', ?,?, 'Asfalto', 100, 20, ?, 0, 6, 1, '10','30','50','0','0');";
 
 	public static String insertInscripcionPredefinida = "Insert into inscripcion values ('idMariano', 'idMaratonMadrid', '1', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '', 'PP','10','20','30','40','50');";
@@ -115,8 +118,8 @@ public class SQLStrings {
 	public static String insertInscripcionPredefinida3 = "Insert into inscripcion values ('idPablo', 'idMaratonMadrid', '4', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '', 'PODEMOS','16','26','36','46','56');";
 	public static String insertInscripcionPredefinida4 = "Insert into inscripcion values ('idCasado', 'idMaratonMadrid', '5', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '', 'PP','18','28','38','48','58');";
 	public static String insertInscripcionPredefinida5 = "Insert into inscripcion values ('idAyuso', 'idMaratonMadrid', '6', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '', 'PP','20','30','40','50','60');";
-	public static String insertInscripcionPredefinida6 = "Insert into inscripcion values ('idZapatero', 'idMaratonMadrid', '7', ?, 'Inscrito', 'Tarjeta', 'NP', 'Junior', '', 'PSOE','22','32','42','52','62');";
-	public static String insertInscripcionPredefinida7 = "Insert into inscripcion values ('idThrall', 'idMaratonMadrid', '8', ?, 'Inscrito', 'Tarjeta', 'NP', 'Veterano', '', 'HORDA','24','34','44','54','64');";
+	public static String insertInscripcionPredefinida6 = "Insert into inscripcion values ('idIllidan', 'idMaratonMadrid', '7', ?, 'Cancelado', 'Tarjeta', 'NP', 'Junior', '', 'POR LIBRE','22','32','42','52','62');";
+	public static String insertInscripcionPredefinida7 = "Insert into inscripcion values ('idJaina', 'idMaratonMadrid', '8', ?, 'Cancelado', 'Tarjeta', 'NP', 'Veterano', '', 'ALIANZA','24','34','44','54','64');";
 
 	public static String insertListaEsperaPredefinida = "Insert into TListaEspera values ('idZapatero', 'idMaratonMadrid', ?, 1, 'Veterano');";
 	public static String insertListaEsperaPredefinida1 = "Insert into TListaEspera values ('idThrall', 'idMaratonMadrid', ?, 2, 'Veterano');";
