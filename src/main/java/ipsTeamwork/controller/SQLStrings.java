@@ -80,7 +80,7 @@ public class SQLStrings {
 	public static String cancelarInscripcionAtletaCarrera = "update inscripcion set estadoInscripcion='Cancelado' where idAtleta = ? and idCarrera = ?";
 	public static String incidenciasDevolverCantidad = "update inscripcion set incidenciasPagos = ? where idAtleta = ? and idCarrera = ?";
 	public static String updatePlazasEnCarrera = "update carrera set plazasDisp = ? where idCarrera = ?";
-	public static String updateInscripcionStatusIncidencia = "update inscripcion set estadoInscripcion = ? incidenciasPagos = ? where idAtleta = ? and idCarrera = ?";
+	public static String updateInscripcionStatusIncidencia = "update inscripcion set estadoInscripcion = ?, incidenciasPagos = ? where idAtleta = ? and idCarrera = ?";
 
 	// creates
 	public static String createAtleta = "CREATE TABLE atleta (idAtleta varchar2 NOT NULL, dni varchar2 not null, nombre varchar2 not null, edad integer not null, sexo varchar not null, discapacitado bit NOT NULL, email varchar2 not null, CONSTRAINT CHK_Atleta CHECK (edad >18 AND (sexo='M' OR sexo='F' OR sexo='NB')) , primary key (idAtleta), constraint unique_email UNIQUE (email))";
@@ -154,6 +154,7 @@ public class SQLStrings {
 
 	public static String insertDevolucionValues = "insert into devolucion(idCarrera, porcentaje, fechaFin) values (?, ?, ?)";
 
-	public static String atletaByEmail = "select a from atleta a where a.email = ?";
+	public static String atletaByEmail = "select * from atleta where email = ?";
+	//public static String atletaByEmail = "select a from atleta a where a.email = ?";
 
 }

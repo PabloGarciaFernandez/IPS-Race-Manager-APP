@@ -442,6 +442,10 @@ public class MainWindow extends JFrame {
 			btnListaCarreras.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					showCard(PANEL_LISTA_CARRERAS);
+					reset(tablaAtleta);
+					reset(tb);
+					cargarTablaCarrerasOrganizador();
+					cargarTablaCarrerasAtleta();
 				}
 			});
 			btnListaCarreras.setBounds(210, 120, 435, 46);
@@ -3452,7 +3456,7 @@ public class MainWindow extends JFrame {
 			List<AtletaDto> noInsc = AccionesClub.inscribirLote(file, carreraActual, nombreClub);
 
 			if (noInsc.size() == 0) {
-				JOptionPane.showConfirmDialog(null, "Todos los atletas inscritos con éxito");
+				JOptionPane.showMessageDialog(null, "Todos los atletas inscritos con éxito");
 			} else {
 				StringBuilder str = new StringBuilder("Estos atletas no han sido inscritos: ");
 

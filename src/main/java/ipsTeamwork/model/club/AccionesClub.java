@@ -51,7 +51,7 @@ public class AccionesClub {
 
 		AtletaDto encontrado = new FindAtletaByEmail().execute(atleta.getEmail());
 
-		if (encontrado == null) { // si el atleta directamente no existe
+		if (encontrado.getIdAtleta() == null) { // si el atleta directamente no existe
 			atleta.setIdAtleta(UUID.randomUUID().toString()); // se le da un id y se inscribe
 
 			new AddAtleta(atleta).execute2();
